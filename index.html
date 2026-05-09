@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Guided — Literacy Tools for K-6 Teachers</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:#080B12;color:#F0EEF8;overflow-x:hidden;}
+a{color:inherit;text-decoration:none;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(8,11,18,0.9);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-icon{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#4ECDC4,#A78BFA);display:flex;align-items:center;justify-content:center;font-size:16px;}
+.logo-text{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;}
+.nav-links{display:flex;gap:8px;align-items:center;}
+.nav-link{background:transparent;color:#8B8BA8;border:none;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.nav-cta{background:linear-gradient(135deg,#4ECDC4,#2BBDB5);color:#080B12;border:none;border-radius:9px;padding:9px 18px;font-size:13px;font-weight:800;cursor:pointer;font-family:'DM Sans',sans-serif;}
+
+/* HERO */
+.hero{max-width:960px;margin:0 auto;padding:80px 40px 60px;text-align:center;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(78,205,196,0.08);border:1px solid rgba(78,205,196,0.2);border-radius:20px;padding:6px 16px;margin-bottom:28px;}
+.hero-badge span{font-size:12px;font-weight:700;color:#4ECDC4;letter-spacing:0.08em;}
+.hero h1{font-family:'Playfair Display',serif;font-size:56px;font-weight:900;line-height:1.1;letter-spacing:-2px;margin-bottom:20px;}
+.gradient-text{background:linear-gradient(135deg,#4ECDC4,#A78BFA,#FFD166);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero p{font-size:17px;color:#8B8BA8;line-height:1.7;max-width:520px;margin:0 auto 36px;}
+.hero-buttons{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.btn-primary{background:linear-gradient(135deg,#4ECDC4,#2BBDB5);color:#080B12;border:none;border-radius:11px;padding:14px 26px;font-size:15px;font-weight:800;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.btn-secondary{background:rgba(255,255,255,0.06);color:#F0EEF8;border:1px solid rgba(255,255,255,0.1);border-radius:11px;padding:14px 26px;font-size:15px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.stats{display:flex;gap:14px;justify-content:center;margin-top:40px;flex-wrap:wrap;}
+.stat{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:10px 20px;text-align:center;}
+.stat-num{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:#4ECDC4;}
+.stat-label{font-size:11px;color:#8B8BA8;font-weight:600;}
+
+/* HOW IT WORKS */
+.section{max-width:960px;margin:0 auto;padding:60px 40px;}
+.section-label{font-size:11px;font-weight:800;color:#8B8BA8;letter-spacing:0.1em;margin-bottom:10px;text-align:center;}
+.section-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;text-align:center;margin-bottom:40px;}
+.how-grid{display:grid;grid-template-columns:1fr 40px 1fr 40px 1fr;gap:0;align-items:center;}
+.how-card{background:#0E1117;border-radius:16px;padding:24px;border:1px solid rgba(255,255,255,0.06);}
+.how-icon{font-size:30px;margin-bottom:10px;}
+.how-step{font-size:11px;font-weight:800;color:#4ECDC4;margin-bottom:6px;letter-spacing:0.06em;}
+.how-title{font-size:15px;font-weight:700;margin-bottom:8px;}
+.how-desc{font-size:13px;color:#8B8BA8;line-height:1.6;}
+.arrow{text-align:center;color:rgba(255,255,255,0.15);font-size:24px;}
+
+/* APPS */
+.apps-section{max-width:960px;margin:0 auto;padding:20px 40px 60px;}
+.app-card{background:#0E1117;border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:30px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:flex-start;gap:20px;}
+.app-left{flex:1;}
+.app-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.app-icon-wrap{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;}
+.app-name{font-family:'Playfair Display',serif;font-size:21px;font-weight:700;}
+.app-tagline{font-size:12px;color:#8B8BA8;font-weight:600;}
+.app-desc{font-size:14px;color:#8B8BA8;line-height:1.7;margin-bottom:14px;max-width:500px;}
+.app-features{display:flex;flex-wrap:wrap;gap:6px;}
+.feature-tag{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:600;color:#8B8BA8;}
+.app-right{text-align:center;flex-shrink:0;}
+.app-stat-box{border-radius:14px;padding:18px 22px;margin-bottom:10px;min-width:120px;}
+.app-stat-num{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;}
+.app-stat-sub{font-size:11px;color:#8B8BA8;font-weight:600;margin-top:2px;}
+.app-btn{border:none;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:800;cursor:pointer;width:100%;font-family:'DM Sans',sans-serif;}
+.coming-soon-badge{background:rgba(167,139,250,0.15);color:#A78BFA;border:1px solid rgba(167,139,250,0.3);border-radius:20px;padding:2px 10px;font-size:10px;font-weight:800;margin-left:8px;}
+
+/* FEATURES */
+.features-bg{background:#0E1117;border-top:1px solid rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.05);}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.feature-card{padding:22px;background:#161B22;border-radius:14px;border:1px solid rgba(255,255,255,0.05);}
+.feature-icon-wrap{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:12px;}
+.feature-title{font-size:14px;font-weight:700;margin-bottom:6px;}
+.feature-desc{font-size:12px;color:#8B8BA8;line-height:1.7;}
+
+/* PRICING */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.pricing-card{background:#0E1117;border:2px solid rgba(255,255,255,0.06);border-radius:18px;padding:26px;text-align:center;position:relative;}
+.pricing-card.popular{border-color:#4ECDC4;box-shadow:0 0 40px rgba(78,205,196,0.1);}
+.popular-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#4ECDC4,#2BBDB5);color:#080B12;border-radius:20px;padding:4px 14px;font-size:10px;font-weight:800;white-space:nowrap;}
+.plan-name{font-size:14px;font-weight:700;margin-bottom:8px;}
+.plan-price{font-family:'Playfair Display',serif;font-size:36px;font-weight:900;}
+.plan-period{font-size:11px;color:#8B8BA8;margin-bottom:18px;}
+.plan-features{list-style:none;margin-bottom:20px;text-align:left;}
+.plan-features li{font-size:12px;color:#8B8BA8;padding:5px 0;display:flex;gap:8px;}
+.plan-features li span{flex-shrink:0;}
+.plan-btn{width:100%;border:none;border-radius:10px;padding:11px;font-size:13px;font-weight:800;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.pricing-note{text-align:center;margin-top:20px;font-size:12px;color:#8B8BA8;line-height:1.8;}
+
+/* CTA */
+.cta-section{background:linear-gradient(135deg,rgba(78,205,196,0.08),rgba(167,139,250,0.06));border-top:1px solid rgba(255,255,255,0.05);padding:80px 40px;text-align:center;}
+.cta-title{font-family:'Playfair Display',serif;font-size:36px;font-weight:900;margin-bottom:14px;line-height:1.2;}
+.cta-sub{font-size:15px;color:#8B8BA8;margin-bottom:30px;line-height:1.7;}
+
+/* FOOTER */
+footer{border-top:1px solid rgba(255,255,255,0.05);padding:26px 40px;}
+.footer-inner{max-width:960px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-logo{display:flex;align-items:center;gap:8px;}
+.footer-copy{font-size:12px;color:#8B8BA8;}
+.footer-links{display:flex;gap:16px;}
+.footer-links span{font-size:12px;color:#8B8BA8;cursor:pointer;}
+
+@media(max-width:700px){
+.hero h1{font-size:36px;}
+.how-grid{grid-template-columns:1fr;}
+.arrow{transform:rotate(90deg);}
+.app-card{flex-direction:column;}
+.features-grid{grid-template-columns:1fr;}
+.pricing-grid{grid-template-columns:1fr;}
+nav{padding:0 16px;}
+.hero{padding:50px 20px 40px;}
+.section,.apps-section{padding:40px 20px;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+<div class="logo">
+<div class="logo-icon">✦</div>
+<div class="logo-text">Guided</div>
+</div>
+<div class="nav-links">
+<button class="nav-link">About</button>
+<button class="nav-link">Pricing</button>
+<button class="nav-cta">Get Started Free</button>
+</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+<div class="hero-badge"><span>✦ BUILT FOR K–6 LITERACY TEACHERS</span></div>
+<h1>Everything your<br/><span class="gradient-text">literacy block</span><br/>needs. Together.</h1>
+<p>Three connected tools — assessment, centres, and reporting — that talk to each other so you don't have to repeat yourself.</p>
+<div class="hero-buttons">
+<button class="btn-primary">Start Free Today →</button>
+<button class="btn-secondary">Watch Demo</button>
+</div>
+<div class="stats">
+<div class="stat"><div class="stat-num">K–6</div><div class="stat-label">Full Grade Range</div></div>
+<div class="stat"><div class="stat-num">3</div><div class="stat-label">Connected Apps</div></div>
+<div class="stat"><div class="stat-num">&lt;2 min</div><div class="stat-label">Per Session</div></div>
+<div class="stat"><div class="stat-num">100%</div><div class="stat-label">Curriculum Aligned</div></div>
+</div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="section">
+<div class="section-label">HOW IT WORKS</div>
+<div class="section-title">One ecosystem. Zero repeated work.</div>
+<div class="how-grid">
+<div class="how-card">
+<div class="how-icon">📖</div>
+<div class="how-step">STEP 1</div>
+<div class="how-title">Assess in ReadLead</div>
+<div class="how-desc">Run a 2-minute reading session. Log errors, rate skills, generate a lesson.</div>
+</div>
+<div class="arrow">→</div>
+<div class="how-card">
+<div class="how-icon">🔄</div>
+<div class="how-step">STEP 2</div>
+<div class="how-title">Rotate with CentreRotator</div>
+<div class="how-desc">Groups sync automatically. Build your schedule and display it live.</div>
+</div>
+<div class="arrow">→</div>
+<div class="how-card">
+<div class="how-icon">📊</div>
+<div class="how-step">STEP 3</div>
+<div class="how-title">Report with ProgressReporter</div>
+<div class="how-desc">Growth is tracked. Generate a report card comment in seconds.</div>
+</div>
+</div>
+</div>
+
+<!-- APPS -->
+<div class="apps-section">
+<div class="section-label" style="text-align:center;">THE SUITE</div>
+<div class="section-title">Three apps. One subscription.</div>
+
+<!-- ReadLead -->
+<div class="app-card" style="border-color:rgba(78,205,196,0.2);">
+<div class="app-left">
+<div class="app-header">
+<div class="app-icon-wrap" style="background:rgba(78,205,196,0.12);border:1px solid rgba(78,205,196,0.25);">📖</div>
+<div>
+<div class="app-name">ReadLead</div>
+<div class="app-tagline">Guided Reading Assessment</div>
+</div>
+</div>
+<div class="app-desc">Observe students reading, log errors, rate skills, and generate personalized 15-minute lesson plans aligned to your curriculum — all in under 2 minutes per student.</div>
+<div class="app-features">
+<span class="feature-tag">✓ Leveled Reading Passages K–6</span>
+<span class="feature-tag">✓ Comprehension Questions</span>
+<span class="feature-tag">✓ AI Lesson Plans — All 6 Pillars</span>
+<span class="feature-tag">✓ Curriculum Standard Alignment</span>
+<span class="feature-tag">✓ Auto Small Group Recommendations</span>
+<span class="feature-tag">✓ Student Progress Tracking</span>
+</div>
+</div>
+<div class="app-right">
+<div class="app-stat-box" style="background:rgba(78,205,196,0.08);border:1px solid rgba(78,205,196,0.2);">
+<div class="app-stat-num" style="color:#4ECDC4;">15-min</div>
+<div class="app-stat-sub">lessons generated instantly</div>
+</div>
+<button class="app-btn" style="background:linear-gradient(135deg,#4ECDC4,#2BBDB5);color:#080B12;">Open App →</button>
+</div>
+</div>
+
+<!-- CentreRotator -->
+<div class="app-card" style="border-color:rgba(255,209,102,0.2);">
+<div class="app-left">
+<div class="app-header">
+<div class="app-icon-wrap" style="background:rgba(255,209,102,0.12);border:1px solid rgba(255,209,102,0.25);">🔄</div>
+<div>
+<div class="app-name">CentreRotator</div>
+<div class="app-tagline">Literacy Centre Management</div>
+</div>
+</div>
+<div class="app-desc">Auto-generate centre rotation schedules from ReadLead groups. Run whole-class or skill-targeted centres with a live countdown timer and projector display.</div>
+<div class="app-features">
+<span class="feature-tag">✓ Whole Class & Skill-Based Modes</span>
+<span class="feature-tag">✓ Groups Synced from ReadLead</span>
+<span class="feature-tag">✓ Live Countdown Timer</span>
+<span class="feature-tag">✓ Projector Display Mode</span>
+<span class="feature-tag">✓ Activity Suggestions per Group</span>
+<span class="feature-tag">✓ Print-Ready Schedules</span>
+</div>
+</div>
+<div class="app-right">
+<div class="app-stat-box" style="background:rgba(255,209,102,0.08);border:1px solid rgba(255,209,102,0.2);">
+<div class="app-stat-num" style="color:#FFD166;">30 sec</div>
+<div class="app-stat-sub">to a full schedule</div>
+</div>
+<button class="app-btn" style="background:linear-gradient(135deg,#FFD166,#F0C050);color:#080B12;">Open App →</button>
+</div>
+</div>
+
+<!-- ProgressReporter -->
+<div class="app-card" style="border-color:rgba(167,139,250,0.2);">
+<div class="app-left">
+<div class="app-header">
+<div class="app-icon-wrap" style="background:rgba(167,139,250,0.12);border:1px solid rgba(167,139,250,0.25);">📊</div>
+<div>
+<div class="app-name">ProgressReporter <span class="coming-soon-badge">COMING SOON</span></div>
+<div class="app-tagline">Report Card Comment Generator</div>
+</div>
+</div>
+<div class="app-desc">Track student growth across sessions and generate professional, evidence-based report card comments mapped to your specific curriculum outcomes — in seconds.</div>
+<div class="app-features">
+<span class="feature-tag">✓ Progress Tracked Across Sessions</span>
+<span class="feature-tag">✓ Curriculum Outcome Mapping</span>
+<span class="feature-tag">✓ AI Report Card Comments</span>
+<span class="feature-tag">✓ Evidence-Based Language</span>
+<span class="feature-tag">✓ Differentiated by Student Level</span>
+<span class="feature-tag">✓ Print & Export Ready</span>
+</div>
+</div>
+<div class="app-right">
+<div class="app-stat-box" style="background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.2);">
+<div class="app-stat-num" style="color:#A78BFA;">Seconds</div>
+<div class="app-stat-sub">to a full report comment</div>
+</div>
+<button class="app-btn" style="background:rgba(255,255,255,0.06);color:#8B8BA8;border:1px solid rgba(255,255,255,0.1);">Coming Soon</button>
+</div>
+</div>
+</div>
+
+<!-- FEATURES -->
+<div class="features-bg">
+<div class="section">
+<div class="section-label">WHY GUIDED</div>
+<div class="section-title">Built by an educator. For educators.</div>
+<div class="features-grid">
+<div class="feature-card">
+<div class="feature-icon-wrap" style="background:rgba(78,205,196,0.12);">📋</div>
+<div class="feature-title">Curriculum Aligned</div>
+<div class="feature-desc">Upload your district's standards and every lesson activity gets mapped to a specific outcome — defensible, printable, and ready to show your administrator.</div>
+</div>
+<div class="feature-card">
+<div class="feature-icon-wrap" style="background:rgba(167,139,250,0.12);">🔒</div>
+<div class="feature-title">Privacy First</div>
+<div class="feature-desc">First names only. No birthdates, no IDs, no audio stored. Designed to work within FERPA guidelines without requiring complex school agreements.</div>
+</div>
+<div class="feature-card">
+<div class="feature-icon-wrap" style="background:rgba(255,209,102,0.12);">📈</div>
+<div class="feature-title">Real Progress Data</div>
+<div class="feature-desc">Every session is saved. Track growth over time and generate report card comments based on actual observed data — not guesswork.</div>
+</div>
+<div class="feature-card">
+<div class="feature-icon-wrap" style="background:rgba(255,107,107,0.12);">🎯</div>
+<div class="feature-title">Granular Reading Levels</div>
+<div class="feature-desc">Multiple levels per grade from Kindergarten through 6th — granular enough to show real growth. Mapped to F&P, DRA, and Lexile so teachers can start immediately.</div>
+</div>
+<div class="feature-card">
+<div class="feature-icon-wrap" style="background:rgba(255,159,67,0.12);">⚡</div>
+<div class="feature-title">2-Minute Sessions</div>
+<div class="feature-desc">No more lengthy assessment tools. Tap ratings, log errors, hit generate. A full reading session and lesson plan in under 2 minutes per student.</div>
+</div>
+<div class="feature-card">
+<div class="feature-icon-wrap" style="background:rgba(78,205,196,0.12);">🤖</div>
+<div class="feature-title">AI That Teaches</div>
+<div class="feature-desc">Not generic AI output — lessons are built from the specific errors you logged, the specific skills that need work, and your specific curriculum standards.</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- PRICING -->
+<div class="section">
+<div class="section-label">PRICING</div>
+<div class="section-title">Simple. Transparent. Fair.</div>
+<p style="text-align:center;color:#8B8BA8;font-size:14px;margin-bottom:10px;">Auto-renewing monthly subscription. Cancel anytime — no questions asked.</p>
+<p style="text-align:center;margin-bottom:36px;">
+<span style="background:rgba(78,205,196,0.1);border:1px solid rgba(78,205,196,0.2);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;color:#4ECDC4;">🔒 Secure billing · Cancel anytime · No hidden fees</span>
+</p>
+<div class="pricing-grid">
+<div class="pricing-card">
+<div class="plan-name">Free</div>
+<div class="plan-price" style="color:#8B8BA8;">$0</div>
+<div class="plan-period">free forever</div>
+<ul class="plan-features">
+<li><span style="color:#8B8BA8;">✓</span>5 students</li>
+<li><span style="color:#8B8BA8;">✓</span>3 sessions per month</li>
+<li><span style="color:#8B8BA8;">✓</span>All 3 apps</li>
+<li><span style="color:#8B8BA8;">✓</span>Basic lesson plans</li>
+<li><span style="color:#8B8BA8;">✗</span>No curriculum alignment</li>
+</ul>
+<button class="plan-btn" style="background:rgba(255,255,255,0.06);color:#F0EEF8;border:1px solid rgba(255,255,255,0.1);">Start Free</button>
+</div>
+<div class="pricing-card popular">
+<div class="popular-badge">MOST POPULAR</div>
+<div class="plan-name">Teacher</div>
+<div class="plan-price" style="color:#4ECDC4;">$12</div>
+<div class="plan-period">/ month, billed monthly</div>
+<ul class="plan-features">
+<li><span style="color:#4ECDC4;">✓</span>Unlimited students</li>
+<li><span style="color:#4ECDC4;">✓</span>Unlimited sessions</li>
+<li><span style="color:#4ECDC4;">✓</span>All 3 apps</li>
+<li><span style="color:#4ECDC4;">✓</span>Curriculum alignment</li>
+<li><span style="color:#4ECDC4;">✓</span>Progress reports</li>
+<li><span style="color:#4ECDC4;">✓</span>Priority support</li>
+</ul>
+<button class="plan-btn" style="background:linear-gradient(135deg,#4ECDC4,#2BBDB5);color:#080B12;">Start 14-Day Free Trial</button>
+</div>
+<div class="pricing-card">
+<div class="plan-name">School</div>
+<div class="plan-price" style="color:#A78BFA;">$8</div>
+<div class="plan-period">/ teacher / month</div>
+<ul class="plan-features">
+<li><span style="color:#A78BFA;">✓</span>Everything in Teacher</li>
+<li><span style="color:#A78BFA;">✓</span>School-wide dashboard</li>
+<li><span style="color:#A78BFA;">✓</span>Admin reporting</li>
+<li><span style="color:#A78BFA;">✓</span>Bulk student import</li>
+<li><span style="color:#A78BFA;">✓</span>Dedicated support</li>
+<li><span style="color:#A78BFA;">✓</span>Custom onboarding</li>
+</ul>
+<button class="plan-btn" style="background:rgba(255,255,255,0.06);color:#F0EEF8;border:1px solid rgba(255,255,255,0.1);">Contact Us</button>
+</div>
+</div>
+<div class="pricing-note">
+Teacher plan auto-renews monthly at $12/month. School plan auto-renews monthly per active teacher seat.<br/>
+Cancel anytime from your account settings — no fees, no questions asked.<br/>
+All paid plans include a <strong style="color:#F0EEF8;">14-day free trial</strong> with full access.
+</div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+<div class="cta-title">Ready to transform your literacy block?</div>
+<div class="cta-sub">Join teachers who are saving hours every week and seeing real growth in their students.</div>
+<button class="btn-primary" style="font-size:15px;padding:15px 32px;">Get Started Free — No Credit Card Required</button>
+</div>
+
+<!-- FOOTER -->
+<footer>
+<div class="footer-inner">
+<div class="footer-logo">
+<div class="logo-icon" style="width:28px;height:28px;font-size:13px;">✦</div>
+<span style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;">Guided</span>
+</div>
+<div class="footer-copy">© 2026 Guided. Built for educators, by an educator.</div>
+<div class="footer-links">
+<span>Privacy</span>
+<span>Terms</span>
+<span>Contact</span>
+</div>
+</div>
+</footer>
+
+</body>
+</html>
