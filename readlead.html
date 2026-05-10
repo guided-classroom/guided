@@ -4,28 +4,26 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>ReadLead — Guided Reading Assessment</title>
+<title>ReadLead</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'DM Sans',sans-serif;background:#F5F3EE;color:#1A1A2E;min-height:100vh;}
-button,input,select,textarea{font-family:'DM Sans',sans-serif;}
+button,input,select,textarea{font-family:inherit;cursor:pointer;}
 .nav{background:#1A1A2E;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100;}
 .nav-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#F5F3EE;}
 .nav-logo span{color:#4ECDC4;}
-.nav-links{display:flex;gap:6px;align-items:center;}
-.nav-link{background:transparent;color:#9999BB;border:none;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;}
-.nav-link.active{background:#4ECDC4;color:#1A1A2E;}
-.nav-home{background:transparent;color:#9999BB;border:2px solid #444;border-radius:10px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;}
+.nav-home{color:#9999BB;border:2px solid #444;border-radius:10px;padding:6px 12px;font-size:12px;font-weight:600;text-decoration:none;background:transparent;}
+.nav-btn{background:transparent;color:#9999BB;border:none;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:600;}
+.nav-btn.active{background:#4ECDC4;color:#1A1A2E;}
 .main{max-width:920px;margin:0 auto;padding:28px 20px;}
 .h1{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;margin-bottom:4px;}
-.sub{font-size:14px;color:#666;margin-bottom:20px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
-.card{background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.06);margin-bottom:12px;}
-.btn{background:#1A1A2E;color:#fff;border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:700;cursor:pointer;}
+.sub{font-size:14px;color:#666;margin-bottom:20px;}
+.card{background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.06);margin-bottom:12px;}
+.btn{background:#1A1A2E;color:#fff;border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:700;}
 .btn-teal{background:#4ECDC4;color:#1A1A2E;}
 .btn-sm{padding:6px 12px;font-size:11px;}
-.btn-ghost{background:transparent;color:#555;border:2px solid #DDD;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;}
-.btn-danger{background:none;border:none;color:#CCC;cursor:pointer;font-size:18px;}
+.btn-ghost{background:transparent;color:#555;border:2px solid #DDD;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:600;}
 .inp{padding:10px 14px;border-radius:10px;border:2px solid #E8E8E8;font-size:13px;width:100%;background:#fff;}
 .lbl{font-size:11px;font-weight:800;color:#999;display:block;margin-bottom:6px;letter-spacing:.05em;}
 .tag{border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;display:inline-block;}
@@ -35,76 +33,63 @@ button,input,select,textarea{font-family:'DM Sans',sans-serif;}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
 .screen{display:none;}
 .screen.active{display:block;}
-.student-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #F5F3EE;}
-.student-row:last-child{border-bottom:none;}
-.rating-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
-.rating-btn{background:#F5F3EE;color:#555;border:2px solid #EBEBEB;border-radius:8px;padding:8px;font-size:11px;cursor:pointer;text-align:left;line-height:1.3;}
-.rating-btn.selected{color:#fff;border-color:transparent;font-weight:700;}
-.error-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid #F5F3EE;}
-.seg-card{border-radius:12px;padding:16px;margin-bottom:10px;border-left:5px solid #ccc;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,0.05);}
-.seg-header{display:flex;justify-content:space-between;cursor:pointer;align-items:flex-start;}
+.srow{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #F5F3EE;}
+.srow:last-child{border-bottom:none;}
+.rg{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.rbtn{background:#F5F3EE;color:#555;border:2px solid #EBEBEB;border-radius:8px;padding:8px;font-size:11px;text-align:left;line-height:1.3;}
+.rbtn.sel{color:#fff;border-color:transparent;font-weight:700;}
+.erow{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid #F5F3EE;}
+.seg{border-radius:12px;padding:16px;margin-bottom:10px;border-left:5px solid #ccc;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.05);}
 .seg-body{display:none;margin-top:14px;border-top:1px solid #F0F0F0;padding-top:14px;}
 .seg-body.open{display:block;}
-.progress-bar-bg{background:#F0F0F0;border-radius:99px;height:8px;margin-top:4px;}
-.progress-bar{height:8px;border-radius:99px;}
-.toggle-wrap{display:flex;align-items:center;gap:8px;}
-.toggle{width:44px;height:24px;border-radius:99px;background:#DDD;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;}
+.pbg{background:#F0F0F0;border-radius:99px;height:8px;margin-top:4px;}
+.pbar{height:8px;border-radius:99px;}
+.toggle{width:44px;height:24px;border-radius:99px;background:#DDD;position:relative;transition:background .2s;flex-shrink:0;}
 .toggle.on{background:#4ECDC4;}
-.toggle-knob{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.2);}
-.toggle.on .toggle-knob{left:23px;}
-.pillar-bar{border-radius:10px;overflow:hidden;height:14px;display:flex;margin-bottom:6px;}
-.pillar-bar-seg{height:14px;}
-.time-labels{display:flex;justify-content:space-between;font-size:11px;color:#CCC;margin-bottom:18px;}
-.stat-card{border-top:4px solid #ccc;text-align:center;margin-bottom:0;}
-.stat-num{font-size:28px;font-weight:800;font-family:'Playfair Display',serif;}
-.spinner{display:inline-block;width:28px;height:28px;border:3px solid #444;border-top-color:#4ECDC4;border-radius:50%;animation:spin .8s linear infinite;}
+.knob{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.2);}
+.toggle.on .knob{left:23px;}
+.genbox{background:#1A1A2E;color:#fff;border-radius:14px;padding:20px;}
+.pbar-wrap{border-radius:10px;overflow:hidden;height:14px;display:flex;margin-bottom:6px;}
+.pbar-seg{height:14px;}
+.tlabels{display:flex;justify-content:space-between;font-size:11px;color:#CCC;margin-bottom:18px;}
+.spin{display:inline-block;width:28px;height:28px;border:3px solid #444;border-top-color:#4ECDC4;border-radius:50%;animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
-.curr-badge{background:#4ECDC422;color:#4ECDC4;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;}
-.priority-badge{background:#FF6B6B;color:#fff;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:800;}
-.std-badge{background:#1A1A2E;color:#4ECDC4;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;}
-.gen-box{background:#1A1A2E;color:#fff;border-radius:14px;padding:20px;}
-.alert-box{padding:10px 14px;border-radius:10px;font-size:13px;font-weight:600;line-height:1.6;margin-top:12px;}
-@media(max-width:640px){.grid2{grid-template-columns:1fr;}.grid3{grid-template-columns:1fr 1fr;}}
+@media(max-width:640px){.grid2{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
-
 <nav class="nav">
 <div class="row" style="gap:10px">
-<a href="/" class="nav-home">← Home</a>
+<a href="/" class="nav-home">Back</a>
 <div class="nav-logo">Read<span>Lead</span></div>
 </div>
-<div class="nav-links">
-<button class="nav-link active" id="nav-dash" onclick="showScreen('dashboard')">Dashboard</button>
-<button class="nav-link" id="nav-groups" onclick="showScreen('groups')">Groups</button>
-<button class="nav-link" id="nav-add" onclick="showScreen('add')">+ Student</button>
+<div class="row">
+<button class="nav-btn active" id="nb-dash" onclick="go('dash')">Dashboard</button>
+<button class="nav-btn" id="nb-groups" onclick="go('groups')">Groups</button>
+<button class="nav-btn" id="nb-add" onclick="go('add')">+ Student</button>
 </div>
 </nav>
 
-<!-- DASHBOARD -->
-
-<div class="screen active" id="screen-dashboard">
+<div class="screen active" id="s-dash">
 <div class="main">
-<div class="h1">Good morning! 👋</div>
-<div class="sub" id="dash-sub">Loading students…</div>
+<div class="h1">Good morning!</div>
+<div class="sub" id="dash-sub"></div>
 <div class="grid3" id="dash-stats" style="margin-bottom:16px"></div>
 <div class="card">
 <div class="row" style="justify-content:space-between;margin-bottom:14px">
 <div style="font-size:16px;font-weight:700">Your Students</div>
-<button class="btn btn-teal btn-sm" onclick="showScreen('add')">+ Add Student</button>
+<button class="btn btn-teal btn-sm" onclick="go('add')">+ Add Student</button>
 </div>
 <div id="student-list"></div>
 </div>
 </div>
 </div>
 
-<!-- ADD STUDENT -->
-
-<div class="screen" id="screen-add">
+<div class="screen" id="s-add">
 <div class="main">
-<button class="btn-ghost" onclick="showScreen('dashboard')" style="margin-bottom:18px">← Back</button>
+<button class="btn-ghost" onclick="go('dash')" style="margin-bottom:18px">Back</button>
 <div class="h1">Add a Student</div>
-<div class="sub">First name only — no personal data stored.</div>
+<div class="sub">First name only</div>
 <div class="card" style="max-width:440px">
 <div style="margin-bottom:14px"><label class="lbl">FIRST NAME</label>
 <input class="inp" id="new-name" placeholder="e.g. Marcus"/>
@@ -115,214 +100,245 @@ button,input,select,textarea{font-family:'DM Sans',sans-serif;}
 <option>3rd Grade</option><option>4th Grade</option><option>5th Grade</option><option>6th Grade</option>
 </select>
 </div>
-<div style="margin-bottom:20px"><label class="lbl">READLEAD LEVEL</label>
+<div style="margin-bottom:20px"><label class="lbl">LEVEL</label>
 <select class="inp" id="new-level"></select>
 </div>
-<button class="btn btn-teal" style="width:100%;font-size:14px" onclick="addStudent()">Add Student →</button>
-<div style="font-size:11px;color:#BBB;text-align:center;margin-top:8px">🔒 First name only · No sensitive data</div>
+<button class="btn btn-teal" style="width:100%" onclick="addStu()">Add Student</button>
 </div>
 </div>
 </div>
 
-<!-- OBSERVE -->
-
-<div class="screen" id="screen-observe">
+<div class="screen" id="s-observe">
 <div class="main">
-<button class="btn-ghost" onclick="showScreen('dashboard')" style="margin-bottom:16px">← Back</button>
+<button class="btn-ghost" onclick="go('dash')" style="margin-bottom:16px">Back</button>
 <div class="h1" id="obs-title">Session</div>
 <div class="sub" id="obs-sub"></div>
 <div class="grid2">
 <div>
-<!-- Toggle -->
 <div class="card" style="margin-bottom:12px">
 <div class="row" style="justify-content:space-between">
 <div>
-<div style="font-size:14px;font-weight:700;margin-bottom:2px">📚 Reading Material</div>
-<div style="font-size:12px;color:#888" id="toggle-label">Using a ReadLead passage</div>
+<div style="font-size:14px;font-weight:700;margin-bottom:2px">Reading Material</div>
+<div style="font-size:12px;color:#888" id="tog-lbl">Using a ReadLead passage</div>
 </div>
-<div class="toggle-wrap">
-<span style="font-size:12px;font-weight:700" id="toggle-left">Our Passages</span>
-<div class="toggle" id="text-toggle" onclick="toggleOwnText()"><div class="toggle-knob"></div></div>
-<span style="font-size:12px;color:#AAA" id="toggle-right">My Own Text</span>
-</div>
-</div>
-<div id="own-text-msg" style="display:none" class="alert-box" style="background:#4ECDC415;border:1px solid #4ECDC433;color:#4ECDC4">
-✓ Using your own classroom text. Log errors below as the student reads aloud.
+<div class="row">
+<span style="font-size:12px;font-weight:700" id="tog-l">Our Passages</span>
+<div class="toggle" id="tog" onclick="flipToggle()"><div class="knob"></div></div>
+<span style="font-size:12px;color:#AAA" id="tog-r">My Own Text</span>
 </div>
 </div>
-
-```
-<!-- Passage (hidden when using own text) -->
+<div id="own-msg" style="display:none;margin-top:12px;background:#4ECDC415;border:1px solid #4ECDC433;border-radius:10px;padding:10px 14px;font-size:13px;color:#4ECDC4;font-weight:600">
+Using your own classroom text. Log errors below as the student reads aloud.
+</div>
+</div>
 <div class="card" id="passage-card">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-<div class="lbl" style="margin-bottom:0">📖 PASSAGE</div>
-<button class="btn btn-teal btn-sm" onclick="printPassage()">🖨 Print / Display</button>
+<div class="lbl" style="margin-bottom:0">PASSAGE</div>
+<button class="btn btn-teal btn-sm" onclick="printP()">Print</button>
 </div>
-<div style="display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap" id="passage-tabs"></div>
-<div style="background:#F5F3EE;border-radius:10px;padding:14px;font-size:14px;line-height:2;font-family:Georgia,serif;max-height:200px;overflow-y:auto;white-space:pre-line" id="passage-text"></div>
+<div style="display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap" id="p-tabs"></div>
+<div style="background:#F5F3EE;border-radius:10px;padding:14px;font-size:14px;line-height:2;font-family:Georgia,serif;max-height:200px;overflow-y:auto;white-space:pre-line" id="p-text"></div>
 <div style="margin-top:12px;border-top:1px solid #F0F0F0;padding-top:10px">
 <div class="lbl">COMPREHENSION QUESTIONS</div>
-<div id="passage-questions"></div>
+<div id="p-qs"></div>
 </div>
 </div>
-
-<!-- Errors -->
 <div class="card">
-<div class="lbl">✏️ ERRORS HEARD</div>
+<div class="lbl">ERRORS HEARD</div>
 <div class="grid2" style="margin-bottom:6px">
-<div>
-<div style="font-size:10px;font-weight:700;color:#AAA;margin-bottom:4px">ACTUAL WORD</div>
-<input class="inp" id="word-input" placeholder='"pet"' onkeydown="if(event.key==='Enter'){addError();}"/>
+<div><div style="font-size:10px;font-weight:700;color:#AAA;margin-bottom:4px">ACTUAL WORD</div>
+<input class="inp" id="w-in" placeholder="pet" onkeydown="if(event.key==='Enter')addErr()"/>
 </div>
-<div>
-<div style="font-size:10px;font-weight:700;color:#AAA;margin-bottom:4px">STUDENT SAID</div>
-<input class="inp" id="said-input" placeholder='"pit"' onkeydown="if(event.key==='Enter'){addError();}"/>
+<div><div style="font-size:10px;font-weight:700;color:#AAA;margin-bottom:4px">STUDENT SAID</div>
+<input class="inp" id="s-in" placeholder="pit" onkeydown="if(event.key==='Enter')addErr()"/>
 </div>
 </div>
 <div class="row" style="margin-bottom:10px">
-<select class="inp" id="type-input" style="flex:1">
+<select class="inp" id="t-in" style="flex:1">
 <option>Substituted</option><option>Omitted</option><option>Added a word</option>
 <option>Skipped</option><option>Self-corrected</option><option>Re-read</option><option>Guessed</option>
 </select>
-<button class="btn btn-teal" style="padding:10px 14px" onclick="addError()">+ Add</button>
+<button class="btn btn-teal" style="padding:10px 14px" onclick="addErr()">+ Add</button>
 </div>
-<div id="error-list"><div style="font-size:12px;color:#CCC">No errors logged yet</div></div>
+<div id="err-list"><div style="font-size:12px;color:#CCC">No errors logged yet</div></div>
 </div>
-
-<!-- Curriculum -->
 <div class="card" style="border-left:4px solid #4ECDC4">
 <div class="row" style="justify-content:space-between;margin-bottom:6px">
-<div class="lbl" style="margin-bottom:0">📋 CURRICULUM STANDARDS (OPTIONAL)</div>
-<span class="curr-badge" id="curr-badge" style="display:none">✓ Loaded</span>
+<div class="lbl" style="margin-bottom:0">CURRICULUM STANDARDS (OPTIONAL)</div>
+<span id="curr-badge" style="display:none;background:#4ECDC422;color:#4ECDC4;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700">Loaded</span>
 </div>
-<textarea class="inp" id="curriculum-input" rows="3" placeholder="Paste your district standards here to align each lesson activity to a specific outcome…" oninput="updateCurrBadge()" style="resize:none"></textarea>
-<div id="curr-msg" style="display:none;font-size:11px;color:#4ECDC4;font-weight:600;margin-top:6px">✓ Standards loaded — activities will be mapped to your specific curriculum</div>
+<textarea class="inp" id="curr-in" rows="3" oninput="chkCurr()" style="resize:none" placeholder="Paste your district standards here to align each lesson activity to a specific outcome"></textarea>
+<div id="curr-msg" style="display:none;font-size:11px;color:#4ECDC4;font-weight:600;margin-top:6px">Standards loaded</div>
 </div>
 </div>
-
 <div>
-<!-- Ratings -->
 <div class="card">
-<div class="lbl">⚡ QUICK RATINGS — TAP TO SELECT</div>
-<div style="font-size:11px;color:#AAA;margin-bottom:10px" id="rating-count">0/5 areas rated</div>
-<div id="ratings-list"></div>
+<div class="lbl">QUICK RATINGS</div>
+<div style="font-size:11px;color:#AAA;margin-bottom:10px" id="r-count">0/5 rated</div>
+<div id="r-list"></div>
 </div>
-
-<!-- Generate -->
-<div class="gen-box" id="gen-box">
-<div style="font-size:15px;font-weight:800;margin-bottom:4px">🤖 Generate Lesson Plan</div>
+<div class="genbox" id="gen-box">
+<div style="font-size:15px;font-weight:800;margin-bottom:4px">Generate Lesson Plan</div>
 <div style="font-size:12px;color:#9999BB;margin-bottom:14px" id="gen-desc">Builds a personalized 15-min lesson targeting all 6 pillars.</div>
-<button class="btn btn-teal" style="width:100%;font-size:14px" id="gen-btn" onclick="generateLesson()">Generate Lesson →</button>
-<div id="gen-error" style="display:none;margin-top:10px;padding:10px 12px;background:#FF6B6B22;border-radius:8px;font-size:12px;color:#FF6B6B"></div>
+<button class="btn btn-teal" style="width:100%;font-size:14px" onclick="doGen()">Generate Lesson</button>
+<div id="gen-err" style="display:none;margin-top:10px;padding:10px;background:#FF6B6B22;border-radius:8px;font-size:12px;color:#FF6B6B"></div>
 </div>
 </div>
 </div>
-```
-
 </div>
 </div>
 
-<!-- LESSON -->
-
-<div class="screen" id="screen-lesson">
+<div class="screen" id="s-lesson">
 <div class="main">
-<div class="row" style="margin-bottom:20px">
-<button class="btn-ghost" onclick="showScreen('observe')">← Back</button>
-<button class="btn-ghost" onclick="showScreen('dashboard')">Dashboard</button>
-<button class="btn btn-teal" onclick="window.print()" style="margin-left:auto">🖨 Print</button>
+<div class="row" style="margin-bottom:20px;flex-wrap:wrap;gap:8px">
+<button class="btn-ghost" onclick="go('observe')">Back</button>
+<button class="btn-ghost" onclick="go('dash')">Dashboard</button>
+<button class="btn btn-teal" onclick="window.print()" style="margin-left:auto">Print</button>
 </div>
-<div id="lesson-content"></div>
+<div id="lesson-out"></div>
 </div>
 </div>
 
-<!-- PROGRESS -->
-
-<div class="screen" id="screen-progress">
+<div class="screen" id="s-progress">
 <div class="main">
-<button class="btn-ghost" onclick="showScreen('dashboard')" style="margin-bottom:16px">← Dashboard</button>
-<div class="h1" id="prog-title">Progress</div>
+<button class="btn-ghost" onclick="go('dash')" style="margin-bottom:16px">Back</button>
+<div class="h1" id="prog-h"></div>
 <div class="sub" id="prog-sub"></div>
-<div id="prog-content"></div>
+<div id="prog-out"></div>
 </div>
 </div>
 
-<!-- GROUPS -->
-
-<div class="screen" id="screen-groups">
+<div class="screen" id="s-groups">
 <div class="main">
 <div class="h1">Small Groups</div>
-<div class="sub">Auto-grouped by shared skill needs from latest sessions.</div>
-<div id="groups-content"></div>
+<div class="sub">Auto-grouped by shared skill needs</div>
+<div id="grp-out"></div>
 </div>
 </div>
 
 <script>
-// ── DATA ──────────────────────────────────────────────────────────
-const PASSAGES = {
-"Level 1":[{title:"My Cat",text:"I have a cat.\nMy cat is big.\nShe can sit.\nShe can nap.\nI love my cat.",questions:["What can the cat do?","Is the cat big or small?","Do you have a pet?"]},{title:"The Sun",text:"I see the sun.\nThe sun is hot.\nThe sun is big.\nI like the sun.",questions:["What is the sun like?","When do you see the sun?","Do you like sunny days?"]},{title:"My Ball",text:"I have a ball.\nIt is red.\nI kick the ball.\nI throw the ball.\nFun, fun, fun!",questions:["What color is the ball?","What do you do with the ball?","What is your favorite toy?"]}],
-"Level 2":[{title:"My Dog",text:"I have a dog.\nMy dog can run.\nMy dog can jump.\nHe is so fun.\nI like my dog.",questions:["What can the dog do?","How does the child feel?","What pet would you want?"]},{title:"The Rain",text:"It is raining.\nI see the rain.\nI have my coat.\nI have my boots.\nI like the rain!",questions:["What does the child wear?","How does the child feel?","What do you do on rainy days?"]},{title:"At School",text:"I go to school.\nI see my friends.\nWe read and write.\nWe play at lunch.\nI like school!",questions:["What do they do at school?","Who does the child see?","What is your favorite thing about school?"]}],
-"Level 3":[{title:"The Big Dog",text:"The dog ran fast.\nThe dog ran to the man.\nThe man pat the dog.\nThe dog was happy.\nHe wagged his tail.",questions:["Where did the dog run?","How did the dog feel?","What do dogs do when happy?"]},{title:"My Pet Fish",text:"I have a pet fish.\nHis name is Fin.\nFin is blue and red.\nHe swims all day.\nI feed him every morning.",questions:["What is the fishs name?","What color is the fish?","When does the child feed the fish?"]},{title:"Time to Play",text:"School is done.\nTime to play!\nI ride my bike.\nI kick my ball.\nI run with my dog.\nWhat a great day!",questions:["What does the child do after school?","How does the child feel?","What do you like to do after school?"]}],
-"Level 4":[{title:"At the Park",text:"We went to the park. We ran and had fun. I saw a big duck. The duck sat in the mud. We fed the duck bits of bread. Then we went home for lunch.",questions:["Where did they go?","What did they see?","What did they feed the duck?","What do you like to do at a park?"]},{title:"The Big Game",text:"Today we play a game. I kick the ball hard. It goes far and fast. My team runs and cheers. We score a point! We win the game! My coach gives me a high five.",questions:["What game are they playing?","What happened when they scored?","How do you think they felt?","What sport do you like?"]},{title:"My New Bike",text:"I got a new bike. It is red and black. I put on my helmet. Then I rode down the street. I fell one time but I got back up. By the end I could ride all the way to the corner.",questions:["What color is the bike?","What did the child wear for safety?","What happened when the child fell?","Have you ever learned something hard?"]}],
-"Level 5":[{title:"The Lost Puppy",text:"One morning Jake found a small puppy near the swings. It had no collar and looked scared. Jake sat down slowly so the puppy would not run. He gave it part of his sandwich. The puppy wagged its tail and licked his hand. Jake brought it home and made a lost dog sign.",questions:["Where did Jake find the puppy?","Why did Jake sit down slowly?","What did Jake do to help find the owner?","How do you think Jake felt?"]},{title:"Pizza Night",text:"Every Friday is pizza night at Mias house. Her whole family helps make the pizza. Dad rolls out the dough. Mom spreads the sauce. Mia and her brother put on the toppings. Mia always adds extra cheese. When the pizza comes out of the oven it smells amazing.",questions:["When is pizza night?","What does each person do to help?","What does Mia always add?","What is a special tradition in your family?"]},{title:"The Spelling Bee",text:"Carlos had practiced every night for the spelling bee. On the day of the contest his hands were shaking. His teacher smiled and said he was ready. When his turn came he took a deep breath. He spelled every word correctly and won first place.",questions:["How did Carlos prepare?","How did Carlos feel before his turn?","What helped Carlos feel better?","What does it mean to believe in yourself?"]}],
-"Level 6":[{title:"The Soccer Star",text:"Mia loved to play soccer. She practiced every day after school even when it was cold. One day her team made it to the championship game. Mia was nervous but she was ready. In the final minute the score was tied. Her teammate passed her the ball and Mia kicked it as hard as she could. It flew right into the net.",questions:["How did Mia prepare?","How did she feel before the game?","What happened in the final minute?","What does this story teach about hard work?"]},{title:"Rainy Day Inside",text:"It was too rainy to go outside so Sam had to find something to do indoors. First he tried reading a book about frogs. Then he built a tall tower with blocks. Later his mom showed him how to make chocolate chip cookies. The kitchen smelled warm and sweet.",questions:["Why did Sam stay inside?","Name three things Sam did.","What did Sam and his mom make?","What do you like to do on a rainy day?"]},{title:"New Kid",text:"On the first day at her new school Sofia did not know anyone. She sat alone at lunch and stared at her sandwich. Then a girl named Priya sat down next to her. Priya asked Sofia what her favorite video game was. They talked until the bell rang. By the end of the day Sofia had made her first friend.",questions:["How did Sofia feel at the start?","How did Priya help Sofia?","What did they talk about?","Have you ever helped someone who was new?"]}],
-"Level 7":[{title:"Learning to Skate",text:"Marcus wanted to learn to skateboard more than anything. His older cousin made it look easy. But the first time Marcus tried, he fell three times in a row. His knees hurt and he wanted to quit. His cousin said everyone falls and that is how you learn. Marcus tried again. By the end of the day he could roll down the sidewalk without falling.",questions:["Why did Marcus want to skateboard?","What happened the first time?","What did his cousin say?","What does everyone falls mean to you?"]},{title:"The Class Pet",text:"Room 14 voted to get a class pet. Most kids wanted a dog but the teacher explained a dog was too hard to care for in a classroom. After a long discussion they chose a hamster named Nugget. One Monday Nugget was gone. The whole class searched everywhere. Finally Jaylen found him sleeping inside a backpack.",questions:["What pet did the class want first?","Why could not they have a dog?","What happened to Nugget?","Who found Nugget and where?"]},{title:"The Minecraft Build",text:"Zoe and her best friend Ava decided to build an entire city in Minecraft. Zoe built the houses and Ava designed the roads and parks. It took three full weekends to finish. When they were done they invited their class to explore the world. Some kids found secret doors and hidden chests that Zoe had placed as surprises.",questions:["How did Zoe and Ava divide the work?","How long did the build take?","What surprises did Zoe hide?","If you could build anything in Minecraft what would it be?"]}],
-"Level 8":[{title:"The Science Fair",text:"Destiny spent three weeks preparing her science fair project on whether plants grow faster with music or without it. She set up two groups of bean plants — one heard classical music for an hour a day, the other heard nothing. At the end the music plants were almost two centimeters taller. A judge asked how she came up with the idea. Destiny said her grandmother always sang to her garden.",questions:["What was Destinys project about?","How did she set up her experiment?","What were the results?","Why do you think Destiny chose this topic?"]},{title:"Staying Safe Online",text:"The internet is an amazing place to learn and connect with friends. But it also has risks. Never share personal information like your home address or school name online. Tell a trusted adult if something online makes you feel uncomfortable. Cyberbullying — when someone is mean online — affects many kids. Remember that what you post can last forever.",questions:["Name two rules for staying safe online.","What is cyberbullying?","Why tell a trusted adult?","Why is it important to think before you post?"]},{title:"The Big Move",text:"When Theo found out his family was moving he was angry. He did not want to leave his friends or his school. For weeks he barely spoke at dinner. But on the first day at his new school his teacher asked students to share something interesting. Theo talked about his citys baseball team and three kids immediately turned around. By Friday he had exchanged numbers with all three.",questions:["Why was Theo angry?","How did Theo feel before the move?","What happened on the first day?","What does this story show about new beginnings?"]}],
-"Level 9":[{title:"How Sneakers Became Cool",text:"Today sneakers are more than shoes — they are a form of art. It started with basketball. When Nike signed Michael Jordan in 1984 and made the Air Jordan kids everywhere wanted a pair. Jordan wore them and played like no one had before. The shoes became legendary. From there sneaker culture grew fast. Rappers wore them on stage. Today rare sneakers can sell for thousands of dollars.",questions:["How did sneaker culture begin?","Why did Air Jordans become popular?","What made limited editions special?","Why do you think sneakers became more than just shoes?"]},{title:"Simone Biles",text:"Simone Biles is considered the greatest gymnast in history. She has won more World Championship medals than anyone and has moves named after her. Growing up she spent time in foster care before her grandparents adopted her. At the 2020 Olympics she made the brave decision to step back to protect her mental health. Many people admired her for that choice just as much as for her medals.",questions:["What makes Simone the greatest?","What was her early life like?","What brave decision did she make?","What does this passage say real greatness looks like?"]},{title:"The Robot That Learned to Walk",text:"Scientists spent two years building a robot that could walk like a human. The first version fell immediately. The second fell after three steps. Each time scientists collected data and made changes. By version seventeen the robot could walk across a room. The scientists said the hardest part was not building the robot — it was being patient enough to keep trying after each failure.",questions:["How long did it take?","What did scientists do after each failure?","What was the hardest part?","What lesson about failure does this teach?"]}],
-"Level 10":[{title:"The Science of Slime",text:"Slime took over the internet and kids everywhere started making it at home. Most slime is made from glue and an activator like contact lens solution. Glue is made of tiny chains called polymers that slide past each other. When you add the activator those chains link together and can no longer slide freely. This creates something not quite liquid and not quite solid — scientists call it a non-Newtonian fluid.",questions:["What are the two main ingredients?","What happens to the chains when you add activator?","What is a non-Newtonian fluid?","Name another example that works like slime."]},{title:"Why Dogs Are Good for You",text:"Science shows that owning a dog is good for your health. People with dogs get more exercise because dogs need daily walks. Petting a dog lowers cortisol — a chemical your body makes when anxious. For kids who struggle with reading some schools have brought in therapy dogs. Students read aloud to the dogs because dogs never judge. Reading scores have improved in many of these programs.",questions:["How do dogs help owners exercise?","What is cortisol?","How are therapy dogs used in schools?","Why do students feel comfortable reading to dogs?"]},{title:"How Animation Works",text:"Have you ever wondered how cartoons move? Animation is a series of still images shown so quickly that your brain tricks itself into seeing motion. Early animators drew every single frame by hand — a one-minute cartoon could need over 1400 drawings. Today most animation is done with computers. But even with computers a single animated movie can take four to five years to make.",questions:["How does animation create motion?","How many drawings did early animators need?","How has animation changed with computers?","Why do animated movies take so long?"]}],
-"Level 11":[{title:"How MrBeast Makes Videos",text:"MrBeast whose real name is Jimmy Donaldson is one of the most popular YouTubers in the world. He started making videos at age thirteen and for years barely anyone watched. But he posted every week without stopping and studied what made videos successful. Today he has over 200 million subscribers. He is also known for giving back — planting millions of trees opening food banks and paying for medical procedures.",questions:["How old was MrBeast when he started?","Why did his channel grow slowly at first?","Name two ways he gives back.","What does his story teach about reaching a big goal?"]},{title:"What Happens When You Sleep",text:"When you sleep your brain processes and stores memories from the day. That is why studying before bed helps you remember — your sleeping brain locks it in. Your body repairs muscles and releases growth hormones. Without enough sleep your ability to focus and control emotions drops significantly. Kids need 8 to 10 hours a night. Screens before bed are a major problem — blue light tricks your brain into thinking it is still daytime.",questions:["What does your brain do while you sleep?","Why can studying before bed help?","How do screens affect sleep?","What would you change about your sleep habits?"]},{title:"The History of Video Games",text:"The first widely known video game was Pong released in 1972. It was simply two paddles and a dot — but people lined up to play. In the 1980s games like Pac-Man became global sensations. Home consoles changed everything. As technology improved games became more complex with detailed worlds and storylines. Today gaming is one of the largest entertainment industries on the planet bigger than movies and music combined.",questions:["What was one of the first video games?","How did home consoles change gaming?","What is esports?","How has gamings role in society changed?"]}],
-"Level 12":[{title:"What It Takes to Be a Content Creator",text:"Becoming a successful content creator is harder than it looks. The best creators focus on something they genuinely love. Then comes the technical side — good lighting and editing make a difference. The hardest part is consistency. Most successful channels posted for a year or more before anyone noticed. The creators who make it are not usually the most talented — they are the most consistent. They post regularly study their data and keep improving.",questions:["What does the author say is more important than a unique topic?","Why is consistency more important than talent?","What does studying data help creators do?","Would you want to be a content creator?"]},{title:"Climate Change and Weather",text:"Weather is what happens outside on any given day. Climate is the pattern of weather over many decades. So a single cold winter does not disprove global warming. Climate scientists look at long-term data to identify trends. Earths average temperature has risen about 1.2 degrees Celsius since the 1800s. That sounds small but small changes can cause big effects — more intense storms rising sea levels and shifting growing seasons.",questions:["What is the difference between weather and climate?","Why does not one cold winter disprove global warming?","How much has Earths temperature risen?","What effects can small changes cause?"]},{title:"The Real Story of Thanksgiving",text:"Most Americans learn a simple version of Thanksgiving — Pilgrims and Native Americans sharing a peaceful meal in 1621. But the real history is more complicated. The Pilgrims did share a harvest celebration with the Wampanoag but the relationship was already tense. Thanksgiving was not a national holiday until 1863 when President Lincoln declared it to promote unity during the Civil War.",questions:["What really happened in 1621?","When did Thanksgiving become a national holiday?","Why do historians encourage learning the full story?","Why is it important to learn history from multiple perspectives?"]}],
-"Level 13":[{title:"How the NFL Became Americas Sport",text:"Football was not always Americas most popular sport. Television changed everything. In the 1960s the NFL struck deals with TV networks to broadcast games every Sunday. The sport was fast and dramatic — perfectly suited for the screen. The Super Bowl became bigger than sports. The halftime shows the commercials and the social gathering turned it into a national event. Fantasy football gave millions of fans a personal stake in every game.",questions:["What sport was most popular before football?","How did television help the NFL?","Why did the Super Bowl become bigger than sports?","What is fantasy football?"]},{title:"Steph Curry and Basketball",text:"Before Steph Curry three-point shots were considered risky. Curry was not highly recruited out of high school — he was considered too small. He ended up at Davidson College a school most fans had never heard of. With the Golden State Warriors he developed one of the most precise shooting techniques the sport had ever seen. The results were historic: two MVP awards four championships and the all-time record for three-pointers made.",questions:["Why were three-pointers risky before Curry?","Why was not Curry heavily recruited?","What records did he set?","How did Curry change how other teams play?"]},{title:"The Psychology of Social Media",text:"Social media platforms are designed to keep you scrolling. Every like and notification triggers a small release of dopamine — a chemical associated with pleasure. Over time your brain starts to crave that feeling. Researchers have found that heavy social media use is linked to increased anxiety and lower self-esteem. Seeing other peoples highlight reels makes your own life feel inadequate. The key is awareness and intentional use.",questions:["What is dopamine and how do platforms use it?","What is social comparison?","How much social media use is linked to loneliness?","What does the author suggest about healthy use?"]}],
-"Level 14":[{title:"The Rise of Artificial Intelligence",text:"Artificial intelligence is woven into almost every part of daily life. When you ask a voice assistant about the weather that is AI. When your streaming service recommends a show that is AI. When your phone unlocks by recognizing your face that is AI. In medicine AI detects diseases earlier than human doctors in some studies. In education AI tutoring tools can identify where a student is struggling and generate a personalized lesson.",questions:["Give three examples of AI in everyday life.","How is AI used in medicine and education?","What are two concerns critics have?","Why does the author say understanding AI is important?"]},{title:"The Business of Being Famous",text:"Being famous used to require appearing on television or in movies. Fame was controlled by powerful gatekeepers — studios labels and networks. The internet ended that. Today a teenager with a phone can build an audience of millions. Platforms like YouTube and TikTok created entirely new categories of celebrity. Brands discovered that a post from a trusted influencer could reach a more targeted audience than a TV commercial at a fraction of the cost.",questions:["How did gatekeepers control fame before the internet?","What economic change did influencer marketing bring?","What new pressures do online creators face?","What does the author suggest the changing nature of fame reveals?"]},{title:"Food Deserts in America",text:"A food desert is an area where residents do not have easy access to affordable nutritious food. Instead of grocery stores these neighborhoods have fast food and convenience stores where fresh produce is rare or expensive. Approximately 19 million Americans live in food deserts. Without access to fresh vegetables and proteins residents face higher rates of obesity diabetes and heart disease. Children in food deserts often have less nutritious diets during critical development years.",questions:["What is a food desert?","How many Americans live in food deserts?","What health problems are linked to food deserts?","What solutions does the passage describe?"]}],
-"Level 15":[{title:"Mental Health in Young People",text:"Over the past decade rates of anxiety and depression among young people have risen steadily. Social media exposes users to constant social comparison and sometimes cyberbullying. Academic pressure is another factor — many students feel overwhelmed by schoolwork and the pressure to secure a future in a competitive world. The COVID-19 pandemic significantly worsened things. Months of isolation left lasting effects on mental health that researchers are still measuring.",questions:["What two causes does the passage identify?","How did COVID-19 affect young people?","What positive changes are happening in schools?","What does the author mean by mental health is not weakness?"]},{title:"How Climate Change Affects Sports",text:"Climate change is disrupting sports in many ways. Rising temperatures have shortened ski seasons. Some resorts that once operated five months a year now struggle to maintain snow for three. Extreme heat is forcing youth leagues and marathon organizers to cancel events. Olympic organizers now schedule outdoor events at unusual hours to avoid peak heat. Marine sports are affected too — coral bleaching has damaged surf breaks and diving sites worldwide.",questions:["How has climate change affected ski resorts?","Why are Olympic events scheduled at unusual hours?","How are marine sports being affected?","What are sports organizations doing in response?"]},{title:"The History of Hip-Hop",text:"Hip-hop began in the South Bronx in New York City in the 1970s. DJ Kool Herc is credited with one of its founding moments — isolating the percussive breaks in records at block parties. Four elements emerged: DJing MCing breakdancing and graffiti art. Through the 1980s and 90s hip-hop spread globally carrying the voices of communities that mainstream media had largely ignored. Today hip-hop is the most streamed genre of music in the world.",questions:["Where and when did hip-hop begin?","What are the four elements?","How did artists use hip-hop?","Why does the author call hip-hops growth remarkable?"]}]
-};
-
-let passageIdx = 0;
-
-const LEVEL_META = {
-"Level 1":{"grade":"Kindergarten","band":"Early K","color":"#FF6B6B"},
-"Level 2":{"grade":"Kindergarten","band":"Mid K","color":"#FF6B6B"},
-"Level 3":{"grade":"Kindergarten","band":"Late K","color":"#FF6B6B"},
-"Level 4":{"grade":"1st Grade","band":"Early 1","color":"#FF9F43"},
-"Level 5":{"grade":"1st Grade","band":"Mid 1","color":"#FF9F43"},
-"Level 6":{"grade":"1st Grade","band":"Late 1","color":"#FF9F43"},
-"Level 7":{"grade":"2nd Grade","band":"Early 2","color":"#FFD166"},
-"Level 8":{"grade":"2nd Grade","band":"Mid 2","color":"#FFD166"},
-"Level 9":{"grade":"2nd Grade","band":"Late 2","color":"#FFD166"},
-"Level 10":{"grade":"3rd Grade","band":"Early 3","color":"#6BCB77"},
-"Level 11":{"grade":"3rd Grade","band":"Mid 3","color":"#6BCB77"},
-"Level 12":{"grade":"3rd Grade","band":"Late 3","color":"#6BCB77"},
-"Level 13":{"grade":"4th Grade","band":"Early 4","color":"#4ECDC4"},
-"Level 14":{"grade":"4th Grade","band":"Mid 4","color":"#4ECDC4"},
-"Level 15":{"grade":"4th Grade","band":"Late 4","color":"#4ECDC4"},
-"Level 16":{"grade":"5th Grade","band":"Early 5","color":"#A78BFA"},
-"Level 17":{"grade":"5th Grade","band":"Mid 5","color":"#A78BFA"},
-"Level 18":{"grade":"5th Grade","band":"Late 5","color":"#A78BFA"},
-"Level 19":{"grade":"6th Grade","band":"Early 6","color":"#3B82F6"},
-"Level 20":{"grade":"6th Grade","band":"Mid 6","color":"#3B82F6"},
-"Level 21":{"grade":"6th Grade","band":"Late 6","color":"#3B82F6"}
-};
-
-const PILLARS = {
-phonemic: {label:"Phonemic Awareness",color:"#FF6B6B",emoji:"👂"},
-phonics: {label:"Phonics",color:"#FF9F43",emoji:"🔤"},
-fluency: {label:"Fluency",color:"#FFD166",emoji:"⚡"},
-vocabulary: {label:"Vocabulary",color:"#6BCB77",emoji:"📚"},
-comprehension:{label:"Comprehension",color:"#4ECDC4",emoji:"🧠"},
-writing: {label:"Writing",color:"#A78BFA",emoji:"✏️"}
-};
-
-const QUICK_RATINGS = [
-{id:"accuracy",label:"Accuracy",emoji:"🎯",options:[{v:96,l:"Strong 95%+"},{v:91,l:"Good 90-94%"},{v:86,l:"Some Errors"},{v:75,l:"Many Errors"}]},
-{id:"fluency",label:"Fluency",emoji:"⚡",options:[{v:95,l:"Smooth & Expressive"},{v:80,l:"Mostly Fluent"},{v:65,l:"Word-by-Word"},{v:50,l:"Very Choppy"}]},
-{id:"decoding",label:"Decoding",emoji:"🔤",options:[{v:95,l:"Sounds Out Well"},{v:75,l:"Partial Attempts"},{v:60,l:"Skips Words"},{v:45,l:"Guesses Only"}]},
-{id:"selfmon",label:"Self-Monitoring",emoji:"👁",options:[{v:95,l:"Corrects Often"},{v:75,l:"Sometimes"},{v:55,l:"Rarely"},{v:35,l:"Never"}]},
-{id:"comprehension",label:"Comprehension",emoji:"🧠",options:[{v:95,l:"Strong Retell"},{v:80,l:"Basic Retell"},{v:60,l:"Minimal Recall"},{v:40,l:"Cannot Retell"}]}
+var PASSAGES = {};
+PASSAGES["Level 1"] = [
+{title:"My Cat",text:"I have a cat.\nMy cat is big.\nShe can sit.\nShe can nap.\nI love my cat.",qs:["What can the cat do?","Is the cat big or small?","Do you have a pet?"]},
+{title:"The Sun",text:"I see the sun.\nThe sun is hot.\nThe sun is big.\nI like the sun.",qs:["What is the sun like?","When do you see the sun?","Do you like sunny days?"]},
+{title:"My Ball",text:"I have a ball.\nIt is red.\nI kick the ball.\nI throw the ball.\nFun, fun, fun!",qs:["What color is the ball?","What do you do with the ball?","What is your favorite toy?"]}
+];
+PASSAGES["Level 2"] = [
+{title:"My Dog",text:"I have a dog.\nMy dog can run.\nMy dog can jump.\nHe is so fun.\nI like my dog.",qs:["What can the dog do?","How does the child feel?","What pet would you want?"]},
+{title:"The Rain",text:"It is raining.\nI see the rain.\nI have my coat.\nI have my boots.\nI like the rain!",qs:["What does the child wear?","How does the child feel?","What do you do on rainy days?"]},
+{title:"At School",text:"I go to school.\nI see my friends.\nWe read and write.\nWe play at lunch.\nI like school!",qs:["What do they do at school?","Who does the child see?","What is your favorite thing about school?"]}
+];
+PASSAGES["Level 3"] = [
+{title:"The Big Dog",text:"The dog ran fast.\nThe dog ran to the man.\nThe man pat the dog.\nThe dog was happy.\nHe wagged his tail.",qs:["Where did the dog run?","How did the dog feel?","What do dogs do when happy?"]},
+{title:"My Pet Fish",text:"I have a pet fish.\nHis name is Fin.\nFin is blue and red.\nHe swims all day.\nI feed him every morning.",qs:["What is the fish name?","What color is the fish?","When does the child feed the fish?"]},
+{title:"Time to Play",text:"School is done.\nTime to play!\nI ride my bike.\nI kick my ball.\nI run with my dog.\nWhat a great day!",qs:["What does the child do after school?","How does the child feel?","What do you like to do after school?"]}
+];
+PASSAGES["Level 4"] = [
+{title:"At the Park",text:"We went to the park. We ran and had fun. I saw a big duck. The duck sat in the mud. We fed the duck bits of bread. Then we went home for lunch.",qs:["Where did they go?","What did they see?","What did they feed the duck?","What do you like to do at a park?"]},
+{title:"The Big Game",text:"Today we play a game. I kick the ball hard. It goes far and fast. My team runs and cheers. We score a point! We win the game! My coach gives me a high five.",qs:["What game are they playing?","What happened when they scored?","How do you think they felt?","What sport do you like?"]},
+{title:"My New Bike",text:"I got a new bike. It is red and black. I put on my helmet. Then I rode down the street. I fell one time but I got back up. By the end I could ride all the way to the corner.",qs:["What color is the bike?","What did the child wear for safety?","What happened when the child fell?","Have you ever learned something hard?"]}
+];
+PASSAGES["Level 5"] = [
+{title:"The Lost Puppy",text:"One morning Jake found a small puppy near the swings. It had no collar and looked scared. Jake sat down slowly so the puppy would not run. He gave it part of his sandwich. The puppy wagged its tail and licked his hand. Jake brought it home and made a lost dog sign.",qs:["Where did Jake find the puppy?","Why did Jake sit down slowly?","What did Jake do to help find the owner?","How do you think Jake felt?"]},
+{title:"Pizza Night",text:"Every Friday is pizza night at the house. The whole family helps make the pizza. Dad rolls out the dough. Mom spreads the sauce. The kids put on the toppings. When the pizza comes out of the oven it smells amazing.",qs:["When is pizza night?","What does each person do to help?","What toppings do you like?","What is a special tradition in your family?"]},
+{title:"The Spelling Bee",text:"Carlos had practiced every night for the spelling bee. On the day of the contest his hands were shaking. His teacher smiled and said he was ready. When his turn came he took a deep breath. He spelled every word correctly and won first place.",qs:["How did Carlos prepare?","How did Carlos feel before his turn?","What helped Carlos feel better?","What does it mean to believe in yourself?"]}
+];
+PASSAGES["Level 6"] = [
+{title:"The Soccer Star",text:"Mia loved to play soccer. She practiced every day after school even when it was cold. One day her team made it to the championship game. Mia was nervous but she was ready. In the final minute the score was tied. Her teammate passed her the ball and Mia kicked it as hard as she could. It flew right into the net.",qs:["How did Mia prepare?","How did she feel before the game?","What happened in the final minute?","What does this story teach about hard work?"]},
+{title:"Rainy Day Inside",text:"It was too rainy to go outside so Sam had to find something to do indoors. First he tried reading a book about frogs. Then he built a tall tower with blocks. Later his mom showed him how to make chocolate chip cookies. The kitchen smelled warm and sweet.",qs:["Why did Sam stay inside?","Name three things Sam did.","What did Sam and his mom make?","What do you like to do on a rainy day?"]},
+{title:"New Kid",text:"On the first day at her new school Sofia did not know anyone. She sat alone at lunch and stared at her sandwich. Then a girl named Priya sat down next to her. Priya asked Sofia what her favorite video game was. They talked until the bell rang. By the end of the day Sofia had made her first friend.",qs:["How did Sofia feel at the start?","How did Priya help Sofia?","What did they talk about?","Have you ever helped someone who was new?"]}
+];
+PASSAGES["Level 7"] = [
+{title:"Learning to Skate",text:"Marcus wanted to learn to skateboard more than anything. His older cousin made it look easy. But the first time Marcus tried he fell three times in a row. His knees hurt and he wanted to quit. His cousin said everyone falls and that is how you learn. Marcus tried again. By the end of the day he could roll down the sidewalk without falling.",qs:["Why did Marcus want to skateboard?","What happened the first time?","What did his cousin say?","What does everyone falls mean to you?"]},
+{title:"The Class Pet",text:"Room 14 voted to get a class pet. Most kids wanted a dog but the teacher explained a dog was too hard to care for in a classroom. After a long discussion they chose a hamster named Nugget. One Monday Nugget was gone. The whole class searched everywhere. Finally Jaylen found him sleeping inside a backpack.",qs:["What pet did the class want first?","Why could they not have a dog?","What happened to Nugget?","Who found Nugget and where?"]},
+{title:"The Minecraft Build",text:"Zoe and her best friend Ava decided to build an entire city in Minecraft. Zoe built the houses and Ava designed the roads and parks. It took three full weekends to finish. When they were done they invited their class to explore the world. Some kids found secret doors and hidden chests that Zoe had placed as surprises.",qs:["How did Zoe and Ava divide the work?","How long did the build take?","What surprises did Zoe hide?","If you could build anything in Minecraft what would it be?"]}
+];
+PASSAGES["Level 8"] = [
+{title:"The Science Fair",text:"Destiny spent three weeks preparing her science fair project on whether plants grow faster with music or without it. She set up two groups of bean plants. One group heard classical music for an hour a day and the other heard nothing. At the end the music plants were almost two centimeters taller. A judge asked how she came up with the idea. Destiny said her grandmother always sang to her garden.",qs:["What was Destiny project about?","How did she set up her experiment?","What were the results?","Why do you think Destiny chose this topic?"]},
+{title:"Staying Safe Online",text:"The internet is an amazing place to learn and connect with friends. But it also has risks. Never share personal information like your home address or school name online. Tell a trusted adult if something online makes you feel uncomfortable. Cyberbullying happens when someone is mean online and it affects many kids. Remember that what you post can last forever.",qs:["Name two rules for staying safe online.","What is cyberbullying?","Why tell a trusted adult?","Why is it important to think before you post?"]},
+{title:"The Big Move",text:"When Theo found out his family was moving he was angry. He did not want to leave his friends or his school. For weeks he barely spoke at dinner. But on the first day at his new school his teacher asked students to share something interesting. Theo talked about his city baseball team and three kids immediately turned around. By Friday he had exchanged numbers with all three.",qs:["Why was Theo angry?","How did Theo feel before the move?","What happened on the first day?","What does this story show about new beginnings?"]}
+];
+PASSAGES["Level 9"] = [
+{title:"How Sneakers Became Cool",text:"Today sneakers are more than shoes. They are a form of art. It started with basketball. When Nike signed Michael Jordan in 1984 and made the Air Jordan kids everywhere wanted a pair. Jordan wore them and played like no one had before. The shoes became legendary. From there sneaker culture grew fast. Rappers wore them on stage. Today rare sneakers can sell for thousands of dollars.",qs:["How did sneaker culture begin?","Why did Air Jordans become popular?","What made limited editions special?","Why do you think sneakers became more than just shoes?"]},
+{title:"Simone Biles",text:"Simone Biles is considered the greatest gymnast in history. She has won more World Championship medals than anyone and has moves named after her. Growing up she spent time in foster care before her grandparents adopted her. At the 2020 Olympics she made the brave decision to step back to protect her mental health. Many people admired her for that choice just as much as for her medals.",qs:["What makes Simone the greatest?","What was her early life like?","What brave decision did she make?","What does this passage say real greatness looks like?"]},
+{title:"The Robot That Learned to Walk",text:"Scientists spent two years building a robot that could walk like a human. The first version fell immediately. The second fell after three steps. Each time scientists collected data and made changes. By version seventeen the robot could walk across a room. The scientists said the hardest part was not building the robot. It was being patient enough to keep trying after each failure.",qs:["How long did it take?","What did scientists do after each failure?","What was the hardest part?","What lesson about failure does this teach?"]}
+];
+PASSAGES["Level 10"] = [
+{title:"The Science of Slime",text:"Slime took over the internet and kids everywhere started making it at home. Most slime is made from glue and an activator like contact lens solution. Glue is made of tiny chains called polymers that slide past each other. When you add the activator those chains link together and can no longer slide freely. This creates something not quite liquid and not quite solid. Scientists call it a non-Newtonian fluid.",qs:["What are the two main ingredients?","What happens to the chains when you add activator?","What is a non-Newtonian fluid?","Name another example that works like slime."]},
+{title:"Why Dogs Are Good for You",text:"Science shows that owning a dog is good for your health. People with dogs get more exercise because dogs need daily walks. Petting a dog lowers cortisol which is a chemical your body makes when anxious. For kids who struggle with reading some schools have brought in therapy dogs. Students read aloud to the dogs because dogs never judge. Reading scores have improved in many of these programs.",qs:["How do dogs help owners exercise?","What is cortisol?","How are therapy dogs used in schools?","Why do students feel comfortable reading to dogs?"]},
+{title:"How Animation Works",text:"Have you ever wondered how cartoons move? Animation is a series of still images shown so quickly that your brain tricks itself into seeing motion. Early animators drew every single frame by hand. A one-minute cartoon could need over 1400 drawings. Today most animation is done with computers. But even with computers a single animated movie can take four to five years to make.",qs:["How does animation create motion?","How many drawings did early animators need?","How has animation changed with computers?","Why do animated movies take so long?"]}
+];
+PASSAGES["Level 11"] = [
+{title:"How MrBeast Makes Videos",text:"MrBeast whose real name is Jimmy Donaldson is one of the most popular YouTubers in the world. He started making videos at age thirteen and for years barely anyone watched. But he posted every week without stopping and studied what made videos successful. Today he has over 200 million subscribers. He is also known for giving back by planting millions of trees opening food banks and paying for medical procedures.",qs:["How old was MrBeast when he started?","Why did his channel grow slowly at first?","Name two ways he gives back.","What does his story teach about reaching a big goal?"]},
+{title:"What Happens When You Sleep",text:"When you sleep your brain processes and stores memories from the day. That is why studying before bed helps you remember. Your sleeping brain locks it in. Your body repairs muscles and releases growth hormones. Without enough sleep your ability to focus and control emotions drops significantly. Kids need 8 to 10 hours a night. Screens before bed are a major problem because blue light tricks your brain into thinking it is still daytime.",qs:["What does your brain do while you sleep?","Why can studying before bed help?","How do screens affect sleep?","What would you change about your sleep habits?"]},
+{title:"The History of Video Games",text:"The first widely known video game was Pong released in 1972. It was simply two paddles and a dot but people lined up to play. In the 1980s games like Pac-Man became global sensations. Home consoles changed everything. As technology improved games became more complex with detailed worlds and storylines. Today gaming is one of the largest entertainment industries on the planet bigger than movies and music combined.",qs:["What was one of the first video games?","How did home consoles change gaming?","What is esports?","How has gaming changed over time?"]}
+];
+PASSAGES["Level 12"] = [
+{title:"What It Takes to Be a Content Creator",text:"Becoming a successful content creator is harder than it looks. The best creators focus on something they genuinely love. Then comes the technical side. Good lighting and editing make a difference. The hardest part is consistency. Most successful channels posted for a year or more before anyone noticed. The creators who make it are not usually the most talented. They are the most consistent. They post regularly study their data and keep improving.",qs:["What does the author say is more important than a unique topic?","Why is consistency more important than talent?","What does studying data help creators do?","Would you want to be a content creator?"]},
+{title:"Climate Change and Weather",text:"Weather is what happens outside on any given day. Climate is the pattern of weather over many decades. So a single cold winter does not disprove global warming. Climate scientists look at long-term data to identify trends. Earth average temperature has risen about 1.2 degrees Celsius since the 1800s. That sounds small but small changes can cause big effects like more intense storms rising sea levels and shifting growing seasons.",qs:["What is the difference between weather and climate?","Why does one cold winter not disprove global warming?","How much has Earth temperature risen?","What effects can small changes cause?"]},
+{title:"The Real Story of Thanksgiving",text:"Most Americans learn a simple version of Thanksgiving. Pilgrims and Native Americans sharing a peaceful meal in 1621. But the real history is more complicated. The Pilgrims did share a harvest celebration with the Wampanoag but the relationship was already tense. Thanksgiving was not a national holiday until 1863 when President Lincoln declared it to promote unity during the Civil War.",qs:["What really happened in 1621?","When did Thanksgiving become a national holiday?","Why do historians encourage learning the full story?","Why is it important to learn history from multiple perspectives?"]}
+];
+PASSAGES["Level 13"] = [
+{title:"How the NFL Became Popular",text:"Football was not always America most popular sport. Television changed everything. In the 1960s the NFL struck deals with TV networks to broadcast games every Sunday. The sport was fast and dramatic and perfectly suited for the screen. The Super Bowl became bigger than sports. The halftime shows the commercials and the social gathering turned it into a national event. Fantasy football gave millions of fans a personal stake in every game.",qs:["What sport was most popular before football?","How did television help the NFL?","Why did the Super Bowl become bigger than sports?","What is fantasy football?"]},
+{title:"Steph Curry and Basketball",text:"Before Steph Curry three-point shots were considered risky. Curry was not highly recruited out of high school because he was considered too small. He ended up at Davidson College a school most fans had never heard of. With the Golden State Warriors he developed one of the most precise shooting techniques the sport had ever seen. The results were historic with two MVP awards four championships and the all-time record for three-pointers made.",qs:["Why were three-pointers risky before Curry?","Why was Curry not heavily recruited?","What records did he set?","How did Curry change how other teams play?"]},
+{title:"The Psychology of Social Media",text:"Social media platforms are designed to keep you scrolling. Every like and notification triggers a small release of dopamine which is a chemical associated with pleasure. Over time your brain starts to crave that feeling. Researchers have found that heavy social media use is linked to increased anxiety and lower self-esteem. Seeing other people highlight reels makes your own life feel inadequate. The key is awareness and intentional use.",qs:["What is dopamine and how do platforms use it?","What is social comparison?","How much social media use is linked to loneliness?","What does the author suggest about healthy use?"]}
+];
+PASSAGES["Level 14"] = [
+{title:"The Rise of Artificial Intelligence",text:"Artificial intelligence is woven into almost every part of daily life. When you ask a voice assistant about the weather that is AI. When your streaming service recommends a show that is AI. When your phone unlocks by recognizing your face that is AI. In medicine AI detects diseases earlier than human doctors in some studies. In education AI tutoring tools can identify where a student is struggling and generate a personalized lesson.",qs:["Give three examples of AI in everyday life.","How is AI used in medicine and education?","What are two concerns critics have?","Why does the author say understanding AI is important?"]},
+{title:"The Business of Being Famous",text:"Being famous used to require appearing on television or in movies. Fame was controlled by powerful gatekeepers like studios labels and networks. The internet ended that. Today a teenager with a phone can build an audience of millions. Platforms like YouTube and TikTok created entirely new categories of celebrity. Brands discovered that a post from a trusted influencer could reach a more targeted audience than a TV commercial at a fraction of the cost.",qs:["How did gatekeepers control fame before the internet?","What economic change did influencer marketing bring?","What new pressures do online creators face?","What does the changing nature of fame reveal about our culture?"]},
+{title:"Food Deserts in America",text:"A food desert is an area where residents do not have easy access to affordable nutritious food. Instead of grocery stores these neighborhoods have fast food and convenience stores where fresh produce is rare or expensive. Approximately 19 million Americans live in food deserts. Without access to fresh vegetables and proteins residents face higher rates of obesity diabetes and heart disease. Children in food deserts often have less nutritious diets during critical development years.",qs:["What is a food desert?","How many Americans live in food deserts?","What health problems are linked to food deserts?","What solutions does the passage describe?"]}
+];
+PASSAGES["Level 15"] = [
+{title:"Mental Health in Young People",text:"Over the past decade rates of anxiety and depression among young people have risen steadily. Social media exposes users to constant social comparison and sometimes cyberbullying. Academic pressure is another factor because many students feel overwhelmed by schoolwork and the pressure to secure a future in a competitive world. The COVID-19 pandemic significantly worsened things. Months of isolation left lasting effects on mental health that researchers are still measuring.",qs:["What two causes does the passage identify?","How did COVID-19 affect young people?","What positive changes are happening in schools?","Why does the author say mental health is not weakness?"]},
+{title:"How Climate Change Affects Sports",text:"Climate change is disrupting sports in many ways. Rising temperatures have shortened ski seasons. Some resorts that once operated five months a year now struggle to maintain snow for three. Extreme heat is forcing youth leagues and marathon organizers to cancel events. Olympic organizers now schedule outdoor events at unusual hours to avoid peak heat. Marine sports are affected too because coral bleaching has damaged surf breaks and diving sites worldwide.",qs:["How has climate change affected ski resorts?","Why are Olympic events scheduled at unusual hours?","How are marine sports being affected?","What are sports organizations doing in response?"]},
+{title:"The History of Hip-Hop",text:"Hip-hop began in the South Bronx in New York City in the 1970s. DJ Kool Herc is credited with one of its founding moments by isolating the percussive breaks in records at block parties. Four elements emerged which were DJing MCing breakdancing and graffiti art. Through the 1980s and 90s hip-hop spread globally carrying the voices of communities that mainstream media had largely ignored. Today hip-hop is the most streamed genre of music in the world.",qs:["Where and when did hip-hop begin?","What are the four elements?","How did artists use hip-hop?","Why is hip-hops growth considered remarkable?"]}
 ];
 
-const AV_COLORS = ["#FF6B6B","#4ECDC4","#FFD166","#6BCB77","#A78BFA","#FF9F43"];
-const ALL_LEVELS = Object.keys(LEVEL_META);
+var LM = {
+"Level 1":["Kindergarten","Early K","#FF6B6B"],
+"Level 2":["Kindergarten","Mid K","#FF6B6B"],
+"Level 3":["Kindergarten","Late K","#FF6B6B"],
+"Level 4":["1st Grade","Early 1","#FF9F43"],
+"Level 5":["1st Grade","Mid 1","#FF9F43"],
+"Level 6":["1st Grade","Late 1","#FF9F43"],
+"Level 7":["2nd Grade","Early 2","#FFD166"],
+"Level 8":["2nd Grade","Mid 2","#FFD166"],
+"Level 9":["2nd Grade","Late 2","#FFD166"],
+"Level 10":["3rd Grade","Early 3","#6BCB77"],
+"Level 11":["3rd Grade","Mid 3","#6BCB77"],
+"Level 12":["3rd Grade","Late 3","#6BCB77"],
+"Level 13":["4th Grade","Early 4","#4ECDC4"],
+"Level 14":["4th Grade","Mid 4","#4ECDC4"],
+"Level 15":["4th Grade","Late 4","#4ECDC4"],
+"Level 16":["5th Grade","Early 5","#A78BFA"],
+"Level 17":["5th Grade","Mid 5","#A78BFA"],
+"Level 18":["5th Grade","Late 5","#A78BFA"],
+"Level 19":["6th Grade","Early 6","#3B82F6"],
+"Level 20":["6th Grade","Mid 6","#3B82F6"],
+"Level 21":["6th Grade","Late 6","#3B82F6"]
+};
 
-let students = [
+var PILLS = {
+phonemic:{l:"Phonemic Awareness",c:"#FF6B6B",e:"👂"},
+phonics:{l:"Phonics",c:"#FF9F43",e:"🔤"},
+fluency:{l:"Fluency",c:"#FFD166",e:"⚡"},
+vocabulary:{l:"Vocabulary",c:"#6BCB77",e:"📚"},
+comprehension:{l:"Comprehension",c:"#4ECDC4",e:"🧠"},
+writing:{l:"Writing",c:"#A78BFA",e:"✏️"}
+};
+
+var QR = [
+{id:"accuracy",l:"Accuracy",e:"🎯",opts:[{v:96,l:"Strong 95%+"},{v:91,l:"Good 90-94%"},{v:86,l:"Some Errors"},{v:75,l:"Many Errors"}]},
+{id:"fluency",l:"Fluency",e:"⚡",opts:[{v:95,l:"Smooth & Expressive"},{v:80,l:"Mostly Fluent"},{v:65,l:"Word-by-Word"},{v:50,l:"Very Choppy"}]},
+{id:"decoding",l:"Decoding",e:"🔤",opts:[{v:95,l:"Sounds Out Well"},{v:75,l:"Partial Attempts"},{v:60,l:"Skips Words"},{v:45,l:"Guesses Only"}]},
+{id:"selfmon",l:"Self-Monitoring",e:"👁",opts:[{v:95,l:"Corrects Often"},{v:75,l:"Sometimes"},{v:55,l:"Rarely"},{v:35,l:"Never"}]},
+{id:"comprehension",l:"Comprehension",e:"🧠",opts:[{v:95,l:"Strong Retell"},{v:80,l:"Basic Retell"},{v:60,l:"Minimal Recall"},{v:40,l:"Cannot Retell"}]}
+];
+
+var AVC = ["#FF6B6B","#4ECDC4","#FFD166","#6BCB77","#A78BFA","#FF9F43"];
+var LEVELS = Object.keys(LM);
+
+var students = [
 {id:1,name:"Marcus",level:"Level 3",grade:"Kindergarten",sessions:[]},
 {id:2,name:"Sofia",level:"Level 11",grade:"3rd Grade",sessions:[]},
 {id:3,name:"Jaylen",level:"Level 2",grade:"Kindergarten",sessions:[]},
@@ -330,405 +346,271 @@ let students = [
 {id:5,name:"Luca",level:"Level 7",grade:"2nd Grade",sessions:[]}
 ];
 
-let currentStudent = null;
-let currentRatings = {};
-let currentErrors = [];
-let useOwnText = false;
-let currentLesson = null;
-let openSegIndex = null;
+var cur = null, rats = {}, errs = [], ownText = false, lesson = null, pidx = 0, openSeg = null;
 
-// ── HELPERS ───────────────────────────────────────────────────────
-const lc = lv => LEVEL_META[lv]?.color || "#888";
-const lb = lv => LEVEL_META[lv]?.band || lv;
+function lc(lv){return (LM[lv]||["","","#888"])[2];}
+function lb(lv){return (LM[lv]||["","lv",""])[1];}
+function tag(t,c){return '<span class="tag" style="background:'+c+'22;color:'+c+'">'+t+'</span>';}
 
-function tag(text, color) {
-return `<span class="tag" style="background:${color}22;color:${color}">${text}</span>`;
+function go(scr){
+document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+document.getElementById('s-'+scr).classList.add('active');
+document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
+var nm = {dash:'nb-dash',add:'nb-add',groups:'nb-groups'};
+if(nm[scr]) document.getElementById(nm[scr]).classList.add('active');
+if(scr==='dash') rdDash();
+if(scr==='groups') rdGroups();
 }
 
-function avgScore(r) {
-const v = Object.values(r||{});
-return v.length ? Math.round(v.reduce((a,b)=>a+b,0)/v.length) : 75;
-}
+function avg(r){var v=Object.values(r||{});return v.length?Math.round(v.reduce(function(a,b){return a+b;},0)/v.length):75;}
 
-function buildGroups() {
-const ws = students.filter(s=>s.sessions?.length>0);
-if (ws.length < 2) return [];
-const tagged = ws.map(s=>{
-const r = s.sessions[0]?.ratings||{};
-const weakest = QUICK_RATINGS.reduce((min,q)=>(r[q.id]||75)<(r[min.id]||75)?q:min, QUICK_RATINGS[0]);
-return {...s, weakestId:weakest.id, weakestLabel:weakest.label, avg:avgScore(r)};
-});
-const buckets = {};
-tagged.forEach(s=>{ if(!buckets[s.weakestId]) buckets[s.weakestId]=[]; buckets[s.weakestId].push(s); });
-const pc = {accuracy:"#FF6B6B",fluency:"#FFD166",decoding:"#FF9F43",selfmon:"#4ECDC4",comprehension:"#A78BFA"};
-return Object.entries(buckets).map(([id,members])=>{
-const q = QUICK_RATINGS.find(r=>r.id===id);
-return {id, name:q.label+" Group", focus:q.label, emoji:q.emoji, members, color:pc[id]||"#4ECDC4",
-avgScore:Math.round(members.reduce((a,s)=>a+s.avg,0)/members.length)};
-});
-}
-
-// ── SCREENS ───────────────────────────────────────────────────────
-function showScreen(name) {
-document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-document.getElementById('screen-'+name).classList.add('active');
-document.querySelectorAll('.nav-link').forEach(b=>b.classList.remove('active'));
-const navMap = {dashboard:'nav-dash',add:'nav-add',groups:'nav-groups'};
-if (navMap[name]) document.getElementById(navMap[name]).classList.add('active');
-if (name==='dashboard') renderDashboard();
-if (name==='groups') renderGroups();
-}
-
-// ── LEVEL SELECT ──────────────────────────────────────────────────
-function populateLevelSelect() {
-const sel = document.getElementById('new-level');
-sel.innerHTML = ALL_LEVELS.map(l=>`<option value="${l}">${l} — ${LEVEL_META[l].band} (${LEVEL_META[l].grade})</option>`).join('');
-}
-
-// ── DASHBOARD ─────────────────────────────────────────────────────
-function renderDashboard() {
-document.getElementById('dash-sub').textContent = `${students.length} students · tap Start to begin a session`;
-const groups = buildGroups();
+function rdDash(){
+document.getElementById('dash-sub').textContent = students.length+' students';
+var grps = bldGroups();
 document.getElementById('dash-stats').innerHTML = [
 [students.length,"Students","#4ECDC4"],
-[students.filter(s=>s.sessions?.length>0).length,"Sessioned","#FFD166"],
-[groups.length||"—","Auto Groups","#6BCB77"]
-].map(([v,l,c])=>`
-<div class="card stat-card" style="border-top-color:${c}">
-<div class="stat-num" style="color:${c}">${v}</div>
-<div style="font-size:11px;color:#888;font-weight:600">${l}</div>
-</div>`).join('');
-document.getElementById('student-list').innerHTML = students.map((s,i)=>`
-<div class="student-row">
-<div class="row">
-<div class="av" style="width:40px;height:40px;background:${AV_COLORS[i%6]};font-size:15px">${s.name[0]}</div>
-<div>
-<div style="font-weight:700;font-size:14px">${s.name}</div>
-<div style="font-size:12px;color:#999;display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-<span>${s.grade}</span>
-${tag(s.level,lc(s.level))}
-<span style="color:#BBB">${lb(s.level)}</span>
-<span>· ${s.sessions?.length||0} session${s.sessions?.length!==1?'s':''}</span>
-</div>
-</div>
-</div>
-<div class="row">
-${s.sessions?.length>0?`<button class="btn-ghost" onclick="showProgress(${s.id})">📈</button>`:''}
-<button class="btn" onclick="startSession(${s.id})">▶ Start</button>
-</div>
-</div>`).join('');
+[students.filter(function(s){return s.sessions.length>0;}).length,"Sessioned","#FFD166"],
+[grps.length||"--","Groups","#6BCB77"]
+].map(function(x){return '<div class="card" style="margin-bottom:0;border-top:4px solid '+x[2]+';text-align:center"><div style="font-size:28px;font-weight:800;color:'+x[2]+';font-family:Playfair Display,serif">'+x[0]+'</div><div style="font-size:11px;color:#888;font-weight:600">'+x[1]+'</div></div>';}).join('');
+document.getElementById('student-list').innerHTML = students.map(function(s,i){
+return '<div class="srow"><div class="row"><div class="av" style="width:40px;height:40px;background:'+AVC[i%6]+';font-size:15px">'+s.name[0]+'</div><div><div style="font-weight:700;font-size:14px">'+s.name+'</div><div style="font-size:12px;color:#999">'+s.grade+' '+tag(s.level,lc(s.level))+' '+lb(s.level)+' - '+s.sessions.length+' sessions</div></div></div><div class="row">'+(s.sessions.length>0?'<button class="btn-ghost" onclick="showProg('+s.id+')">📈</button>':'')+'<button class="btn" onclick="startSess('+s.id+')">Start</button></div></div>';
+}).join('');
 }
 
-// ── SESSION ───────────────────────────────────────────────────────
-function startSession(id) {
-currentStudent = students.find(s=>s.id===id);
-currentRatings = {...(currentStudent.sessions?.[0]?.ratings||{})};
-currentErrors = [];
-useOwnText = false;
-currentLesson = null;
-openSegIndex = null;
-passageIdx = 0;
-
-document.getElementById('obs-title').textContent = `Session: ${currentStudent.name}`;
-const lvColor = lc(currentStudent.level);
-document.getElementById('obs-sub').innerHTML = `
-${tag(currentStudent.level, lvColor)}
-<span>${lb(currentStudent.level)} · ${currentStudent.grade}</span>`;
-
-// reset toggle
-const toggle = document.getElementById('text-toggle');
-toggle.classList.remove('on');
-document.getElementById('toggle-label').textContent = 'Using a ReadLead passage';
-document.getElementById('toggle-left').style.fontWeight = '700';
-document.getElementById('toggle-left').style.color = '#1A1A2E';
-document.getElementById('toggle-right').style.fontWeight = '400';
-document.getElementById('toggle-right').style.color = '#AAA';
-document.getElementById('own-text-msg').style.display = 'none';
-
-document.getElementById('word-input').value = '';
-document.getElementById('said-input').value = '';
-document.getElementById('curriculum-input').value = '';
-document.getElementById('curr-badge').style.display = 'none';
-document.getElementById('curr-msg').style.display = 'none';
-renderErrorList();
-renderRatings();
-resetGenBox();
-renderPassage();
-showScreen('observe');
+function startSess(id){
+cur = students.find(function(s){return s.id===id;});
+rats = Object.assign({},cur.sessions[0]&&cur.sessions[0].ratings||{});
+errs = []; ownText = false; lesson = null; openSeg = null; pidx = 0;
+document.getElementById('obs-title').textContent = 'Session: '+cur.name;
+document.getElementById('obs-sub').innerHTML = tag(cur.level,lc(cur.level))+' '+lb(cur.level)+' - '+cur.grade;
+var tog = document.getElementById('tog'); tog.classList.remove('on');
+document.getElementById('tog-lbl').textContent = 'Using a ReadLead passage';
+document.getElementById('tog-l').style.fontWeight = '700'; document.getElementById('tog-l').style.color = '#1A1A2E';
+document.getElementById('tog-r').style.fontWeight = '400'; document.getElementById('tog-r').style.color = '#AAA';
+document.getElementById('own-msg').style.display = 'none';
+document.getElementById('passage-card').style.display = 'block';
+document.getElementById('w-in').value = ''; document.getElementById('s-in').value = '';
+document.getElementById('curr-in').value = ''; document.getElementById('curr-badge').style.display = 'none'; document.getElementById('curr-msg').style.display = 'none';
+rdErrs(); rdRats(); rdPass();
+document.getElementById('gen-box').innerHTML = '<div style="font-size:15px;font-weight:800;margin-bottom:4px">Generate Lesson Plan</div><div style="font-size:12px;color:#9999BB;margin-bottom:14px" id="gen-desc">Builds a personalized 15-min lesson targeting all 6 pillars.</div><button class="btn btn-teal" style="width:100%;font-size:14px" onclick="doGen()">Generate '+cur.name+' Lesson</button>';
+go('observe');
 }
 
-function renderPassage() {
-const level = currentStudent.level;
-const passages = PASSAGES[level] || PASSAGES["Level 5"] || [];
-if (!passages.length) return;
-const p = passages[passageIdx % passages.length];
-const lvColor = lc(level);
-
-document.getElementById('passage-tabs').innerHTML = passages.map((pas,i)=>
-`<button onclick="selectPassage(${i})" style="background:${passageIdx===i?lvColor:'#F5F3EE'};color:${passageIdx===i?'#fff':'#777'};border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer">${pas.title}</button>`
-).join('');
-
-document.getElementById('passage-text').textContent = p.text;
-document.getElementById('passage-questions').innerHTML = p.questions.map((q,i)=>
-`<div style="font-size:12px;color:#666;margin-bottom:4px;display:flex;gap:6px"><span style="font-weight:700;color:${lvColor};flex-shrink:0">${i+1}.</span><span>${q}</span></div>`
-).join('');
+function rdPass(){
+var ps = PASSAGES[cur.level]||PASSAGES["Level 5"]||[];
+if(!ps.length) return;
+var p = ps[pidx%ps.length];
+var lv = lc(cur.level);
+document.getElementById('p-tabs').innerHTML = ps.map(function(x,i){
+return '<button onclick="selP('+i+')" style="background:'+(pidx===i?lv:'#F5F3EE')+';color:'+(pidx===i?'#fff':'#777')+';border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer">'+x.title+'</button>';
+}).join('');
+document.getElementById('p-text').textContent = p.text;
+document.getElementById('p-qs').innerHTML = p.qs.map(function(q,i){
+return '<div style="font-size:12px;color:#666;margin-bottom:4px;display:flex;gap:6px"><span style="font-weight:700;color:'+lv+';flex-shrink:0">'+(i+1)+'.</span><span>'+q+'</span></div>';
+}).join('');
 }
 
-function selectPassage(i) {
-passageIdx = i;
-renderPassage();
-}
+function selP(i){pidx=i;rdPass();}
 
-function printPassage() {
-const level = currentStudent.level;
-const passages = PASSAGES[level] || PASSAGES["Level 5"] || [];
-const p = passages[passageIdx % passages.length];
-const w = window.open('','_blank');
-w.document.write(`<!DOCTYPE html><html><head><title>${p.title}</title>
-<style>body{font-family:Georgia,serif;max-width:640px;margin:40px auto;color:#1A1A2E;}
-h1{font-size:24px;margin-bottom:20px;}
-.text{font-size:16px;line-height:2.2;white-space:pre-line;margin-bottom:28px;}
-.q{margin-bottom:16px;font-size:14px;font-weight:600;}
-.line{height:28px;border-bottom:1px solid #DDD;margin-bottom:4px;}
-@media print{button{display:none}}</style></head><body>
+function printP(){
+var ps = PASSAGES[cur.level]||PASSAGES["Level 5"]||[];
+var p = ps[pidx%ps.length];
+var w = window.open('','_blank');
+w.document.write('<!DOCTYPE html><html><head><title>'+p.title+'</title><style>body{font-family:Georgia,serif;max-width:640px;margin:40px auto;}h1{font-size:24px;margin-bottom:20px;}.txt{font-size:16px;line-height:2.2;white-space:pre-line;margin-bottom:28px;}.line{height:28px;border-bottom:1px solid #DDD;margin-bottom:4px;}@media print{button{display:none}}</style></head><body><h1>'+p.title+'</h1><div class="txt">'+p.text+'</div><h2 style="font-size:16px;margin-bottom:16px">Comprehension Questions</h2>'+p.qs.map(function(q,i){return '<div style="margin-bottom:16px;font-size:14px;font-weight:600">'+(i+1)+'. '+q+'</div><div class="line"></div><div class="line"></div>';}).join('')+'<button onclick="window.print()" style="margin-top:20px;padding:10px 20px;cursor:pointer">Print</button></body></html>');
 
-<h1>${p.title}</h1>
-<div class="text">${p.text}</div>
-<h2 style="font-size:16px;margin-bottom:16px">📝 Comprehension Questions</h2>
-${p.questions.map((q,i)=>`<div class="q">${i+1}. ${q}</div><div class="line"></div><div class="line"></div>`).join('')}
-<button onclick="window.print()" style="margin-top:20px;padding:10px 20px;font-size:14px;cursor:pointer">🖨 Print</button>
-</body></html>`);
 w.document.close();
 }
 
-function toggleOwnText() {
-useOwnText = !useOwnText;
-const toggle = document.getElementById(‘text-toggle’);
-toggle.classList.toggle(‘on’, useOwnText);
-document.getElementById(‘toggle-label’).textContent = useOwnText ? ‘Using classroom book or decodable’ : ‘Using a ReadLead passage’;
-document.getElementById(‘toggle-left’).style.fontWeight = useOwnText ? ‘400’ : ‘700’;
-document.getElementById(‘toggle-left’).style.color = useOwnText ? ‘#AAA’ : ‘#1A1A2E’;
-document.getElementById(‘toggle-right’).style.fontWeight = useOwnText ? ‘700’ : ‘400’;
-document.getElementById(‘toggle-right’).style.color = useOwnText ? ‘#1A1A2E’ : ‘#AAA’;
-document.getElementById(‘own-text-msg’).style.display = useOwnText ? ‘block’ : ‘none’;
-document.getElementById(‘own-text-msg’).style.background = ‘#4ECDC415’;
-document.getElementById(‘own-text-msg’).style.border = ‘1px solid #4ECDC433’;
-document.getElementById(‘own-text-msg’).style.color = ‘#4ECDC4’;
-// Show/hide passage card
-document.getElementById(‘passage-card’).style.display = useOwnText ? ‘none’ : ‘block’;
+function flipToggle(){
+ownText = !ownText;
+var tog = document.getElementById(‘tog’); tog.classList.toggle(‘on’,ownText);
+document.getElementById(‘tog-lbl’).textContent = ownText?‘Using classroom book or decodable’:‘Using a ReadLead passage’;
+document.getElementById(‘tog-l’).style.fontWeight = ownText?‘400’:‘700’; document.getElementById(‘tog-l’).style.color = ownText?’#AAA’:’#1A1A2E’;
+document.getElementById(‘tog-r’).style.fontWeight = ownText?‘700’:‘400’; document.getElementById(‘tog-r’).style.color = ownText?’#1A1A2E’:’#AAA’;
+document.getElementById(‘own-msg’).style.display = ownText?‘block’:‘none’;
+document.getElementById(‘passage-card’).style.display = ownText?‘none’:‘block’;
 }
 
-function addError() {
-const word = document.getElementById(‘word-input’).value.trim();
-if (!word) return;
-const said = document.getElementById(‘said-input’).value.trim();
-const type = document.getElementById(‘type-input’).value;
-currentErrors.push({word, said, type});
-document.getElementById(‘word-input’).value = ‘’;
-document.getElementById(‘said-input’).value = ‘’;
-renderErrorList();
+function addErr(){
+var w = document.getElementById(‘w-in’).value.trim(); if(!w) return;
+errs.push({word:w,said:document.getElementById(‘s-in’).value.trim(),type:document.getElementById(‘t-in’).value});
+document.getElementById(‘w-in’).value=’’; document.getElementById(‘s-in’).value=’’;
+rdErrs();
 }
 
-function removeError(i) {
-currentErrors.splice(i, 1);
-renderErrorList();
-}
+function rmErr(i){errs.splice(i,1);rdErrs();}
 
-function renderErrorList() {
-const el = document.getElementById(‘error-list’);
-if (!currentErrors.length) { el.innerHTML = ‘<div style="font-size:12px;color:#CCC">No errors logged yet</div>’; return; }
-el.innerHTML = currentErrors.map((e,i)=>` <div class="error-row"> <div class="row"> ${tag(e.type,"#FF9F43")} <span style="font-size:12px;font-weight:700">"${e.word}"</span> ${e.said?`<span style="font-size:12px;color:#888">→ said “<strong>${e.said}</strong>”</span>`:''} </div> <button class="btn-danger" onclick="removeError(${i})">×</button> </div>`).join(’’);
-}
-
-function renderRatings() {
-const el = document.getElementById(‘ratings-list’);
-el.innerHTML = QUICK_RATINGS.map(r=>`<div style="margin-bottom:14px"> <div style="font-size:13px;font-weight:700;margin-bottom:6px">${r.emoji} ${r.label}</div> <div class="rating-grid"> ${r.options.map(opt=>{ const sel = currentRatings[r.id]===opt.v; const c = opt.v>=90?'#6BCB77':opt.v>=75?'#FFD166':opt.v>=60?'#FF9F43':'#FF6B6B'; return`<button class="rating-btn${sel?' selected':''}" style="${sel?`background:${c};border-color:transparent`:''}" onclick="selectRating('${r.id}',${opt.v},'${c}')">${sel?‘✓ ‘:’’}${opt.l}</button>`; }).join('')} </div> </div>`).join(’’);
-updateRatingCount();
-}
-
-function selectRating(id, v, c) {
-currentRatings[id] = v;
-renderRatings();
-}
-
-function updateRatingCount() {
-document.getElementById(‘rating-count’).textContent = `${Object.keys(currentRatings).length}/${QUICK_RATINGS.length} areas rated`;
-}
-
-function updateCurrBadge() {
-const hasCurr = document.getElementById(‘curriculum-input’).value.trim().length > 0;
-document.getElementById(‘curr-badge’).style.display = hasCurr ? ‘inline-block’ : ‘none’;
-document.getElementById(‘curr-msg’).style.display = hasCurr ? ‘block’ : ‘none’;
-document.getElementById(‘gen-desc’).textContent = hasCurr
-? ‘Curriculum loaded — activities will cite specific standards.’
-: ‘Builds a personalized 15-min lesson targeting all 6 pillars.’;
-}
-
-function resetGenBox() {
-document.getElementById(‘gen-box’).innerHTML = ` <div style="font-size:15px;font-weight:800;margin-bottom:4px">🤖 Generate Lesson Plan</div> <div style="font-size:12px;color:#9999BB;margin-bottom:14px" id="gen-desc">Builds a personalized 15-min lesson targeting all 6 pillars.</div> <button class="btn btn-teal" style="width:100%;font-size:14px" id="gen-btn" onclick="generateLesson()">Generate ${currentStudent?.name}'s Lesson →</button> <div id="gen-error" style="display:none;margin-top:10px;padding:10px 12px;background:#FF6B6B22;border-radius:8px;font-size:12px;color:#FF6B6B"></div>`;
-}
-
-// ── GENERATE ──────────────────────────────────────────────────────
-async function generateLesson() {
-const curriculum = document.getElementById(‘curriculum-input’)?.value?.trim()||’’;
-const hasCurr = curriculum.length > 0;
-const rStr = QUICK_RATINGS.map(r=>`${r.label}:${currentRatings[r.id]||75}${(currentRatings[r.id]||75)<75?'(WEAK)':''}`).join(’, ‘);
-const eStr = currentErrors.length ? currentErrors.map(e=>`"${e.word}"${e.said?` (said “${e.said}”)`:''}=${e.type}`).join(’; ‘) : ‘none’;
-const weak = QUICK_RATINGS.filter(r=>(currentRatings[r.id]||75)<75).map(r=>r.label).join(’, ’)||‘none’;
-const meta = LEVEL_META[currentStudent.level]||{};
-
-const prompt = `Expert reading interventionist: create a 15-min guided reading lesson. Student:${currentStudent.name} Grade:${currentStudent.grade} Level:${currentStudent.level}(${meta.band||''}) ${useOwnText?'Using teacher\'s own classroom text/decodable':''} Ratings:${rStr} Errors:${eStr} Weak:${weak} ${hasCurr?`Curriculum: ${curriculum}\nCRITICAL: cite exact standard codes in each segment “standard” field.`:'No curriculum. Leave "standard" as "".'} Reply ONLY raw JSON: {"lessonTitle":"...","focusSummary":"...","hasCurriculumAlignment":${hasCurr},"segments":[{"pillar":"phonemic","title":"...","timeRange":"0-2 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":"..."},{"pillar":"phonics","title":"...","timeRange":"2-5 min","minutes":3,"emphasis":true,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":"..."},{"pillar":"fluency","title":"...","timeRange":"5-8 min","minutes":3,"emphasis":true,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":"..."},{"pillar":"vocabulary","title":"...","timeRange":"8-11 min","minutes":3,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":"..."},{"pillar":"comprehension","title":"...","timeRange":"11-13 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":"..."},{"pillar":"writing","title":"...","timeRange":"13-15 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":"..."}],"afterLesson":"..."} Real content for ${currentStudent.name}. emphasis:true on 2 weakest.`;
-
-document.getElementById(‘gen-box’).innerHTML = ` <div style="text-align:center;padding:8px 0"> <div class="spinner" style="margin-bottom:8px"></div> <div style="font-size:14px;font-weight:700;margin-bottom:4px">Building lesson plan…</div> <div style="font-size:12px;color:#9999BB">${hasCurr?'Aligning to your curriculum…':'Personalizing for '+currentStudent.name}</div> </div>`;
-
-try {
-const res = await fetch(‘https://api.anthropic.com/v1/messages’, {
-method:‘POST’, headers:{‘content-type’:‘application/json’},
-body: JSON.stringify({model:‘claude-sonnet-4-20250514’,max_tokens:1000,messages:[{role:‘user’,content:prompt}]})
-});
-const data = await res.json();
-let text = (data.content||[]).filter(b=>b.type===‘text’).map(b=>b.text).join(’’).trim();
-let lesson;
-try { lesson = JSON.parse(text); }
-catch(*) { try { lesson = JSON.parse(text.replace(/`json/gi,'').replace(/`/g,’’).trim()); }
-catch(*) { const a=text.indexOf(’{’),b=text.lastIndexOf(’}’); lesson = JSON.parse(text.slice(a,b+1)); } }
-
-```
-currentLesson = lesson;
-const rec = {date:new Date().toLocaleDateString(), ratings:{...currentRatings}, errors:[...currentErrors]};
-const idx = students.findIndex(s=>s.id===currentStudent.id);
-students[idx].sessions = [rec,...(students[idx].sessions||[])].slice(0,10);
-currentStudent = students[idx];
-
-document.getElementById('gen-box').innerHTML = `
-<div style="font-size:14px;font-weight:800;color:#4ECDC4;margin-bottom:4px">✅ Lesson Ready!</div>
-${lesson.hasCurriculumAlignment?'<div style="font-size:11px;color:#4ECDC4;margin-bottom:8px;font-weight:600">📋 Curriculum standards mapped to each activity</div>':''}
-<div style="font-size:12px;color:#9999BB;margin-bottom:12px">${lesson.focusSummary||''}</div>
-<button class="btn btn-teal" style="width:100%;font-size:14px" onclick="viewLesson()">View Lesson Plan →</button>`;
-```
-
-} catch(e) {
-document.getElementById(‘gen-box’).innerHTML = ` <div style="font-size:15px;font-weight:800;margin-bottom:4px">🤖 Generate Lesson Plan</div> <div style="font-size:12px;color:#9999BB;margin-bottom:14px">Something went wrong. Please try again.</div> <button class="btn btn-teal" style="width:100%;font-size:14px" onclick="generateLesson()">Retry →</button> <div style="margin-top:10px;padding:10px 12px;background:#FF6B6B22;border-radius:8px;font-size:12px;color:#FF6B6B">⚠️ ${e.message}</div>`;
-}
-}
-
-// ── LESSON VIEW ───────────────────────────────────────────────────
-function viewLesson() {
-if (!currentLesson) return;
-openSegIndex = null;
-const lesson = currentLesson;
-const label = `${currentStudent.name} · ${currentStudent.level} (${lb(currentStudent.level)})`;
-
-const pillarsHtml = Object.entries(PILLARS).map(([k,p])=>`<span class="tag" style="background:${p.color}22;color:${p.color};font-size:11px">${p.emoji} ${p.label}</span>`).join(’’);
-const barHtml = lesson.segments?.map(seg=>`<div class="pillar-bar-seg" style="width:${(seg.minutes/15)*100}%;background:${PILLARS[seg.pillar]?.color||'#ccc'};opacity:${seg.emphasis?1:0.5}"></div>`).join(’’)||’’;
-const segsHtml = lesson.segments?.map((seg,i)=>{
-const p = PILLARS[seg.pillar]||{label:seg.pillar,color:’#888’,emoji:‘📌’};
-return ` <div class="seg-card" id="seg-${i}" style="border-left-color:${p.color};background:${seg.emphasis?p.color+'0A':'#fff'}"> <div class="seg-header" onclick="toggleSeg(${i})"> <div style="flex:1"> <div class="row" style="flex-wrap:wrap;gap:6px;margin-bottom:5px"> <span class="tag" style="background:${p.color}22;color:${p.color}">${p.emoji} ${p.label}</span> ${seg.emphasis?'<span class="priority-badge">⚠ PRIORITY</span>':''} <span style="font-size:11px;color:#CCC">${seg.timeRange}</span> ${seg.standard?.trim()?`<span class="std-badge">📋 ${seg.standard}</span>`:''} </div> <div style="font-size:15px;font-weight:800">${seg.title}</div> <div style="font-size:12px;color:#777;margin-top:4px;line-height:1.5">${seg.tip||''}</div> </div> <div style="font-size:14px;color:#DDD;margin-left:10px;padding-top:4px" id="seg-arrow-${i}">▼</div> </div> <div class="seg-body" id="seg-body-${i}"> ${seg.standard?.trim()?`
-<div style="background:#1A1A2E;border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;gap:10px">
-<span style="font-size:16px">📋</span>
-<div><div style="font-size:10px;font-weight:800;color:#4ECDC4;margin-bottom:2px">CURRICULUM STANDARD</div>
-<div style="font-size:13px;color:#F5F3EE">${seg.standard}</div></div>
-</div>`:''} <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px"> <div style="background:#F5F3EE;border-radius:10px;padding:12px"> <div class="lbl">👩‍🏫 TEACHER DOES</div> <div style="font-size:13px;line-height:1.7">${seg.teacherDoes||''}</div> </div> <div style="background:#F5F3EE;border-radius:10px;padding:12px"> <div class="lbl">🧒 STUDENT DOES</div> <div style="font-size:13px;line-height:1.7">${seg.studentDoes||''}</div> </div> </div> <div style="background:#FFF8E1;border-radius:8px;padding:9px 12px;font-size:12px"> <strong>📦 Materials: </strong>${seg.materials||''} </div> </div> </div>`;
-}).join(’’)||’’;
-
-document.getElementById(‘lesson-content’).innerHTML = ` <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;margin-bottom:4px">${lesson.lessonTitle}</div> <div style="font-size:14px;color:#555;margin-bottom:4px"><strong>${label}</strong> · ${new Date().toLocaleDateString()}</div> <div style="font-size:14px;color:#666;margin-bottom:20px">${lesson.focusSummary||''}</div> ${lesson.hasCurriculumAlignment?`
-<div class="card" style="background:#1A1A2E;color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:12px">
-<span style="font-size:24px">📋</span>
-<div><div style="font-size:13px;font-weight:800;color:#4ECDC4;margin-bottom:2px">Curriculum Aligned</div>
-<div style="font-size:12px;color:#9999BB">Each activity is mapped to a standard from your uploaded curriculum.</div></div>
-</div>`:''} <div class="card" style="margin-bottom:14px"> <div style="font-size:12px;font-weight:700;margin-bottom:8px">6 PILLARS OF READING</div> <div style="display:flex;flex-wrap:wrap;gap:6px">${pillarsHtml}</div> </div> <div class="pillar-bar">${barHtml}</div> <div class="time-labels"><span>0 min</span><span>5 min</span><span>10 min</span><span>15 min</span></div> ${segsHtml} ${lesson.afterLesson?`
-<div class="card" style="background:#1A1A2E;color:#fff">
-<div style="font-size:13px;font-weight:700;margin-bottom:5px">✅ After the Lesson</div>
-<div style="font-size:13px;color:#9999BB;line-height:1.6">${lesson.afterLesson}</div>
-</div>`:''}`;
-
-showScreen(‘lesson’);
-}
-
-function toggleSeg(i) {
-const body = document.getElementById(`seg-body-${i}`);
-const arrow = document.getElementById(`seg-arrow-${i}`);
-const isOpen = body.classList.contains(‘open’);
-document.querySelectorAll(’.seg-body’).forEach(b=>b.classList.remove(‘open’));
-document.querySelectorAll(’[id^=“seg-arrow-”]’).forEach(a=>a.textContent=‘▼’);
-if (!isOpen) { body.classList.add(‘open’); arrow.textContent=‘▲’; }
-}
-
-// ── ADD STUDENT ───────────────────────────────────────────────────
-function addStudent() {
-const name = document.getElementById(‘new-name’).value.trim();
-if (!name) return;
-const grade = document.getElementById(‘new-grade’).value;
-const level = document.getElementById(‘new-level’).value;
-students.push({id:Date.now(), name, grade, level, sessions:[]});
-document.getElementById(‘new-name’).value = ‘’;
-showScreen(‘dashboard’);
-}
-
-// ── PROGRESS ─────────────────────────────────────────────────────
-function showProgress(id) {
-const stu = students.find(s=>s.id===id);
-currentStudent = stu;
-document.getElementById(‘prog-title’).textContent = `Progress: ${stu.name}`;
-document.getElementById(‘prog-sub’).innerHTML = `${tag(stu.level,lc(stu.level))} <span>${lb(stu.level)} · ${stu.sessions?.length||0} sessions</span>`;
-const sess = stu.sessions||[];
-if (!sess.length) {
-document.getElementById(‘prog-content’).innerHTML = ` <div class="card" style="text-align:center;padding:40px"> <div style="font-size:36px;margin-bottom:10px">📈</div> <div style="font-weight:700;margin-bottom:10px">No sessions yet</div> <button class="btn" onclick="startSession(${stu.id})">Start First Session</button> </div>`;
-} else {
-const ratingBars = QUICK_RATINGS.map(r=>{
-const curr=sess[0]?.ratings?.[r.id]??75, prev=sess.length>1?sess[1]?.ratings?.[r.id]??75:null, diff=prev!==null?curr-prev:null;
-const c=curr>=90?’#6BCB77’:curr>=75?’#FFD166’:’#FF6B6B’;
-return ` <div style="margin-bottom:12px"> <div style="display:flex;justify-content:space-between;margin-bottom:4px"> <span style="font-size:13px;font-weight:600">${r.emoji} ${r.label}</span> <div class="row"> ${diff!==null&&diff!==0?`<span style="font-size:12px;font-weight:800;color:${diff>0?'#6BCB77':'#FF6B6B'}">${diff>0?’+’:’’}${diff}</span>`:''} <span style="font-weight:800;color:${c}">${curr}</span> </div> </div> <div class="progress-bar-bg"><div class="progress-bar" style="width:${curr}%;background:${c}"></div></div> </div>`;
+function rdErrs(){
+var el = document.getElementById(‘err-list’);
+if(!errs.length){el.innerHTML=’<div style="font-size:12px;color:#CCC">No errors logged yet</div>’;return;}
+el.innerHTML = errs.map(function(e,i){
+return ‘<div class="erow"><div class="row">’+tag(e.type,’#FF9F43’)+’<span style="font-size:12px;font-weight:700">”’+e.word+’”</span>’+(e.said?’<span style="font-size:12px;color:#888">said “’+e.said+’”</span>’:’’)+’</div><button style="background:none;border:none;color:#CCC;cursor:pointer;font-size:18px" onclick="rmErr('+i+')">x</button></div>’;
 }).join(’’);
-const history = sess.map((s,i)=>` <div style="padding:10px 0;border-bottom:${i<sess.length-1?'1px solid #F5F3EE':'none'}"> <div style="display:flex;justify-content:space-between;margin-bottom:6px"> <span style="font-weight:700;font-size:13px">${s.date}</span> ${tag(i===0?'Latest':'#'+(sess.length-i),i===0?'#4ECDC4':'#DDD')} </div> <div style="display:flex;flex-wrap:wrap;gap:5px"> ${QUICK_RATINGS.map(r=>{const v=s.ratings?.[r.id]??75;const c=v>=90?'#6BCB77':v>=75?'#FFD166':'#FF6B6B';return`<span style="font-size:11px;background:${c}22;color:${c};border-radius:6px;padding:2px 7px;font-weight:700">${r.emoji} ${v}</span>`;}).join('')} </div> </div>`).join(’’);
-document.getElementById(‘prog-content’).innerHTML = ` ${sess.length>=2?`<div class="card"><div style="font-size:14px;font-weight:700;margin-bottom:12px">📊 Latest vs Previous</div>${ratingBars}</div>`:''} <div class="card"><div style="font-size:14px;font-weight:700;margin-bottom:12px">📅 Session History</div>${history}</div>`;
-}
-showScreen(‘progress’);
 }
 
-// ── GROUPS ────────────────────────────────────────────────────────
-function renderGroups() {
-const groups = buildGroups();
-if (!groups.length) {
-document.getElementById(‘groups-content’).innerHTML = ` <div class="card" style="text-align:center;padding:40px"> <div style="font-size:36px;margin-bottom:10px">👥</div> <div style="font-weight:700;margin-bottom:6px">No Groups Yet</div> <div style="font-size:13px;color:#888;margin-bottom:16px">Complete sessions with at least 2 students to auto-generate groups.</div> <button class="btn" onclick="showScreen('dashboard')">← Dashboard</button> </div>`;
+function rdRats(){
+var el = document.getElementById(‘r-list’);
+el.innerHTML = QR.map(function(r){
+return ‘<div style="margin-bottom:14px"><div style="font-size:13px;font-weight:700;margin-bottom:6px">’+r.e+’ ‘+r.l+’</div><div class="rg">’+
+r.opts.map(function(o){
+var sel = rats[r.id]===o.v;
+var c = o.v>=90?’#6BCB77’:o.v>=75?’#FFD166’:o.v>=60?’#FF9F43’:’#FF6B6B’;
+return ‘<button class="rbtn'+(sel?' sel':'')+'" style="'+(sel?'background:'+c+';':'')+'cursor:pointer" onclick="selR(\''+r.id+'\','+o.v+')">’+o.l+’</button>’;
+}).join(’’)+’</div></div>’;
+}).join(’’);
+document.getElementById(‘r-count’).textContent = Object.keys(rats).length+’/’+QR.length+’ rated’;
+}
+
+function selR(id,v){rats[id]=v;rdRats();}
+
+function chkCurr(){
+var has = document.getElementById(‘curr-in’).value.trim().length>0;
+document.getElementById(‘curr-badge’).style.display = has?‘inline-block’:‘none’;
+document.getElementById(‘curr-msg’).style.display = has?‘block’:‘none’;
+}
+
+async function doGen(){
+var curr = document.getElementById(‘curr-in’).value.trim();
+var hasc = curr.length>0;
+var meta = LM[cur.level]||[];
+var rStr = QR.map(function(r){return r.l+’:’+(rats[r.id]||75)+((rats[r.id]||75)<75?’(WEAK)’:’’);}).join(’, ‘);
+var eStr = errs.length?errs.map(function(e){return ‘”’+e.word+’”’+(e.said?’ (said “’+e.said+’”)’:’’)+’ = ‘+e.type;}).join(’; ‘):‘none’;
+var weak = QR.filter(function(r){return (rats[r.id]||75)<75;}).map(function(r){return r.l;}).join(’, ‘)||‘none’;
+var prompt = ‘Expert reading interventionist: create a 15-min guided reading lesson.\nStudent:’+cur.name+’ Grade:’+cur.grade+’ Level:’+cur.level+’ (’+meta[1]+’)\n’+(ownText?‘Using own classroom text/decodable\n’:’’)+
+‘Ratings:’+rStr+’ Errors:’+eStr+’ Weak:’+weak+’\n’+
+(hasc?‘Curriculum: ‘+curr+’\nCRITICAL: cite exact standard codes in each segment standard field.’:‘No curriculum. Leave standard as empty string.’)+
+‘\nReply ONLY raw JSON:\n{“lessonTitle”:”…”,“focusSummary”:”…”,“hasCurriculumAlignment”:’+hasc+’,“segments”:[{“pillar”:“phonemic”,“title”:”…”,“timeRange”:“0-2 min”,“minutes”:2,“emphasis”:false,“teacherDoes”:”…”,“studentDoes”:”…”,“materials”:”…”,“tip”:”…”,“standard”:””},{“pillar”:“phonics”,“title”:”…”,“timeRange”:“2-5 min”,“minutes”:3,“emphasis”:true,“teacherDoes”:”…”,“studentDoes”:”…”,“materials”:”…”,“tip”:”…”,“standard”:””},{“pillar”:“fluency”,“title”:”…”,“timeRange”:“5-8 min”,“minutes”:3,“emphasis”:true,“teacherDoes”:”…”,“studentDoes”:”…”,“materials”:”…”,“tip”:”…”,“standard”:””},{“pillar”:“vocabulary”,“title”:”…”,“timeRange”:“8-11 min”,“minutes”:3,“emphasis”:false,“teacherDoes”:”…”,“studentDoes”:”…”,“materials”:”…”,“tip”:”…”,“standard”:””},{“pillar”:“comprehension”,“title”:”…”,“timeRange”:“11-13 min”,“minutes”:2,“emphasis”:false,“teacherDoes”:”…”,“studentDoes”:”…”,“materials”:”…”,“tip”:”…”,“standard”:””},{“pillar”:“writing”,“title”:”…”,“timeRange”:“13-15 min”,“minutes”:2,“emphasis”:false,“teacherDoes”:”…”,“studentDoes”:”…”,“materials”:”…”,“tip”:”…”,“standard”:””}],“afterLesson”:”…”}\nReal content for ‘+cur.name+’. emphasis true on 2 weakest.’;
+
+document.getElementById(‘gen-box’).innerHTML = ‘<div style="text-align:center;padding:8px 0"><div class="spin" style="margin:0 auto 8px"></div><div style="font-size:14px;font-weight:700">Building lesson plan…</div><div style="font-size:12px;color:#9999BB">’+(hasc?‘Aligning to your curriculum…’:‘Personalizing for ‘+cur.name)+’</div></div>’;
+
+try{
+var res = await fetch(‘https://api.anthropic.com/v1/messages’,{method:‘POST’,headers:{‘content-type’:‘application/json’},body:JSON.stringify({model:‘claude-sonnet-4-20250514’,max_tokens:1000,messages:[{role:‘user’,content:prompt}]})});
+var data = await res.json();
+var text = (data.content||[]).filter(function(b){return b.type===‘text’;}).map(function(b){return b.text;}).join(’’).trim();
+var les; try{les=JSON.parse(text);}catch(e){try{les=JSON.parse(text.replace(/`json/gi,'').replace(/`/g,’’).trim());}catch(e2){var a=text.indexOf(’{’),b=text.lastIndexOf(’}’);les=JSON.parse(text.slice(a,b+1));}}
+lesson = les;
+var rec = {date:new Date().toLocaleDateString(),ratings:Object.assign({},rats),errors:errs.slice()};
+var idx = students.findIndex(function(s){return s.id===cur.id;});
+students[idx].sessions = [rec].concat(students[idx].sessions).slice(0,10);
+cur = students[idx];
+document.getElementById(‘gen-box’).innerHTML = ‘<div style="font-size:14px;font-weight:800;color:#4ECDC4;margin-bottom:4px">Lesson Ready!</div><div style="font-size:12px;color:#9999BB;margin-bottom:12px">’+les.focusSummary+’</div><button class="btn btn-teal" style="width:100%;font-size:14px" onclick="viewLes()">View Lesson Plan</button>’;
+}catch(e){
+document.getElementById(‘gen-box’).innerHTML = ‘<div style="font-size:15px;font-weight:800;margin-bottom:4px">Generate Lesson Plan</div><div style="font-size:12px;color:#9999BB;margin-bottom:14px">Something went wrong. Please try again.</div><button class="btn btn-teal" style="width:100%;font-size:14px" onclick="doGen()">Retry</button><div style="margin-top:10px;padding:10px;background:#FF6B6B22;border-radius:8px;font-size:12px;color:#FF6B6B">’+e.message+’</div>’;
+}
+}
+
+function viewLes(){
+if(!lesson) return;
+openSeg = null;
+var les = lesson;
+var label = cur.name+’ - ‘+cur.level+’ (’+lb(cur.level)+’)’;
+var pillHtml = Object.entries(PILLS).map(function(x){return tag(x[1].e+’ ‘+x[1].l,x[1].c);}).join(’ ‘);
+var barHtml = (les.segments||[]).map(function(sg){var p=PILLS[sg.pillar]||{c:’#ccc’};return ‘<div class="pbar-seg" style="width:'+((sg.minutes/15)*100)+'%;background:'+p.c+';opacity:'+(sg.emphasis?1:.5)+'"></div>’;}).join(’’);
+var segHtml = (les.segments||[]).map(function(sg,i){
+var p = PILLS[sg.pillar]||{l:sg.pillar,c:’#888’,e:’?’};
+return ‘<div class="seg" style="border-left-color:'+p.c+';background:'+(sg.emphasis?p.c+'0A':'#fff')+'"><div style="display:flex;justify-content:space-between;cursor:pointer" onclick="togSeg('+i+')"><div style="flex:1"><div class="row" style="flex-wrap:wrap;gap:6px;margin-bottom:5px">’+tag(p.e+’ ‘+p.l,p.c)+(sg.emphasis?’<span style="background:#FF6B6B;color:#fff;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:800">PRIORITY</span>’:’’)+’<span style="font-size:11px;color:#CCC">’+sg.timeRange+’</span>’+(sg.standard?’<span style="background:#1A1A2E;color:#4ECDC4;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700">’+sg.standard+’</span>’:’’)+’</div><div style="font-size:15px;font-weight:800">’+sg.title+’</div><div style="font-size:12px;color:#777;margin-top:4px;line-height:1.5">’+sg.tip+’</div></div><div style="font-size:14px;color:#DDD;margin-left:10px;padding-top:4px" id="sa-'+i+'">▼</div></div><div class="seg-body" id="sb-'+i+'">’+(sg.standard?’<div style="background:#1A1A2E;border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;gap:10px"><span style="font-size:16px">📋</span><div><div style="font-size:10px;font-weight:800;color:#4ECDC4;margin-bottom:2px">CURRICULUM STANDARD</div><div style="font-size:13px;color:#F5F3EE">’+sg.standard+’</div></div></div>’:’’)+’<div class="grid2" style="gap:10px;margin-bottom:10px"><div style="background:#F5F3EE;border-radius:10px;padding:12px"><div class="lbl">TEACHER DOES</div><div style="font-size:13px;line-height:1.7">’+sg.teacherDoes+’</div></div><div style="background:#F5F3EE;border-radius:10px;padding:12px"><div class="lbl">STUDENT DOES</div><div style="font-size:13px;line-height:1.7">’+sg.studentDoes+’</div></div></div><div style="background:#FFF8E1;border-radius:8px;padding:9px 12px;font-size:12px"><strong>Materials: </strong>’+sg.materials+’</div></div></div>’;
+}).join(’’);
+document.getElementById(‘lesson-out’).innerHTML =
+‘<div style="font-family:Playfair Display,serif;font-size:28px;font-weight:700;margin-bottom:4px">’+les.lessonTitle+’</div>’+
+‘<div style="font-size:14px;color:#555;margin-bottom:4px"><strong>’+label+’</strong> - ‘+new Date().toLocaleDateString()+’</div>’+
+‘<div style="font-size:14px;color:#666;margin-bottom:20px">’+les.focusSummary+’</div>’+
+(les.hasCurriculumAlignment?’<div class="card" style="background:#1A1A2E;color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:12px"><span style="font-size:24px">📋</span><div><div style="font-size:13px;font-weight:800;color:#4ECDC4;margin-bottom:2px">Curriculum Aligned</div><div style="font-size:12px;color:#9999BB">Each activity mapped to your curriculum standards.</div></div></div>’:’’)+
+‘<div class="card" style="margin-bottom:14px"><div style="font-size:12px;font-weight:700;margin-bottom:8px">6 PILLARS OF READING</div><div style="display:flex;flex-wrap:wrap;gap:6px">’+pillHtml+’</div></div>’+
+‘<div class="pbar-wrap">’+barHtml+’</div>’+
+‘<div class="tlabels"><span>0 min</span><span>5 min</span><span>10 min</span><span>15 min</span></div>’+
+segHtml+
+(les.afterLesson?’<div class="card" style="background:#1A1A2E;color:#fff"><div style="font-size:13px;font-weight:700;margin-bottom:5px">After the Lesson</div><div style="font-size:13px;color:#9999BB;line-height:1.6">’+les.afterLesson+’</div></div>’:’’);
+go(‘lesson’);
+}
+
+function togSeg(i){
+var body = document.getElementById(‘sb-’+i);
+var arrow = document.getElementById(‘sa-’+i);
+var isOpen = body.classList.contains(‘open’);
+document.querySelectorAll(’.seg-body’).forEach(function(b){b.classList.remove(‘open’);});
+document.querySelectorAll(’[id^=“sa-”]’).forEach(function(a){a.innerHTML=’▼’;});
+if(!isOpen){body.classList.add(‘open’);arrow.innerHTML=’▲’;}
+}
+
+function addStu(){
+var n = document.getElementById(‘new-name’).value.trim(); if(!n) return;
+students.push({id:Date.now(),name:n,grade:document.getElementById(‘new-grade’).value,level:document.getElementById(‘new-level’).value,sessions:[]});
+document.getElementById(‘new-name’).value = ‘’;
+go(‘dash’);
+}
+
+function showProg(id){
+var stu = students.find(function(s){return s.id===id;});
+cur = stu;
+document.getElementById(‘prog-h’).textContent = ‘Progress: ‘+stu.name;
+document.getElementById(‘prog-sub’).innerHTML = tag(stu.level,lc(stu.level))+’ ‘+lb(stu.level)+’ - ‘+stu.sessions.length+’ sessions’;
+var sess = stu.sessions||[];
+if(!sess.length){
+document.getElementById(‘prog-out’).innerHTML = ‘<div class="card" style="text-align:center;padding:40px"><div style="font-size:36px;margin-bottom:10px">📈</div><div style="font-weight:700;margin-bottom:10px">No sessions yet</div><button class="btn" onclick="startSess('+stu.id+')">Start First Session</button></div>’;
+} else {
+var bars = QR.map(function(r){
+var curr=sess[0].ratings[r.id]||75, prev=sess.length>1?(sess[1].ratings[r.id]||75):null, diff=prev!==null?curr-prev:null;
+var c=curr>=90?’#6BCB77’:curr>=75?’#FFD166’:’#FF6B6B’;
+return ‘<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:13px;font-weight:600">’+r.e+’ ‘+r.l+’</span><div class="row">’+(diff!==null&&diff!==0?’<span style="font-size:12px;font-weight:800;color:'+(diff>0?'#6BCB77':'#FF6B6B')+'">’+(diff>0?’+’:’’)+diff+’</span>’:’’)+’<span style="font-weight:800;color:'+c+'">’+curr+’</span></div></div><div class="pbg"><div class="pbar" style="width:'+curr+'%;background:'+c+'"></div></div></div>’;
+}).join(’’);
+var hist = sess.map(function(s,i){return ‘<div style="padding:10px 0;border-bottom:'+(i<sess.length-1?'1px solid #F5F3EE':'none')+'"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-weight:700;font-size:13px">’+s.date+’</span>’+tag(i===0?‘Latest’:’#’+(sess.length-i),i===0?’#4ECDC4’:’#DDD’)+’</div><div style="display:flex;flex-wrap:wrap;gap:5px">’+QR.map(function(r){var v=s.ratings[r.id]||75;var c=v>=90?’#6BCB77’:v>=75?’#FFD166’:’#FF6B6B’;return’<span style="font-size:11px;background:'+c+'22;color:'+c+';border-radius:6px;padding:2px 7px;font-weight:700">’+r.e+’ ‘+v+’</span>’;}).join(’’)+’</div></div>’;}).join(’’);
+document.getElementById(‘prog-out’).innerHTML = (sess.length>=2?’<div class="card"><div style="font-size:14px;font-weight:700;margin-bottom:12px">Latest vs Previous</div>’+bars+’</div>’:’’)+’<div class="card"><div style="font-size:14px;font-weight:700;margin-bottom:12px">Session History</div>’+hist+’</div>’;
+}
+go(‘progress’);
+}
+
+function bldGroups(){
+var ws = students.filter(function(s){return s.sessions.length>0;});
+if(ws.length<2) return [];
+var tagged = ws.map(function(s){
+var r = s.sessions[0].ratings||{};
+var w = QR.reduce(function(min,q){return (r[q.id]||75)<(r[min.id]||75)?q:min;},QR[0]);
+return Object.assign({},s,{wid:w.id,wl:w.l,wa:avg(r)});
+});
+var bkts = {};
+tagged.forEach(function(s){if(!bkts[s.wid])bkts[s.wid]=[];bkts[s.wid].push(s);});
+var pc = {accuracy:’#FF6B6B’,fluency:’#FFD166’,decoding:’#FF9F43’,selfmon:’#4ECDC4’,comprehension:’#A78BFA’};
+return Object.entries(bkts).map(function(x){
+var q = QR.find(function(r){return r.id===x[0];});
+return {id:x[0],name:q.l+’ Group’,focus:q.l,emoji:q.e,members:x[1],color:pc[x[0]]||’#4ECDC4’,avgScore:Math.round(x[1].reduce(function(a,s){return a+s.wa;},0)/x[1].length)};
+});
+}
+
+function rdGroups(){
+var grps = bldGroups();
+if(!grps.length){
+document.getElementById(‘grp-out’).innerHTML = ‘<div class="card" style="text-align:center;padding:40px"><div style="font-size:36px;margin-bottom:10px">👥</div><div style="font-weight:700;margin-bottom:6px">No Groups Yet</div><div style="font-size:13px;color:#888;margin-bottom:16px">Complete sessions with at least 2 students to auto-generate groups.</div><button class="btn" onclick="go(\'dash\')">Back to Dashboard</button></div>’;
 return;
 }
-document.getElementById(‘groups-content’).innerHTML = groups.map((g,gi)=>` <div class="card" style="border-left:5px solid ${g.color}"> <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px"> <div> <div style="font-size:17px;font-weight:800">${g.emoji} ${g.name}</div> <div style="font-size:12px;color:#888">${g.members.length} student${g.members.length!==1?'s':''} · Avg: ${g.avgScore}</div> </div> ${tag('Focus: '+g.focus, g.color)} </div> <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap"> ${g.members.map((m,j)=>`
-<div class="row">
-<div class="av" style="width:32px;height:32px;background:${AV_COLORS[j%6]};font-size:12px">${m.name[0]}</div>
-<div><div style="font-size:13px;font-weight:700">${m.name}</div><div style="font-size:11px;color:#AAA">${m.level} · ${lb(m.level)}</div></div>
-</div>`).join('')} </div> <button class="btn" style="background:${g.color};font-size:13px;padding:9px 18px" onclick="generateGroupLesson(${gi})"> 🤖 Generate Group Lesson Plan </button> </div>`).join(’’);
-window._currentGroups = groups;
+window._grps = grps;
+document.getElementById(‘grp-out’).innerHTML = grps.map(function(g,gi){
+return ‘<div class="card" style="border-left:5px solid '+g.color+'"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px"><div><div style="font-size:17px;font-weight:800">’+g.emoji+’ ‘+g.name+’</div><div style="font-size:12px;color:#888">’+g.members.length+’ students - Avg: ‘+g.avgScore+’</div></div>’+tag(‘Focus: ‘+g.focus,g.color)+’</div><div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">’+g.members.map(function(m,j){return ‘<div class="row"><div class="av" style="width:32px;height:32px;background:'+AVC[j%6]+';font-size:12px">’+m.name[0]+’</div><div><div style="font-size:13px;font-weight:700">’+m.name+’</div><div style="font-size:11px;color:#AAA">’+m.level+’ - ‘+lb(m.level)+’</div></div></div>’;}).join(’’)+’</div><button class="btn" style="background:'+g.color+';font-size:13px;padding:9px 18px" onclick="doGrpLes('+gi+')">Generate Group Lesson</button></div>’;
+}).join(’’);
 }
 
-async function generateGroupLesson(gi) {
-const group = window._currentGroups[gi];
-const level = group.members[0]?.level||‘Level 5’;
-const prompt = `Reading teacher: 15-min small group lesson. Group:${group.name} Level:${level} Students:${group.members.map(m=>m.name).join(',')} WeakArea:${group.focus} Reply ONLY raw JSON: {"lessonTitle":"...","focusSummary":"...","hasCurriculumAlignment":false,"segments":[{"pillar":"phonemic","title":"...","timeRange":"0-2 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"phonics","title":"...","timeRange":"2-5 min","minutes":3,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"fluency","title":"...","timeRange":"5-8 min","minutes":3,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"vocabulary","title":"...","timeRange":"8-11 min","minutes":3,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"comprehension","title":"...","timeRange":"11-13 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"writing","title":"...","timeRange":"13-15 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""}],"afterLesson":"..."} Real content. emphasis:true on 2 segments targeting ${group.focus}.`;
-
-document.getElementById(‘groups-content’).innerHTML = ` <div style="text-align:center;padding:60px"> <div class="spinner" style="margin:0 auto 12px"></div> <div style="font-weight:700;margin-bottom:6px">Building group lesson…</div> <div style="font-size:13px;color:#888">For ${group.name}</div> </div>`;
-
-try {
-const res = await fetch(‘https://api.anthropic.com/v1/messages’, {
-method:‘POST’, headers:{‘content-type’:‘application/json’},
-body: JSON.stringify({model:‘claude-sonnet-4-20250514’,max_tokens:1000,messages:[{role:‘user’,content:prompt}]})
-});
-const data = await res.json();
-let text = (data.content||[]).filter(b=>b.type===‘text’).map(b=>b.text).join(’’).trim();
-let lesson;
-try{lesson=JSON.parse(text);}catch(*){try{lesson=JSON.parse(text.replace(/`json/gi,'').replace(/`/g,’’).trim());}catch(*){const a=text.indexOf(’{’),b=text.lastIndexOf(’}’);lesson=JSON.parse(text.slice(a,b+1));}}
-currentLesson = lesson;
-currentStudent = {name:group.name, level:group.members[0]?.level||‘Level 5’};
-viewLesson();
-} catch(e) {
-renderGroups();
-alert(’Error generating lesson: ’+e.message);
-}
+async function doGrpLes(gi){
+var g = window._grps[gi];
+var level = g.members[0]&&g.members[0].level||‘Level 5’;
+var prompt = ‘Reading teacher: 15-min small group lesson. Group:’+g.name+’ Level:’+level+’ Students:’+g.members.map(function(m){return m.name;}).join(’,’)+’ WeakArea:’+g.focus+’\nReply ONLY raw JSON:\n{“lessonTitle”:”…”,“focusSummary”:”…”,“hasCurriculumAlignment”:false,“segments”:[{“pillar”:“phonemic”,“title”:”…”,“timeRange”:“0-2 min”,“minutes”:2,“emphasis”:false,“teacherDoes”:”…”,“studentDoes”:”…”,“materials”:”…”,“tip”:”…”,“standard”:””},{“pillar”:“phonics”,“title”:”…”,“timeRange”:“2-5 min”,“minutes”:3,“emphasis”:false,“teacherDoes”:”…”,“studentDoes”:”…”,“materials”:”…”,“tip”:”…”,“standard”:””},{“pillar”:“fluency”,“title”:”…”,“timeRange”:“5-8 min”,“minutes”:3,“emphasis”:false,“teacherDoes”:”…”,“studentDoes”:”…”,“materials”:”…”,“tip”:”…”,“standard”:””},{“pillar”:“vocabulary”,“title”:”…”,“timeRange”:“8-11 min”,“minutes”:3,“emphasis”:false,“teacherDoes”:”…”,“studentDoes”:”…”,“materials”:”…”,“tip”:”…”,“standard”:””},{“pillar”:“comprehension”,“title”:”…”,“timeRange”:“11-13 min”,“minutes”:2,“emphasis”:false,“teacherDoes”:”…”,“studentDoes”:”…”,“materials”:”…”,“tip”:”…”,“standard”:””},{“pillar”:“writing”,“title”:”…”,“timeRange”:“13-15 min”,“minutes”:2,“emphasis”:false,“teacherDoes”:”…”,“studentDoes”:”…”,“materials”:”…”,“tip”:”…”,“standard”:””}],“afterLesson”:”…”}\nReal content. emphasis true on 2 segments targeting ‘+g.focus+’.’;
+document.getElementById(‘grp-out’).innerHTML = ‘<div style="text-align:center;padding:60px"><div class="spin" style="margin:0 auto 12px"></div><div style="font-weight:700;margin-bottom:6px">Building group lesson…</div></div>’;
+try{
+var res = await fetch(‘https://api.anthropic.com/v1/messages’,{method:‘POST’,headers:{‘content-type’:‘application/json’},body:JSON.stringify({model:‘claude-sonnet-4-20250514’,max_tokens:1000,messages:[{role:‘user’,content:prompt}]})});
+var data = await res.json();
+var text = (data.content||[]).filter(function(b){return b.type===‘text’;}).map(function(b){return b.text;}).join(’’).trim();
+var les; try{les=JSON.parse(text);}catch(e){try{les=JSON.parse(text.replace(/`json/gi,'').replace(/`/g,’’).trim());}catch(e2){var a=text.indexOf(’{’),b=text.lastIndexOf(’}’);les=JSON.parse(text.slice(a,b+1));}}
+lesson = les;
+cur = {name:g.name,level:g.members[0]&&g.members[0].level||‘Level 5’};
+viewLes();
+}catch(e){rdGroups();alert(’Error: ’+e.message);}
 }
 
-// ── INIT ──────────────────────────────────────────────────────────
-populateLevelSelect();
-renderDashboard();
+function populateLvl(){
+var sel = document.getElementById(‘new-level’);
+sel.innerHTML = LEVELS.map(function(l){return ‘<option value="'+l+'">’+l+’ - ‘+LM[l][1]+’ (’+LM[l][0]+’)</option>’;}).join(’’);
+}
+
+populateLvl();
+rdDash();
 </script>
 
 </body>
