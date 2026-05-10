@@ -152,6 +152,20 @@ button,input,select,textarea{font-family:'DM Sans',sans-serif;}
 </div>
 
 ```
+<!-- Passage (hidden when using own text) -->
+<div class="card" id="passage-card">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+<div class="lbl" style="margin-bottom:0">📖 PASSAGE</div>
+<button class="btn btn-teal btn-sm" onclick="printPassage()">🖨 Print / Display</button>
+</div>
+<div style="display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap" id="passage-tabs"></div>
+<div style="background:#F5F3EE;border-radius:10px;padding:14px;font-size:14px;line-height:2;font-family:Georgia,serif;max-height:200px;overflow-y:auto;white-space:pre-line" id="passage-text"></div>
+<div style="margin-top:12px;border-top:1px solid #F0F0F0;padding-top:10px">
+<div class="lbl">COMPREHENSION QUESTIONS</div>
+<div id="passage-questions"></div>
+</div>
+</div>
+
 <!-- Errors -->
 <div class="card">
 <div class="lbl">✏️ ERRORS HEARD</div>
@@ -244,6 +258,26 @@ button,input,select,textarea{font-family:'DM Sans',sans-serif;}
 
 <script>
 // ── DATA ──────────────────────────────────────────────────────────
+const PASSAGES = {
+"Level 1":[{title:"My Cat",text:"I have a cat.\nMy cat is big.\nShe can sit.\nShe can nap.\nI love my cat.",questions:["What can the cat do?","Is the cat big or small?","Do you have a pet?"]},{title:"The Sun",text:"I see the sun.\nThe sun is hot.\nThe sun is big.\nI like the sun.",questions:["What is the sun like?","When do you see the sun?","Do you like sunny days?"]},{title:"My Ball",text:"I have a ball.\nIt is red.\nI kick the ball.\nI throw the ball.\nFun, fun, fun!",questions:["What color is the ball?","What do you do with the ball?","What is your favorite toy?"]}],
+"Level 2":[{title:"My Dog",text:"I have a dog.\nMy dog can run.\nMy dog can jump.\nHe is so fun.\nI like my dog.",questions:["What can the dog do?","How does the child feel?","What pet would you want?"]},{title:"The Rain",text:"It is raining.\nI see the rain.\nI have my coat.\nI have my boots.\nI like the rain!",questions:["What does the child wear?","How does the child feel?","What do you do on rainy days?"]},{title:"At School",text:"I go to school.\nI see my friends.\nWe read and write.\nWe play at lunch.\nI like school!",questions:["What do they do at school?","Who does the child see?","What is your favorite thing about school?"]}],
+"Level 3":[{title:"The Big Dog",text:"The dog ran fast.\nThe dog ran to the man.\nThe man pat the dog.\nThe dog was happy.\nHe wagged his tail.",questions:["Where did the dog run?","How did the dog feel?","What do dogs do when happy?"]},{title:"My Pet Fish",text:"I have a pet fish.\nHis name is Fin.\nFin is blue and red.\nHe swims all day.\nI feed him every morning.",questions:["What is the fish's name?","What color is the fish?","When does the child feed the fish?"]},{title:"Time to Play",text:"School is done.\nTime to play!\nI ride my bike.\nI kick my ball.\nI run with my dog.\nWhat a great day!",questions:["What does the child do after school?","How does the child feel?","What do you like to do after school?"]}],
+"Level 4":[{title:"At the Park",text:"We went to the park. We ran and had fun. I saw a big duck. The duck sat in the mud. We fed the duck bits of bread. Then we went home for lunch.",questions:["Where did they go?","What did they see?","What did they feed the duck?","What do you like to do at a park?"]},{title:"The Big Game",text:"Today we play a game. I kick the ball hard. It goes far and fast. My team runs and cheers. We score a point! We win the game! My coach gives me a high five.",questions:["What game are they playing?","What happened when they scored?","How do you think they felt?","What sport do you like?"]},{title:"My New Bike",text:"I got a new bike. It is red and black. I put on my helmet. Then I rode down the street. I fell one time but I got back up. By the end I could ride all the way to the corner.",questions:["What color is the bike?","What did the child wear for safety?","What happened when the child fell?","Have you ever learned something hard?"]}],
+"Level 5":[{title:"The Lost Puppy",text:"One morning Jake found a small puppy near the swings. It had no collar and looked scared. Jake sat down slowly so the puppy would not run. He gave it part of his sandwich. The puppy wagged its tail and licked his hand. Jake brought it home and made a lost dog sign.",questions:["Where did Jake find the puppy?","Why did Jake sit down slowly?","What did Jake do to help find the owner?","How do you think Jake felt?"]},{title:"Pizza Night",text:"Every Friday is pizza night at Mia's house. Her whole family helps make the pizza. Dad rolls out the dough. Mom spreads the sauce. Mia and her brother put on the toppings. Mia always adds extra cheese. When the pizza comes out of the oven it smells amazing.",questions:["When is pizza night?","What does each person do to help?","What does Mia always add?","What is a special tradition in your family?"]},{title:"The Spelling Bee",text:"Carlos had practiced every night for the spelling bee. On the day of the contest his hands were shaking. His teacher smiled and said he was ready. When his turn came he took a deep breath. He spelled every word correctly and won first place.",questions:["How did Carlos prepare?","How did Carlos feel before his turn?","What helped Carlos feel better?","What does it mean to believe in yourself?"]}],
+"Level 6":[{title:"The Soccer Star",text:"Mia loved to play soccer. She practiced every day after school even when it was cold. One day her team made it to the championship game. Mia was nervous but she was ready. In the final minute the score was tied. Her teammate passed her the ball and Mia kicked it as hard as she could. It flew right into the net.",questions:["How did Mia prepare?","How did she feel before the game?","What happened in the final minute?","What does this story teach about hard work?"]},{title:"Rainy Day Inside",text:"It was too rainy to go outside so Sam had to find something to do indoors. First he tried reading a book about frogs. Then he built a tall tower with blocks. Later his mom showed him how to make chocolate chip cookies. The kitchen smelled warm and sweet.",questions:["Why did Sam stay inside?","Name three things Sam did.","What did Sam and his mom make?","What do you like to do on a rainy day?"]},{title:"New Kid",text:"On the first day at her new school Sofia did not know anyone. She sat alone at lunch and stared at her sandwich. Then a girl named Priya sat down next to her. Priya asked Sofia what her favorite video game was. They talked until the bell rang. By the end of the day Sofia had made her first friend.",questions:["How did Sofia feel at the start?","How did Priya help Sofia?","What did they talk about?","Have you ever helped someone who was new?"]}],
+"Level 7":[{title:"Learning to Skate",text:"Marcus wanted to learn to skateboard more than anything. His older cousin made it look easy. But the first time Marcus tried, he fell three times in a row. His knees hurt and he wanted to quit. His cousin said everyone falls — that's how you learn. Marcus tried again. By the end of the day he could roll down the sidewalk without falling.",questions:["Why did Marcus want to skateboard?","What happened the first time?","What did his cousin say?","What does 'everyone falls' mean to you?"]},{title:"The Class Pet",text:"Room 14 voted to get a class pet. Most kids wanted a dog but the teacher explained a dog was too hard to care for in a classroom. After a long discussion they chose a hamster named Nugget. One Monday Nugget was gone. The whole class searched everywhere. Finally Jaylen found him sleeping inside a backpack.",questions:["What pet did the class want first?","Why couldn't they have a dog?","What happened to Nugget?","Who found Nugget and where?"]},{title:"The Minecraft Build",text:"Zoe and her best friend Ava decided to build an entire city in Minecraft. Zoe built the houses and Ava designed the roads and parks. It took three full weekends to finish. When they were done they invited their class to explore the world. Some kids found secret doors and hidden chests that Zoe had placed as surprises.",questions:["How did Zoe and Ava divide the work?","How long did the build take?","What surprises did Zoe hide?","If you could build anything in Minecraft what would it be?"]}],
+"Level 8":[{title:"The Science Fair",text:"Destiny spent three weeks preparing her science fair project on whether plants grow faster with music or without it. She set up two groups of bean plants — one heard classical music for an hour a day, the other heard nothing. At the end the music plants were almost two centimeters taller. A judge asked how she came up with the idea. Destiny said her grandmother always sang to her garden.",questions:["What was Destiny's project about?","How did she set up her experiment?","What were the results?","Why do you think Destiny chose this topic?"]},{title:"Staying Safe Online",text:"The internet is an amazing place to learn and connect with friends. But it also has risks. Never share personal information like your home address or school name online. Tell a trusted adult if something online makes you feel uncomfortable. Cyberbullying — when someone is mean online — affects many kids. Remember that what you post can last forever.",questions:["Name two rules for staying safe online.","What is cyberbullying?","Why tell a trusted adult?","Why is it important to think before you post?"]},{title:"The Big Move",text:"When Theo found out his family was moving he was angry. He did not want to leave his friends or his school. For weeks he barely spoke at dinner. But on the first day at his new school his teacher asked students to share something interesting. Theo talked about his city's baseball team and three kids immediately turned around. By Friday he had exchanged numbers with all three.",questions:["Why was Theo angry?","How did Theo feel before the move?","What happened on the first day?","What does this story show about new beginnings?"]}],
+"Level 9":[{title:"How Sneakers Became Cool",text:"Today sneakers are more than shoes — they are a form of art. It started with basketball. When Nike signed Michael Jordan in 1984 and made the Air Jordan kids everywhere wanted a pair. Jordan wore them and played like no one had before. The shoes became legendary. From there sneaker culture grew fast. Rappers wore them on stage. Today rare sneakers can sell for thousands of dollars.",questions:["How did sneaker culture begin?","Why did Air Jordans become popular?","What made limited editions special?","Why do you think sneakers became more than just shoes?"]},{title:"Simone Biles",text:"Simone Biles is considered the greatest gymnast in history. She has won more World Championship medals than anyone and has moves named after her. Growing up she spent time in foster care before her grandparents adopted her. At the 2020 Olympics she made the brave decision to step back to protect her mental health. Many people admired her for that choice just as much as for her medals.",questions:["What makes Simone the greatest?","What was her early life like?","What brave decision did she make?","What does this passage say real greatness looks like?"]},{title:"The Robot That Learned to Walk",text:"Scientists spent two years building a robot that could walk like a human. The first version fell immediately. The second fell after three steps. Each time scientists collected data and made changes. By version seventeen the robot could walk across a room. The scientists said the hardest part was not building the robot — it was being patient enough to keep trying after each failure.",questions:["How long did it take?","What did scientists do after each failure?","What was the hardest part?","What lesson about failure does this teach?"]}],
+"Level 10":[{title:"The Science of Slime",text:"Slime took over the internet and kids everywhere started making it at home. Most slime is made from glue and an activator like contact lens solution. Glue is made of tiny chains called polymers that slide past each other. When you add the activator those chains link together and can no longer slide freely. This creates something not quite liquid and not quite solid — scientists call it a non-Newtonian fluid.",questions:["What are the two main ingredients?","What happens to the chains when you add activator?","What is a non-Newtonian fluid?","Name another example that works like slime."]},{title:"Why Dogs Are Good for You",text:"Science shows that owning a dog is good for your health. People with dogs get more exercise because dogs need daily walks. Petting a dog lowers cortisol — a chemical your body makes when anxious. For kids who struggle with reading some schools have brought in therapy dogs. Students read aloud to the dogs because dogs never judge. Reading scores have improved in many of these programs.",questions:["How do dogs help owners exercise?","What is cortisol?","How are therapy dogs used in schools?","Why do students feel comfortable reading to dogs?"]},{title:"How Animation Works",text:"Have you ever wondered how cartoons move? Animation is a series of still images shown so quickly that your brain tricks itself into seeing motion. Early animators drew every single frame by hand — a one-minute cartoon could need over 1400 drawings. Today most animation is done with computers. But even with computers a single animated movie can take four to five years to make.",questions:["How does animation create motion?","How many drawings did early animators need?","How has animation changed with computers?","Why do animated movies take so long?"]}],
+"Level 11":[{title:"How MrBeast Makes Videos",text:"MrBeast whose real name is Jimmy Donaldson is one of the most popular YouTubers in the world. He started making videos at age thirteen and for years barely anyone watched. But he posted every week without stopping and studied what made videos successful. Today he has over 200 million subscribers. He is also known for giving back — planting millions of trees opening food banks and paying for medical procedures.",questions:["How old was MrBeast when he started?","Why did his channel grow slowly at first?","Name two ways he gives back.","What does his story teach about reaching a big goal?"]},{title:"What Happens When You Sleep",text:"When you sleep your brain processes and stores memories from the day. That is why studying before bed helps you remember — your sleeping brain locks it in. Your body repairs muscles and releases growth hormones. Without enough sleep your ability to focus and control emotions drops significantly. Kids need 8 to 10 hours a night. Screens before bed are a major problem — blue light tricks your brain into thinking it is still daytime.",questions:["What does your brain do while you sleep?","Why can studying before bed help?","How do screens affect sleep?","What would you change about your sleep habits?"]},{title:"The History of Video Games",text:"The first widely known video game was Pong released in 1972. It was simply two paddles and a dot — but people lined up to play. In the 1980s games like Pac-Man became global sensations. Home consoles changed everything. As technology improved games became more complex with detailed worlds and storylines. Today gaming is one of the largest entertainment industries on the planet bigger than movies and music combined.",questions:["What was one of the first video games?","How did home consoles change gaming?","What is esports?","How has gaming's role in society changed?"]}],
+"Level 12":[{title:"What It Takes to Be a Content Creator",text:"Becoming a successful content creator is harder than it looks. The best creators focus on something they genuinely love. Then comes the technical side — good lighting and editing make a difference. The hardest part is consistency. Most successful channels posted for a year or more before anyone noticed. The creators who make it are not usually the most talented — they are the most consistent. They post regularly study their data and keep improving.",questions:["What does the author say is more important than a unique topic?","Why is consistency more important than talent?","What does studying data help creators do?","Would you want to be a content creator?"]},{title:"Climate Change and Weather",text:"Weather is what happens outside on any given day. Climate is the pattern of weather over many decades. So a single cold winter does not disprove global warming. Climate scientists look at long-term data to identify trends. Earth's average temperature has risen about 1.2 degrees Celsius since the 1800s. That sounds small but small changes can cause big effects — more intense storms rising sea levels and shifting growing seasons.",questions:["What is the difference between weather and climate?","Why doesn't one cold winter disprove global warming?","How much has Earth's temperature risen?","What effects can small changes cause?"]},{title:"The Real Story of Thanksgiving",text:"Most Americans learn a simple version of Thanksgiving — Pilgrims and Native Americans sharing a peaceful meal in 1621. But the real history is more complicated. The Pilgrims did share a harvest celebration with the Wampanoag but the relationship was already tense. Thanksgiving was not a national holiday until 1863 when President Lincoln declared it to promote unity during the Civil War.",questions:["What really happened in 1621?","When did Thanksgiving become a national holiday?","Why do historians encourage learning the full story?","Why is it important to learn history from multiple perspectives?"]}],
+"Level 13":[{title:"How the NFL Became America's Sport",text:"Football was not always America's most popular sport. Television changed everything. In the 1960s the NFL struck deals with TV networks to broadcast games every Sunday. The sport was fast and dramatic — perfectly suited for the screen. The Super Bowl became bigger than sports. The halftime shows the commercials and the social gathering turned it into a national event. Fantasy football gave millions of fans a personal stake in every game.",questions:["What sport was most popular before football?","How did television help the NFL?","Why did the Super Bowl become bigger than sports?","What is fantasy football?"]},{title:"Steph Curry and Basketball",text:"Before Steph Curry three-point shots were considered risky. Curry was not highly recruited out of high school — he was considered too small. He ended up at Davidson College a school most fans had never heard of. With the Golden State Warriors he developed one of the most precise shooting techniques the sport had ever seen. The results were historic: two MVP awards four championships and the all-time record for three-pointers made.",questions:["Why were three-pointers risky before Curry?","Why wasn't Curry heavily recruited?","What records did he set?","How did Curry change how other teams play?"]},{title:"The Psychology of Social Media",text:"Social media platforms are designed to keep you scrolling. Every like and notification triggers a small release of dopamine — a chemical associated with pleasure. Over time your brain starts to crave that feeling. Researchers have found that heavy social media use is linked to increased anxiety and lower self-esteem. Seeing other people's highlight reels makes your own life feel inadequate. The key is awareness and intentional use.",questions:["What is dopamine and how do platforms use it?","What is social comparison?","How much social media use is linked to loneliness?","What does the author suggest about healthy use?"]}],
+"Level 14":[{title:"The Rise of Artificial Intelligence",text:"Artificial intelligence is woven into almost every part of daily life. When you ask a voice assistant about the weather that is AI. When your streaming service recommends a show that is AI. When your phone unlocks by recognizing your face that is AI. In medicine AI detects diseases earlier than human doctors in some studies. In education AI tutoring tools can identify where a student is struggling and generate a personalized lesson.",questions:["Give three examples of AI in everyday life.","How is AI used in medicine and education?","What are two concerns critics have?","Why does the author say understanding AI is important?"]},{title:"The Business of Being Famous",text:"Being famous used to require appearing on television or in movies. Fame was controlled by powerful gatekeepers — studios labels and networks. The internet ended that. Today a teenager with a phone can build an audience of millions. Platforms like YouTube and TikTok created entirely new categories of celebrity. Brands discovered that a post from a trusted influencer could reach a more targeted audience than a TV commercial at a fraction of the cost.",questions:["How did gatekeepers control fame before the internet?","What economic change did influencer marketing bring?","What new pressures do online creators face?","What does the author suggest the changing nature of fame reveals?"]},{title:"Food Deserts in America",text:"A food desert is an area where residents do not have easy access to affordable nutritious food. Instead of grocery stores these neighborhoods have fast food and convenience stores where fresh produce is rare or expensive. Approximately 19 million Americans live in food deserts. Without access to fresh vegetables and proteins residents face higher rates of obesity diabetes and heart disease. Children in food deserts often have less nutritious diets during critical development years.",questions:["What is a food desert?","How many Americans live in food deserts?","What health problems are linked to food deserts?","What solutions does the passage describe?"]}],
+"Level 15":[{title:"Mental Health in Young People",text:"Over the past decade rates of anxiety and depression among young people have risen steadily. Social media exposes users to constant social comparison and sometimes cyberbullying. Academic pressure is another factor — many students feel overwhelmed by schoolwork and the pressure to secure a future in a competitive world. The COVID-19 pandemic significantly worsened things. Months of isolation left lasting effects on mental health that researchers are still measuring.",questions:["What two causes does the passage identify?","How did COVID-19 affect young people?","What positive changes are happening in schools?","What does the author mean by 'mental health is not weakness'?"]},{title:"How Climate Change Affects Sports",text:"Climate change is disrupting sports in many ways. Rising temperatures have shortened ski seasons. Some resorts that once operated five months a year now struggle to maintain snow for three. Extreme heat is forcing youth leagues and marathon organizers to cancel events. Olympic organizers now schedule outdoor events at unusual hours to avoid peak heat. Marine sports are affected too — coral bleaching has damaged surf breaks and diving sites worldwide.",questions:["How has climate change affected ski resorts?","Why are Olympic events scheduled at unusual hours?","How are marine sports being affected?","What are sports organizations doing in response?"]},{title:"The History of Hip-Hop",text:"Hip-hop began in the South Bronx in New York City in the 1970s. DJ Kool Herc is credited with one of its founding moments — isolating the percussive breaks in records at block parties. Four elements emerged: DJing MCing breakdancing and graffiti art. Through the 1980s and 90s hip-hop spread globally carrying the voices of communities that mainstream media had largely ignored. Today hip-hop is the most streamed genre of music in the world.",questions:["Where and when did hip-hop begin?","What are the four elements?","How did artists use hip-hop?","Why does the author call hip-hop's growth remarkable?"]}]
+};
+
+let passageIdx = 0;
+
 const LEVEL_META = {
 "Level 1":{"grade":"Kindergarten","band":"Early K","color":"#FF6B6B"},
 "Level 2":{"grade":"Kindergarten","band":"Mid K","color":"#FF6B6B"},
@@ -393,6 +427,7 @@ currentErrors = [];
 useOwnText = false;
 currentLesson = null;
 openSegIndex = null;
+passageIdx = 0;
 
 document.getElementById('obs-title').textContent = `Session: ${currentStudent.name}`;
 const lvColor = lc(currentStudent.level);
@@ -418,32 +453,79 @@ document.getElementById('curr-msg').style.display = 'none';
 renderErrorList();
 renderRatings();
 resetGenBox();
+renderPassage();
 showScreen('observe');
+}
+
+function renderPassage() {
+const level = currentStudent.level;
+const passages = PASSAGES[level] || PASSAGES["Level 5"] || [];
+if (!passages.length) return;
+const p = passages[passageIdx % passages.length];
+const lvColor = lc(level);
+
+document.getElementById('passage-tabs').innerHTML = passages.map((pas,i)=>
+`<button onclick="selectPassage(${i})" style="background:${passageIdx===i?lvColor:'#F5F3EE'};color:${passageIdx===i?'#fff':'#777'};border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer">${pas.title}</button>`
+).join('');
+
+document.getElementById('passage-text').textContent = p.text;
+document.getElementById('passage-questions').innerHTML = p.questions.map((q,i)=>
+`<div style="font-size:12px;color:#666;margin-bottom:4px;display:flex;gap:6px"><span style="font-weight:700;color:${lvColor};flex-shrink:0">${i+1}.</span><span>${q}</span></div>`
+).join('');
+}
+
+function selectPassage(i) {
+passageIdx = i;
+renderPassage();
+}
+
+function printPassage() {
+const level = currentStudent.level;
+const passages = PASSAGES[level] || PASSAGES["Level 5"] || [];
+const p = passages[passageIdx % passages.length];
+const w = window.open('','_blank');
+w.document.write(`<!DOCTYPE html><html><head><title>${p.title}</title>
+<style>body{font-family:Georgia,serif;max-width:640px;margin:40px auto;color:#1A1A2E;}
+h1{font-size:24px;margin-bottom:20px;}
+.text{font-size:16px;line-height:2.2;white-space:pre-line;margin-bottom:28px;}
+.q{margin-bottom:16px;font-size:14px;font-weight:600;}
+.line{height:28px;border-bottom:1px solid #DDD;margin-bottom:4px;}
+@media print{button{display:none}}</style></head><body>
+
+<h1>${p.title}</h1>
+<div class="text">${p.text}</div>
+<h2 style="font-size:16px;margin-bottom:16px">📝 Comprehension Questions</h2>
+${p.questions.map((q,i)=>`<div class="q">${i+1}. ${q}</div><div class="line"></div><div class="line"></div>`).join('')}
+<button onclick="window.print()" style="margin-top:20px;padding:10px 20px;font-size:14px;cursor:pointer">🖨 Print</button>
+</body></html>`);
+w.document.close();
 }
 
 function toggleOwnText() {
 useOwnText = !useOwnText;
-const toggle = document.getElementById('text-toggle');
-toggle.classList.toggle('on', useOwnText);
-document.getElementById('toggle-label').textContent = useOwnText ? 'Using classroom book or decodable' : 'Using a ReadLead passage';
-document.getElementById('toggle-left').style.fontWeight = useOwnText ? '400' : '700';
-document.getElementById('toggle-left').style.color = useOwnText ? '#AAA' : '#1A1A2E';
-document.getElementById('toggle-right').style.fontWeight = useOwnText ? '700' : '400';
-document.getElementById('toggle-right').style.color = useOwnText ? '#1A1A2E' : '#AAA';
-document.getElementById('own-text-msg').style.display = useOwnText ? 'block' : 'none';
-document.getElementById('own-text-msg').style.background = '#4ECDC415';
-document.getElementById('own-text-msg').style.border = '1px solid #4ECDC433';
-document.getElementById('own-text-msg').style.color = '#4ECDC4';
+const toggle = document.getElementById(‘text-toggle’);
+toggle.classList.toggle(‘on’, useOwnText);
+document.getElementById(‘toggle-label’).textContent = useOwnText ? ‘Using classroom book or decodable’ : ‘Using a ReadLead passage’;
+document.getElementById(‘toggle-left’).style.fontWeight = useOwnText ? ‘400’ : ‘700’;
+document.getElementById(‘toggle-left’).style.color = useOwnText ? ‘#AAA’ : ‘#1A1A2E’;
+document.getElementById(‘toggle-right’).style.fontWeight = useOwnText ? ‘700’ : ‘400’;
+document.getElementById(‘toggle-right’).style.color = useOwnText ? ‘#1A1A2E’ : ‘#AAA’;
+document.getElementById(‘own-text-msg’).style.display = useOwnText ? ‘block’ : ‘none’;
+document.getElementById(‘own-text-msg’).style.background = ‘#4ECDC415’;
+document.getElementById(‘own-text-msg’).style.border = ‘1px solid #4ECDC433’;
+document.getElementById(‘own-text-msg’).style.color = ‘#4ECDC4’;
+// Show/hide passage card
+document.getElementById(‘passage-card’).style.display = useOwnText ? ‘none’ : ‘block’;
 }
 
 function addError() {
-const word = document.getElementById('word-input').value.trim();
+const word = document.getElementById(‘word-input’).value.trim();
 if (!word) return;
-const said = document.getElementById('said-input').value.trim();
-const type = document.getElementById('type-input').value;
+const said = document.getElementById(‘said-input’).value.trim();
+const type = document.getElementById(‘type-input’).value;
 currentErrors.push({word, said, type});
-document.getElementById('word-input').value = '';
-document.getElementById('said-input').value = '';
+document.getElementById(‘word-input’).value = ‘’;
+document.getElementById(‘said-input’).value = ‘’;
 renderErrorList();
 }
 
@@ -453,32 +535,14 @@ renderErrorList();
 }
 
 function renderErrorList() {
-const el = document.getElementById('error-list');
-if (!currentErrors.length) { el.innerHTML = '<div style="font-size:12px;color:#CCC">No errors logged yet</div>'; return; }
-el.innerHTML = currentErrors.map((e,i)=>`
-<div class="error-row">
-<div class="row">
-${tag(e.type,"#FF9F43")}
-<span style="font-size:12px;font-weight:700">"${e.word}"</span>
-${e.said?`<span style="font-size:12px;color:#888">→ said "<strong>${e.said}</strong>"</span>`:''}
-</div>
-<button class="btn-danger" onclick="removeError(${i})">×</button>
-</div>`).join('');
+const el = document.getElementById(‘error-list’);
+if (!currentErrors.length) { el.innerHTML = ‘<div style="font-size:12px;color:#CCC">No errors logged yet</div>’; return; }
+el.innerHTML = currentErrors.map((e,i)=>` <div class="error-row"> <div class="row"> ${tag(e.type,"#FF9F43")} <span style="font-size:12px;font-weight:700">"${e.word}"</span> ${e.said?`<span style="font-size:12px;color:#888">→ said “<strong>${e.said}</strong>”</span>`:''} </div> <button class="btn-danger" onclick="removeError(${i})">×</button> </div>`).join(’’);
 }
 
 function renderRatings() {
-const el = document.getElementById('ratings-list');
-el.innerHTML = QUICK_RATINGS.map(r=>`
-<div style="margin-bottom:14px">
-<div style="font-size:13px;font-weight:700;margin-bottom:6px">${r.emoji} ${r.label}</div>
-<div class="rating-grid">
-${r.options.map(opt=>{
-const sel = currentRatings[r.id]===opt.v;
-const c = opt.v>=90?'#6BCB77':opt.v>=75?'#FFD166':opt.v>=60?'#FF9F43':'#FF6B6B';
-return `<button class="rating-btn${sel?' selected':''}" style="${sel?`background:${c};border-color:transparent`:''}" onclick="selectRating('${r.id}',${opt.v},'${c}')">${sel?'✓ ':''}${opt.l}</button>`;
-}).join('')}
-</div>
-</div>`).join('');
+const el = document.getElementById(‘ratings-list’);
+el.innerHTML = QUICK_RATINGS.map(r=>`<div style="margin-bottom:14px"> <div style="font-size:13px;font-weight:700;margin-bottom:6px">${r.emoji} ${r.label}</div> <div class="rating-grid"> ${r.options.map(opt=>{ const sel = currentRatings[r.id]===opt.v; const c = opt.v>=90?'#6BCB77':opt.v>=75?'#FFD166':opt.v>=60?'#FF9F43':'#FF6B6B'; return`<button class="rating-btn${sel?' selected':''}" style="${sel?`background:${c};border-color:transparent`:''}" onclick="selectRating('${r.id}',${opt.v},'${c}')">${sel?‘✓ ‘:’’}${opt.l}</button>`; }).join('')} </div> </div>`).join(’’);
 updateRatingCount();
 }
 
@@ -488,63 +552,48 @@ renderRatings();
 }
 
 function updateRatingCount() {
-document.getElementById('rating-count').textContent = `${Object.keys(currentRatings).length}/${QUICK_RATINGS.length} areas rated`;
+document.getElementById(‘rating-count’).textContent = `${Object.keys(currentRatings).length}/${QUICK_RATINGS.length} areas rated`;
 }
 
 function updateCurrBadge() {
-const hasCurr = document.getElementById('curriculum-input').value.trim().length > 0;
-document.getElementById('curr-badge').style.display = hasCurr ? 'inline-block' : 'none';
-document.getElementById('curr-msg').style.display = hasCurr ? 'block' : 'none';
-document.getElementById('gen-desc').textContent = hasCurr
-? 'Curriculum loaded — activities will cite specific standards.'
-: 'Builds a personalized 15-min lesson targeting all 6 pillars.';
+const hasCurr = document.getElementById(‘curriculum-input’).value.trim().length > 0;
+document.getElementById(‘curr-badge’).style.display = hasCurr ? ‘inline-block’ : ‘none’;
+document.getElementById(‘curr-msg’).style.display = hasCurr ? ‘block’ : ‘none’;
+document.getElementById(‘gen-desc’).textContent = hasCurr
+? ‘Curriculum loaded — activities will cite specific standards.’
+: ‘Builds a personalized 15-min lesson targeting all 6 pillars.’;
 }
 
 function resetGenBox() {
-document.getElementById('gen-box').innerHTML = `
-<div style="font-size:15px;font-weight:800;margin-bottom:4px">🤖 Generate Lesson Plan</div>
-<div style="font-size:12px;color:#9999BB;margin-bottom:14px" id="gen-desc">Builds a personalized 15-min lesson targeting all 6 pillars.</div>
-<button class="btn btn-teal" style="width:100%;font-size:14px" id="gen-btn" onclick="generateLesson()">Generate ${currentStudent?.name}'s Lesson →</button>
-<div id="gen-error" style="display:none;margin-top:10px;padding:10px 12px;background:#FF6B6B22;border-radius:8px;font-size:12px;color:#FF6B6B"></div>`;
+document.getElementById(‘gen-box’).innerHTML = ` <div style="font-size:15px;font-weight:800;margin-bottom:4px">🤖 Generate Lesson Plan</div> <div style="font-size:12px;color:#9999BB;margin-bottom:14px" id="gen-desc">Builds a personalized 15-min lesson targeting all 6 pillars.</div> <button class="btn btn-teal" style="width:100%;font-size:14px" id="gen-btn" onclick="generateLesson()">Generate ${currentStudent?.name}'s Lesson →</button> <div id="gen-error" style="display:none;margin-top:10px;padding:10px 12px;background:#FF6B6B22;border-radius:8px;font-size:12px;color:#FF6B6B"></div>`;
 }
 
 // ── GENERATE ──────────────────────────────────────────────────────
 async function generateLesson() {
-const curriculum = document.getElementById('curriculum-input')?.value?.trim()||'';
+const curriculum = document.getElementById(‘curriculum-input’)?.value?.trim()||’’;
 const hasCurr = curriculum.length > 0;
-const rStr = QUICK_RATINGS.map(r=>`${r.label}:${currentRatings[r.id]||75}${(currentRatings[r.id]||75)<75?'(WEAK)':''}`).join(', ');
-const eStr = currentErrors.length ? currentErrors.map(e=>`"${e.word}"${e.said?` (said "${e.said}")`:''}=${e.type}`).join('; ') : 'none';
-const weak = QUICK_RATINGS.filter(r=>(currentRatings[r.id]||75)<75).map(r=>r.label).join(', ')||'none';
+const rStr = QUICK_RATINGS.map(r=>`${r.label}:${currentRatings[r.id]||75}${(currentRatings[r.id]||75)<75?'(WEAK)':''}`).join(’, ‘);
+const eStr = currentErrors.length ? currentErrors.map(e=>`"${e.word}"${e.said?` (said “${e.said}”)`:''}=${e.type}`).join(’; ‘) : ‘none’;
+const weak = QUICK_RATINGS.filter(r=>(currentRatings[r.id]||75)<75).map(r=>r.label).join(’, ’)||‘none’;
 const meta = LEVEL_META[currentStudent.level]||{};
 
-const prompt = `Expert reading interventionist: create a 15-min guided reading lesson.
-Student:${currentStudent.name} Grade:${currentStudent.grade} Level:${currentStudent.level}(${meta.band||''})
-${useOwnText?'Using teacher\'s own classroom text/decodable':''}
-Ratings:${rStr} Errors:${eStr} Weak:${weak}
-${hasCurr?`Curriculum: ${curriculum}\nCRITICAL: cite exact standard codes in each segment "standard" field.`:'No curriculum. Leave "standard" as "".'}
-Reply ONLY raw JSON:
-{"lessonTitle":"...","focusSummary":"...","hasCurriculumAlignment":${hasCurr},"segments":[{"pillar":"phonemic","title":"...","timeRange":"0-2 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":"..."},{"pillar":"phonics","title":"...","timeRange":"2-5 min","minutes":3,"emphasis":true,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":"..."},{"pillar":"fluency","title":"...","timeRange":"5-8 min","minutes":3,"emphasis":true,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":"..."},{"pillar":"vocabulary","title":"...","timeRange":"8-11 min","minutes":3,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":"..."},{"pillar":"comprehension","title":"...","timeRange":"11-13 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":"..."},{"pillar":"writing","title":"...","timeRange":"13-15 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":"..."}],"afterLesson":"..."}
-Real content for ${currentStudent.name}. emphasis:true on 2 weakest.`;
+const prompt = `Expert reading interventionist: create a 15-min guided reading lesson. Student:${currentStudent.name} Grade:${currentStudent.grade} Level:${currentStudent.level}(${meta.band||''}) ${useOwnText?'Using teacher\'s own classroom text/decodable':''} Ratings:${rStr} Errors:${eStr} Weak:${weak} ${hasCurr?`Curriculum: ${curriculum}\nCRITICAL: cite exact standard codes in each segment “standard” field.`:'No curriculum. Leave "standard" as "".'} Reply ONLY raw JSON: {"lessonTitle":"...","focusSummary":"...","hasCurriculumAlignment":${hasCurr},"segments":[{"pillar":"phonemic","title":"...","timeRange":"0-2 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":"..."},{"pillar":"phonics","title":"...","timeRange":"2-5 min","minutes":3,"emphasis":true,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":"..."},{"pillar":"fluency","title":"...","timeRange":"5-8 min","minutes":3,"emphasis":true,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":"..."},{"pillar":"vocabulary","title":"...","timeRange":"8-11 min","minutes":3,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":"..."},{"pillar":"comprehension","title":"...","timeRange":"11-13 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":"..."},{"pillar":"writing","title":"...","timeRange":"13-15 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":"..."}],"afterLesson":"..."} Real content for ${currentStudent.name}. emphasis:true on 2 weakest.`;
 
-document.getElementById('gen-box').innerHTML = `
-<div style="text-align:center;padding:8px 0">
-<div class="spinner" style="margin-bottom:8px"></div>
-<div style="font-size:14px;font-weight:700;margin-bottom:4px">Building lesson plan…</div>
-<div style="font-size:12px;color:#9999BB">${hasCurr?'Aligning to your curriculum…':'Personalizing for '+currentStudent.name}</div>
-</div>`;
+document.getElementById(‘gen-box’).innerHTML = ` <div style="text-align:center;padding:8px 0"> <div class="spinner" style="margin-bottom:8px"></div> <div style="font-size:14px;font-weight:700;margin-bottom:4px">Building lesson plan…</div> <div style="font-size:12px;color:#9999BB">${hasCurr?'Aligning to your curriculum…':'Personalizing for '+currentStudent.name}</div> </div>`;
 
 try {
-const res = await fetch('https://api.anthropic.com/v1/messages', {
-method:'POST', headers:{'content-type':'application/json'},
-body: JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
+const res = await fetch(‘https://api.anthropic.com/v1/messages’, {
+method:‘POST’, headers:{‘content-type’:‘application/json’},
+body: JSON.stringify({model:‘claude-sonnet-4-20250514’,max_tokens:1000,messages:[{role:‘user’,content:prompt}]})
 });
 const data = await res.json();
-let text = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim();
+let text = (data.content||[]).filter(b=>b.type===‘text’).map(b=>b.text).join(’’).trim();
 let lesson;
 try { lesson = JSON.parse(text); }
-catch(_) { try { lesson = JSON.parse(text.replace(/```json/gi,'').replace(/```/g,'').trim()); }
-catch(_) { const a=text.indexOf('{'),b=text.lastIndexOf('}'); lesson = JSON.parse(text.slice(a,b+1)); } }
+catch(*) { try { lesson = JSON.parse(text.replace(/`json/gi,'').replace(/`/g,’’).trim()); }
+catch(*) { const a=text.indexOf(’{’),b=text.lastIndexOf(’}’); lesson = JSON.parse(text.slice(a,b+1)); } }
 
+```
 currentLesson = lesson;
 const rec = {date:new Date().toLocaleDateString(), ratings:{...currentRatings}, errors:[...currentErrors]};
 const idx = students.findIndex(s=>s.id===currentStudent.id);
@@ -556,12 +605,10 @@ document.getElementById('gen-box').innerHTML = `
 ${lesson.hasCurriculumAlignment?'<div style="font-size:11px;color:#4ECDC4;margin-bottom:8px;font-weight:600">📋 Curriculum standards mapped to each activity</div>':''}
 <div style="font-size:12px;color:#9999BB;margin-bottom:12px">${lesson.focusSummary||''}</div>
 <button class="btn btn-teal" style="width:100%;font-size:14px" onclick="viewLesson()">View Lesson Plan →</button>`;
+```
+
 } catch(e) {
-document.getElementById('gen-box').innerHTML = `
-<div style="font-size:15px;font-weight:800;margin-bottom:4px">🤖 Generate Lesson Plan</div>
-<div style="font-size:12px;color:#9999BB;margin-bottom:14px">Something went wrong. Please try again.</div>
-<button class="btn btn-teal" style="width:100%;font-size:14px" onclick="generateLesson()">Retry →</button>
-<div style="margin-top:10px;padding:10px 12px;background:#FF6B6B22;border-radius:8px;font-size:12px;color:#FF6B6B">⚠️ ${e.message}</div>`;
+document.getElementById(‘gen-box’).innerHTML = ` <div style="font-size:15px;font-weight:800;margin-bottom:4px">🤖 Generate Lesson Plan</div> <div style="font-size:12px;color:#9999BB;margin-bottom:14px">Something went wrong. Please try again.</div> <button class="btn btn-teal" style="width:100%;font-size:14px" onclick="generateLesson()">Retry →</button> <div style="margin-top:10px;padding:10px 12px;background:#FF6B6B22;border-radius:8px;font-size:12px;color:#FF6B6B">⚠️ ${e.message}</div>`;
 }
 }
 
@@ -572,207 +619,110 @@ openSegIndex = null;
 const lesson = currentLesson;
 const label = `${currentStudent.name} · ${currentStudent.level} (${lb(currentStudent.level)})`;
 
-const pillarsHtml = Object.entries(PILLARS).map(([k,p])=>`<span class="tag" style="background:${p.color}22;color:${p.color};font-size:11px">${p.emoji} ${p.label}</span>`).join('');
-const barHtml = lesson.segments?.map(seg=>`<div class="pillar-bar-seg" style="width:${(seg.minutes/15)*100}%;background:${PILLARS[seg.pillar]?.color||'#ccc'};opacity:${seg.emphasis?1:0.5}"></div>`).join('')||'';
+const pillarsHtml = Object.entries(PILLARS).map(([k,p])=>`<span class="tag" style="background:${p.color}22;color:${p.color};font-size:11px">${p.emoji} ${p.label}</span>`).join(’’);
+const barHtml = lesson.segments?.map(seg=>`<div class="pillar-bar-seg" style="width:${(seg.minutes/15)*100}%;background:${PILLARS[seg.pillar]?.color||'#ccc'};opacity:${seg.emphasis?1:0.5}"></div>`).join(’’)||’’;
 const segsHtml = lesson.segments?.map((seg,i)=>{
-const p = PILLARS[seg.pillar]||{label:seg.pillar,color:'#888',emoji:'📌'};
-return `
-<div class="seg-card" id="seg-${i}" style="border-left-color:${p.color};background:${seg.emphasis?p.color+'0A':'#fff'}">
-<div class="seg-header" onclick="toggleSeg(${i})">
-<div style="flex:1">
-<div class="row" style="flex-wrap:wrap;gap:6px;margin-bottom:5px">
-<span class="tag" style="background:${p.color}22;color:${p.color}">${p.emoji} ${p.label}</span>
-${seg.emphasis?'<span class="priority-badge">⚠ PRIORITY</span>':''}
-<span style="font-size:11px;color:#CCC">${seg.timeRange}</span>
-${seg.standard?.trim()?`<span class="std-badge">📋 ${seg.standard}</span>`:''}
-</div>
-<div style="font-size:15px;font-weight:800">${seg.title}</div>
-<div style="font-size:12px;color:#777;margin-top:4px;line-height:1.5">${seg.tip||''}</div>
-</div>
-<div style="font-size:14px;color:#DDD;margin-left:10px;padding-top:4px" id="seg-arrow-${i}">▼</div>
-</div>
-<div class="seg-body" id="seg-body-${i}">
-${seg.standard?.trim()?`
+const p = PILLARS[seg.pillar]||{label:seg.pillar,color:’#888’,emoji:‘📌’};
+return ` <div class="seg-card" id="seg-${i}" style="border-left-color:${p.color};background:${seg.emphasis?p.color+'0A':'#fff'}"> <div class="seg-header" onclick="toggleSeg(${i})"> <div style="flex:1"> <div class="row" style="flex-wrap:wrap;gap:6px;margin-bottom:5px"> <span class="tag" style="background:${p.color}22;color:${p.color}">${p.emoji} ${p.label}</span> ${seg.emphasis?'<span class="priority-badge">⚠ PRIORITY</span>':''} <span style="font-size:11px;color:#CCC">${seg.timeRange}</span> ${seg.standard?.trim()?`<span class="std-badge">📋 ${seg.standard}</span>`:''} </div> <div style="font-size:15px;font-weight:800">${seg.title}</div> <div style="font-size:12px;color:#777;margin-top:4px;line-height:1.5">${seg.tip||''}</div> </div> <div style="font-size:14px;color:#DDD;margin-left:10px;padding-top:4px" id="seg-arrow-${i}">▼</div> </div> <div class="seg-body" id="seg-body-${i}"> ${seg.standard?.trim()?`
 <div style="background:#1A1A2E;border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;gap:10px">
 <span style="font-size:16px">📋</span>
 <div><div style="font-size:10px;font-weight:800;color:#4ECDC4;margin-bottom:2px">CURRICULUM STANDARD</div>
 <div style="font-size:13px;color:#F5F3EE">${seg.standard}</div></div>
-</div>`:''}
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
-<div style="background:#F5F3EE;border-radius:10px;padding:12px">
-<div class="lbl">👩‍🏫 TEACHER DOES</div>
-<div style="font-size:13px;line-height:1.7">${seg.teacherDoes||''}</div>
-</div>
-<div style="background:#F5F3EE;border-radius:10px;padding:12px">
-<div class="lbl">🧒 STUDENT DOES</div>
-<div style="font-size:13px;line-height:1.7">${seg.studentDoes||''}</div>
-</div>
-</div>
-<div style="background:#FFF8E1;border-radius:8px;padding:9px 12px;font-size:12px">
-<strong>📦 Materials: </strong>${seg.materials||''}
-</div>
-</div>
-</div>`;
-}).join('')||'';
+</div>`:''} <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px"> <div style="background:#F5F3EE;border-radius:10px;padding:12px"> <div class="lbl">👩‍🏫 TEACHER DOES</div> <div style="font-size:13px;line-height:1.7">${seg.teacherDoes||''}</div> </div> <div style="background:#F5F3EE;border-radius:10px;padding:12px"> <div class="lbl">🧒 STUDENT DOES</div> <div style="font-size:13px;line-height:1.7">${seg.studentDoes||''}</div> </div> </div> <div style="background:#FFF8E1;border-radius:8px;padding:9px 12px;font-size:12px"> <strong>📦 Materials: </strong>${seg.materials||''} </div> </div> </div>`;
+}).join(’’)||’’;
 
-document.getElementById('lesson-content').innerHTML = `
-<div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;margin-bottom:4px">${lesson.lessonTitle}</div>
-<div style="font-size:14px;color:#555;margin-bottom:4px"><strong>${label}</strong> · ${new Date().toLocaleDateString()}</div>
-<div style="font-size:14px;color:#666;margin-bottom:20px">${lesson.focusSummary||''}</div>
-${lesson.hasCurriculumAlignment?`
+document.getElementById(‘lesson-content’).innerHTML = ` <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;margin-bottom:4px">${lesson.lessonTitle}</div> <div style="font-size:14px;color:#555;margin-bottom:4px"><strong>${label}</strong> · ${new Date().toLocaleDateString()}</div> <div style="font-size:14px;color:#666;margin-bottom:20px">${lesson.focusSummary||''}</div> ${lesson.hasCurriculumAlignment?`
 <div class="card" style="background:#1A1A2E;color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:12px">
 <span style="font-size:24px">📋</span>
 <div><div style="font-size:13px;font-weight:800;color:#4ECDC4;margin-bottom:2px">Curriculum Aligned</div>
 <div style="font-size:12px;color:#9999BB">Each activity is mapped to a standard from your uploaded curriculum.</div></div>
-</div>`:''}
-<div class="card" style="margin-bottom:14px">
-<div style="font-size:12px;font-weight:700;margin-bottom:8px">6 PILLARS OF READING</div>
-<div style="display:flex;flex-wrap:wrap;gap:6px">${pillarsHtml}</div>
-</div>
-<div class="pillar-bar">${barHtml}</div>
-<div class="time-labels"><span>0 min</span><span>5 min</span><span>10 min</span><span>15 min</span></div>
-${segsHtml}
-${lesson.afterLesson?`
+</div>`:''} <div class="card" style="margin-bottom:14px"> <div style="font-size:12px;font-weight:700;margin-bottom:8px">6 PILLARS OF READING</div> <div style="display:flex;flex-wrap:wrap;gap:6px">${pillarsHtml}</div> </div> <div class="pillar-bar">${barHtml}</div> <div class="time-labels"><span>0 min</span><span>5 min</span><span>10 min</span><span>15 min</span></div> ${segsHtml} ${lesson.afterLesson?`
 <div class="card" style="background:#1A1A2E;color:#fff">
 <div style="font-size:13px;font-weight:700;margin-bottom:5px">✅ After the Lesson</div>
 <div style="font-size:13px;color:#9999BB;line-height:1.6">${lesson.afterLesson}</div>
 </div>`:''}`;
 
-showScreen('lesson');
+showScreen(‘lesson’);
 }
 
 function toggleSeg(i) {
 const body = document.getElementById(`seg-body-${i}`);
 const arrow = document.getElementById(`seg-arrow-${i}`);
-const isOpen = body.classList.contains('open');
-document.querySelectorAll('.seg-body').forEach(b=>b.classList.remove('open'));
-document.querySelectorAll('[id^="seg-arrow-"]').forEach(a=>a.textContent='▼');
-if (!isOpen) { body.classList.add('open'); arrow.textContent='▲'; }
+const isOpen = body.classList.contains(‘open’);
+document.querySelectorAll(’.seg-body’).forEach(b=>b.classList.remove(‘open’));
+document.querySelectorAll(’[id^=“seg-arrow-”]’).forEach(a=>a.textContent=‘▼’);
+if (!isOpen) { body.classList.add(‘open’); arrow.textContent=‘▲’; }
 }
 
 // ── ADD STUDENT ───────────────────────────────────────────────────
 function addStudent() {
-const name = document.getElementById('new-name').value.trim();
+const name = document.getElementById(‘new-name’).value.trim();
 if (!name) return;
-const grade = document.getElementById('new-grade').value;
-const level = document.getElementById('new-level').value;
+const grade = document.getElementById(‘new-grade’).value;
+const level = document.getElementById(‘new-level’).value;
 students.push({id:Date.now(), name, grade, level, sessions:[]});
-document.getElementById('new-name').value = '';
-showScreen('dashboard');
+document.getElementById(‘new-name’).value = ‘’;
+showScreen(‘dashboard’);
 }
 
 // ── PROGRESS ─────────────────────────────────────────────────────
 function showProgress(id) {
 const stu = students.find(s=>s.id===id);
 currentStudent = stu;
-document.getElementById('prog-title').textContent = `Progress: ${stu.name}`;
-document.getElementById('prog-sub').innerHTML = `${tag(stu.level,lc(stu.level))} <span>${lb(stu.level)} · ${stu.sessions?.length||0} sessions</span>`;
+document.getElementById(‘prog-title’).textContent = `Progress: ${stu.name}`;
+document.getElementById(‘prog-sub’).innerHTML = `${tag(stu.level,lc(stu.level))} <span>${lb(stu.level)} · ${stu.sessions?.length||0} sessions</span>`;
 const sess = stu.sessions||[];
 if (!sess.length) {
-document.getElementById('prog-content').innerHTML = `
-<div class="card" style="text-align:center;padding:40px">
-<div style="font-size:36px;margin-bottom:10px">📈</div>
-<div style="font-weight:700;margin-bottom:10px">No sessions yet</div>
-<button class="btn" onclick="startSession(${stu.id})">Start First Session</button>
-</div>`;
+document.getElementById(‘prog-content’).innerHTML = ` <div class="card" style="text-align:center;padding:40px"> <div style="font-size:36px;margin-bottom:10px">📈</div> <div style="font-weight:700;margin-bottom:10px">No sessions yet</div> <button class="btn" onclick="startSession(${stu.id})">Start First Session</button> </div>`;
 } else {
 const ratingBars = QUICK_RATINGS.map(r=>{
 const curr=sess[0]?.ratings?.[r.id]??75, prev=sess.length>1?sess[1]?.ratings?.[r.id]??75:null, diff=prev!==null?curr-prev:null;
-const c=curr>=90?'#6BCB77':curr>=75?'#FFD166':'#FF6B6B';
-return `
-<div style="margin-bottom:12px">
-<div style="display:flex;justify-content:space-between;margin-bottom:4px">
-<span style="font-size:13px;font-weight:600">${r.emoji} ${r.label}</span>
-<div class="row">
-${diff!==null&&diff!==0?`<span style="font-size:12px;font-weight:800;color:${diff>0?'#6BCB77':'#FF6B6B'}">${diff>0?'+':''}${diff}</span>`:''}
-<span style="font-weight:800;color:${c}">${curr}</span>
-</div>
-</div>
-<div class="progress-bar-bg"><div class="progress-bar" style="width:${curr}%;background:${c}"></div></div>
-</div>`;
-}).join('');
-const history = sess.map((s,i)=>`
-<div style="padding:10px 0;border-bottom:${i<sess.length-1?'1px solid #F5F3EE':'none'}">
-<div style="display:flex;justify-content:space-between;margin-bottom:6px">
-<span style="font-weight:700;font-size:13px">${s.date}</span>
-${tag(i===0?'Latest':'#'+(sess.length-i),i===0?'#4ECDC4':'#DDD')}
-</div>
-<div style="display:flex;flex-wrap:wrap;gap:5px">
-${QUICK_RATINGS.map(r=>{const v=s.ratings?.[r.id]??75;const c=v>=90?'#6BCB77':v>=75?'#FFD166':'#FF6B6B';return`<span style="font-size:11px;background:${c}22;color:${c};border-radius:6px;padding:2px 7px;font-weight:700">${r.emoji} ${v}</span>`;}).join('')}
-</div>
-</div>`).join('');
-document.getElementById('prog-content').innerHTML = `
-${sess.length>=2?`<div class="card"><div style="font-size:14px;font-weight:700;margin-bottom:12px">📊 Latest vs Previous</div>${ratingBars}</div>`:''}
-<div class="card"><div style="font-size:14px;font-weight:700;margin-bottom:12px">📅 Session History</div>${history}</div>`;
+const c=curr>=90?’#6BCB77’:curr>=75?’#FFD166’:’#FF6B6B’;
+return ` <div style="margin-bottom:12px"> <div style="display:flex;justify-content:space-between;margin-bottom:4px"> <span style="font-size:13px;font-weight:600">${r.emoji} ${r.label}</span> <div class="row"> ${diff!==null&&diff!==0?`<span style="font-size:12px;font-weight:800;color:${diff>0?'#6BCB77':'#FF6B6B'}">${diff>0?’+’:’’}${diff}</span>`:''} <span style="font-weight:800;color:${c}">${curr}</span> </div> </div> <div class="progress-bar-bg"><div class="progress-bar" style="width:${curr}%;background:${c}"></div></div> </div>`;
+}).join(’’);
+const history = sess.map((s,i)=>` <div style="padding:10px 0;border-bottom:${i<sess.length-1?'1px solid #F5F3EE':'none'}"> <div style="display:flex;justify-content:space-between;margin-bottom:6px"> <span style="font-weight:700;font-size:13px">${s.date}</span> ${tag(i===0?'Latest':'#'+(sess.length-i),i===0?'#4ECDC4':'#DDD')} </div> <div style="display:flex;flex-wrap:wrap;gap:5px"> ${QUICK_RATINGS.map(r=>{const v=s.ratings?.[r.id]??75;const c=v>=90?'#6BCB77':v>=75?'#FFD166':'#FF6B6B';return`<span style="font-size:11px;background:${c}22;color:${c};border-radius:6px;padding:2px 7px;font-weight:700">${r.emoji} ${v}</span>`;}).join('')} </div> </div>`).join(’’);
+document.getElementById(‘prog-content’).innerHTML = ` ${sess.length>=2?`<div class="card"><div style="font-size:14px;font-weight:700;margin-bottom:12px">📊 Latest vs Previous</div>${ratingBars}</div>`:''} <div class="card"><div style="font-size:14px;font-weight:700;margin-bottom:12px">📅 Session History</div>${history}</div>`;
 }
-showScreen('progress');
+showScreen(‘progress’);
 }
 
 // ── GROUPS ────────────────────────────────────────────────────────
 function renderGroups() {
 const groups = buildGroups();
 if (!groups.length) {
-document.getElementById('groups-content').innerHTML = `
-<div class="card" style="text-align:center;padding:40px">
-<div style="font-size:36px;margin-bottom:10px">👥</div>
-<div style="font-weight:700;margin-bottom:6px">No Groups Yet</div>
-<div style="font-size:13px;color:#888;margin-bottom:16px">Complete sessions with at least 2 students to auto-generate groups.</div>
-<button class="btn" onclick="showScreen('dashboard')">← Dashboard</button>
-</div>`;
+document.getElementById(‘groups-content’).innerHTML = ` <div class="card" style="text-align:center;padding:40px"> <div style="font-size:36px;margin-bottom:10px">👥</div> <div style="font-weight:700;margin-bottom:6px">No Groups Yet</div> <div style="font-size:13px;color:#888;margin-bottom:16px">Complete sessions with at least 2 students to auto-generate groups.</div> <button class="btn" onclick="showScreen('dashboard')">← Dashboard</button> </div>`;
 return;
 }
-document.getElementById('groups-content').innerHTML = groups.map((g,gi)=>`
-<div class="card" style="border-left:5px solid ${g.color}">
-<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
-<div>
-<div style="font-size:17px;font-weight:800">${g.emoji} ${g.name}</div>
-<div style="font-size:12px;color:#888">${g.members.length} student${g.members.length!==1?'s':''} · Avg: ${g.avgScore}</div>
-</div>
-${tag('Focus: '+g.focus, g.color)}
-</div>
-<div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
-${g.members.map((m,j)=>`
+document.getElementById(‘groups-content’).innerHTML = groups.map((g,gi)=>` <div class="card" style="border-left:5px solid ${g.color}"> <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px"> <div> <div style="font-size:17px;font-weight:800">${g.emoji} ${g.name}</div> <div style="font-size:12px;color:#888">${g.members.length} student${g.members.length!==1?'s':''} · Avg: ${g.avgScore}</div> </div> ${tag('Focus: '+g.focus, g.color)} </div> <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap"> ${g.members.map((m,j)=>`
 <div class="row">
 <div class="av" style="width:32px;height:32px;background:${AV_COLORS[j%6]};font-size:12px">${m.name[0]}</div>
 <div><div style="font-size:13px;font-weight:700">${m.name}</div><div style="font-size:11px;color:#AAA">${m.level} · ${lb(m.level)}</div></div>
-</div>`).join('')}
-</div>
-<button class="btn" style="background:${g.color};font-size:13px;padding:9px 18px" onclick="generateGroupLesson(${gi})">
-🤖 Generate Group Lesson Plan
-</button>
-</div>`).join('');
+</div>`).join('')} </div> <button class="btn" style="background:${g.color};font-size:13px;padding:9px 18px" onclick="generateGroupLesson(${gi})"> 🤖 Generate Group Lesson Plan </button> </div>`).join(’’);
 window._currentGroups = groups;
 }
 
 async function generateGroupLesson(gi) {
 const group = window._currentGroups[gi];
-const level = group.members[0]?.level||'Level 5';
-const prompt = `Reading teacher: 15-min small group lesson. Group:${group.name} Level:${level} Students:${group.members.map(m=>m.name).join(',')} WeakArea:${group.focus}
-Reply ONLY raw JSON: {"lessonTitle":"...","focusSummary":"...","hasCurriculumAlignment":false,"segments":[{"pillar":"phonemic","title":"...","timeRange":"0-2 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"phonics","title":"...","timeRange":"2-5 min","minutes":3,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"fluency","title":"...","timeRange":"5-8 min","minutes":3,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"vocabulary","title":"...","timeRange":"8-11 min","minutes":3,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"comprehension","title":"...","timeRange":"11-13 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"writing","title":"...","timeRange":"13-15 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""}],"afterLesson":"..."}
-Real content. emphasis:true on 2 segments targeting ${group.focus}.`;
+const level = group.members[0]?.level||‘Level 5’;
+const prompt = `Reading teacher: 15-min small group lesson. Group:${group.name} Level:${level} Students:${group.members.map(m=>m.name).join(',')} WeakArea:${group.focus} Reply ONLY raw JSON: {"lessonTitle":"...","focusSummary":"...","hasCurriculumAlignment":false,"segments":[{"pillar":"phonemic","title":"...","timeRange":"0-2 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"phonics","title":"...","timeRange":"2-5 min","minutes":3,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"fluency","title":"...","timeRange":"5-8 min","minutes":3,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"vocabulary","title":"...","timeRange":"8-11 min","minutes":3,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"comprehension","title":"...","timeRange":"11-13 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"writing","title":"...","timeRange":"13-15 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""}],"afterLesson":"..."} Real content. emphasis:true on 2 segments targeting ${group.focus}.`;
 
-document.getElementById('groups-content').innerHTML = `
-<div style="text-align:center;padding:60px">
-<div class="spinner" style="margin:0 auto 12px"></div>
-<div style="font-weight:700;margin-bottom:6px">Building group lesson…</div>
-<div style="font-size:13px;color:#888">For ${group.name}</div>
-</div>`;
+document.getElementById(‘groups-content’).innerHTML = ` <div style="text-align:center;padding:60px"> <div class="spinner" style="margin:0 auto 12px"></div> <div style="font-weight:700;margin-bottom:6px">Building group lesson…</div> <div style="font-size:13px;color:#888">For ${group.name}</div> </div>`;
 
 try {
-const res = await fetch('https://api.anthropic.com/v1/messages', {
-method:'POST', headers:{'content-type':'application/json'},
-body: JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
+const res = await fetch(‘https://api.anthropic.com/v1/messages’, {
+method:‘POST’, headers:{‘content-type’:‘application/json’},
+body: JSON.stringify({model:‘claude-sonnet-4-20250514’,max_tokens:1000,messages:[{role:‘user’,content:prompt}]})
 });
 const data = await res.json();
-let text = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim();
+let text = (data.content||[]).filter(b=>b.type===‘text’).map(b=>b.text).join(’’).trim();
 let lesson;
-try{lesson=JSON.parse(text);}catch(_){try{lesson=JSON.parse(text.replace(/```json/gi,'').replace(/```/g,'').trim());}catch(_){const a=text.indexOf('{'),b=text.lastIndexOf('}');lesson=JSON.parse(text.slice(a,b+1));}}
+try{lesson=JSON.parse(text);}catch(*){try{lesson=JSON.parse(text.replace(/`json/gi,'').replace(/`/g,’’).trim());}catch(*){const a=text.indexOf(’{’),b=text.lastIndexOf(’}’);lesson=JSON.parse(text.slice(a,b+1));}}
 currentLesson = lesson;
-currentStudent = {name:group.name, level:group.members[0]?.level||'Level 5'};
+currentStudent = {name:group.name, level:group.members[0]?.level||‘Level 5’};
 viewLesson();
 } catch(e) {
 renderGroups();
-alert('Error generating lesson: '+e.message);
+alert(’Error generating lesson: ’+e.message);
 }
 }
 
