@@ -530,7 +530,7 @@ function viewLes(){
   openSeg=null;
   var les=lesson;
   var label=cur.name+' - '+cur.level+' ('+lb(cur.level)+')';
-  var pillHtml=Object.entries(PILLS).map(function(x){return tag(x[1].e+' '+x[1].l,x[1].c);}).join(' ');
+  var pillHtml=Object.entries(PILLS).map(function(x){return tag(x[1].e+' '+x[1].l,x[1].c);}).join('');
   var barHtml=(les.segments||[]).map(function(sg){var p=PILLS[sg.pillar]||{c:'#ccc'};return'<div class="pbar-seg" style="width:'+((sg.minutes/15)*100)+'%;background:'+p.c+';opacity:'+(sg.emphasis?1:.5)+'"></div>';}).join('');
   var segHtml=(les.segments||[]).map(function(sg,i){
     var p=PILLS[sg.pillar]||{l:sg.pillar,c:'#888',e:'?'};
