@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CentreRotator — Guided Literacy Centres</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:#0D1117;color:#E8E6F0;min-height:100vh;}
+button{font-family:'DM Sans',sans-serif;cursor:pointer;}
+.nav{background:#161B22;border-bottom:1px solid #30363D;padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;}
+.logo span{color:#4ECDC4;}
+.nav-home{background:transparent;color:#8B949E;border:1px solid #30363D;border-radius:10px;padding:6px 14px;font-size:12px;font-weight:600;text-decoration:none;}
+.badge{border-radius:8px;padding:4px 12px;font-size:12px;font-weight:700;}
+.badge-teal{background:rgba(78,205,196,0.15);color:#4ECDC4;border:1px solid rgba(78,205,196,0.3);}
+.badge-gold{background:rgba(255,209,102,0.15);color:#FFD166;border:1px solid rgba(255,209,102,0.3);}
+.main{max-width:980px;margin:0 auto;padding:32px 24px;}
+.h1{font-family:'Playfair Display',serif;font-size:30px;font-weight:900;margin-bottom:6px;}
+.sub{font-size:14px;color:#8B949E;margin-bottom:28px;line-height:1.6;}
+.card{background:#161B22;border-radius:16px;padding:22px;border:1px solid #30363D;margin-bottom:14px;}
+.btn{border:none;border-radius:10px;padding:12px 22px;font-size:14px;font-weight:700;}
+.btn-teal{background:#4ECDC4;color:#0D1117;}
+.btn-gold{background:#FFD166;color:#0D1117;}
+.btn-ghost{background:transparent;color:#8B949E;border:1px solid #30363D;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:600;}
+.btn-dark{background:#30363D;color:#E8E6F0;}
+.lbl{font-size:11px;font-weight:800;color:#8B949E;display:block;margin-bottom:8px;letter-spacing:.06em;}
+.tag{border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;display:inline-block;}
+.screen{display:none;}
+.screen.active{display:block;}
+.mode-card{background:#161B22;border:2px solid #30363D;border-radius:20px;padding:28px;cursor:pointer;transition:border-color .2s;}
+.mode-card:hover{border-color:#4ECDC4;}
+.centre-card{background:#0D1117;border:2px solid #30363D;border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .15s;}
+.centre-card.selected-teal{background:rgba(78,205,196,0.08);border-color:#4ECDC4;}
+.centre-card.selected-gold{background:rgba(255,209,102,0.08);border-color:#FFD166;}
+.time-btn{background:#0D1117;color:#8B949E;border:2px solid #30363D;border-radius:10px;padding:12px 20px;font-size:14px;font-weight:700;}
+.time-btn.active-teal{background:#4ECDC4;color:#0D1117;border-color:#4ECDC4;}
+.time-btn.active-gold{background:#FFD166;color:#0D1117;border-color:#FFD166;}
+.sched-table{width:100%;border-collapse:separate;border-spacing:4px;}
+.sched-cell{background:#0D1117;border:2px solid #30363D;border-radius:10px;padding:10px 12px;cursor:pointer;min-width:130px;transition:all .15s;vertical-align:top;}
+.sched-cell:hover{border-color:#4ECDC4;}
+.sched-cell.open{border-color:#4ECDC4;background:rgba(78,205,196,0.08);}
+.activity-detail{display:none;margin-top:10px;border-top:1px solid #30363D;padding-top:10px;font-size:12px;color:#8B949E;line-height:1.6;}
+.activity-detail.open{display:block;}
+.group-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:4px;}
+/* PROJECTOR */
+.proj{display:none;position:fixed;inset:0;background:#0D1117;z-index:200;padding:24px;overflow-y:auto;}
+.proj.active{display:block;}
+.timer-ring{position:relative;width:160px;height:160px;margin:0 auto 16px;}
+.timer-ring svg{transform:rotate(-90deg);}
+.timer-display{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.timer-num{font-family:'Playfair Display',serif;font-size:36px;font-weight:900;line-height:1;}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .4s ease;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+@media(max-width:640px){.grid2{grid-template-columns:1fr;}.grid3{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+<div style="display:flex;align-items:center;gap:10px">
+<a href="/" class="nav-home">← Home</a>
+<div class="logo">Centre<span>Rotator</span></div>
+</div>
+<span class="badge badge-teal" id="nav-badge">✓ ReadLead Connected</span>
+</nav>
+
+<!-- MODE SELECT -->
+
+<div class="screen active fade-in" id="screen-mode">
+<div class="main" style="max-width:680px">
+<div class="h1">Centre<span style="color:#4ECDC4">Rotator</span></div>
+<div class="sub">Choose how you want to run your centres today.</div>
+<div class="grid2" style="margin-bottom:20px">
+<div class="mode-card" onclick="selectMode('whole')">
+<div style="font-size:40px;margin-bottom:14px">🏫</div>
+<div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:8px">Whole Class</div>
+<div style="font-size:13px;color:#8B949E;line-height:1.7;margin-bottom:16px">All students rotate through the same centres with generic activities. Simple, fast, and easy to manage.</div>
+<div id="whole-features"></div>
+<button class="btn btn-teal" style="margin-top:20px;width:100%;font-size:13px">Set Up Whole Class →</button>
+</div>
+<div class="mode-card" onclick="selectMode('skill')">
+<div style="font-size:40px;margin-bottom:14px">🎯</div>
+<div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:8px">Skill-Based</div>
+<div style="font-size:13px;color:#8B949E;line-height:1.7;margin-bottom:16px">Each group gets targeted activities matched to their specific skill needs from ReadLead.</div>
+<div id="skill-features"></div>
+<button class="btn btn-gold" style="margin-top:20px;width:100%;font-size:13px">Set Up Skill-Based →</button>
+</div>
+</div>
+<div class="card" style="background:#0D1117;text-align:center">
+<div style="font-size:13px;color:#8B949E;line-height:1.7">
+💡 <strong style="color:#E8E6F0">Not sure which to use?</strong> Start with <strong style="color:#4ECDC4">Whole Class</strong> to get your students comfortable with the rotation routine, then switch to <strong style="color:#FFD166">Skill-Based</strong>.
+</div>
+</div>
+</div>
+</div>
+
+<!-- SETUP -->
+
+<div class="screen" id="screen-setup">
+<div class="main">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+<button class="btn-ghost" onclick="showScreen('mode')">← Back</button>
+<div class="logo" id="setup-logo">CentreRotator</div>
+<span class="badge" id="setup-mode-badge"></span>
+</div>
+<div class="h1" id="setup-title">Setup</div>
+<div class="sub" id="setup-sub"></div>
+
+```
+<!-- Groups -->
+<div class="card">
+<div class="lbl" id="groups-lbl">📊 GROUPS FROM READLEAD</div>
+<div class="grid2" id="groups-preview"></div>
+<div id="groups-note" style="display:none;margin-top:10px;font-size:12px;color:#8B949E"></div>
+</div>
+
+<!-- Centre picker -->
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+<div class="lbl" style="margin-bottom:0" id="centres-lbl">🏫 SELECT YOUR CENTRES</div>
+<div style="font-size:12px;color:#8B949E">2–6 centres</div>
+</div>
+<div class="grid3" id="centre-picker"></div>
+</div>
+
+<!-- Rotation time -->
+<div class="card">
+<div class="lbl">⏱ ROTATION TIME</div>
+<div style="display:flex;gap:8px;margin-bottom:10px" id="time-btns"></div>
+<div style="font-size:12px;color:#8B949E" id="time-total"></div>
+</div>
+
+<!-- Whole class note -->
+<div class="card" id="whole-note" style="display:none;border-left:4px solid #4ECDC4">
+<div style="font-size:13px;font-weight:700;color:#4ECDC4;margin-bottom:6px">📋 How whole class centres work</div>
+<div style="font-size:13px;color:#8B949E;line-height:1.7">Each centre will have a <strong style="color:#E8E6F0">generic activity</strong> posted on a card. Students manage themselves while you pull groups to the teacher table.</div>
+</div>
+
+<div class="card" id="gen-card" style="background:linear-gradient(135deg,#161B22,#1C2333)">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div>
+<div style="font-size:17px;font-weight:800;margin-bottom:4px">Ready to generate?</div>
+<div style="font-size:13px;color:#8B949E" id="gen-summary"></div>
+</div>
+<button class="btn" id="gen-btn" onclick="generateSchedule()" style="flex-shrink:0;margin-left:20px;font-size:15px;padding:14px 28px">Generate Schedule →</button>
+</div>
+</div>
+```
+
+</div>
+</div>
+
+<!-- SCHEDULE -->
+
+<div class="screen" id="screen-schedule">
+<div class="main">
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+<button class="btn-ghost" onclick="showScreen('setup')">← Edit</button>
+<button class="btn-ghost" onclick="showScreen('mode')">Start Over</button>
+<div class="logo" id="sched-logo" style="margin-left:4px">CentreRotator</div>
+<div style="margin-left:auto;display:flex;gap:8px">
+<button class="btn" id="proj-btn" onclick="openProjector()">📺 Projector + Timer</button>
+<button class="btn btn-dark" onclick="window.print()">🖨 Print</button>
+</div>
+</div>
+<div class="h1">Today's Centre Schedule</div>
+<div class="sub" id="sched-sub"></div>
+<div id="sched-content"></div>
+</div>
+</div>
+
+<!-- PROJECTOR -->
+
+<div class="proj" id="projector">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+<div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:900">
+<span style="color:#4ECDC4">Guided</span> <span id="proj-mode-label" style="font-size:15px;font-weight:400;color:#8B949E"></span>
+</div>
+<button class="btn-ghost" onclick="closeProjector()">← Exit Projector</button>
+</div>
+
+<!-- Rotation dots -->
+
+<div style="display:flex;gap:8px;justify-content:center;margin-bottom:18px" id="proj-dots"></div>
+
+<div style="display:grid;grid-template-columns:1fr 260px;gap:16px;align-items:start">
+<!-- Left: centre cards -->
+<div>
+<div class="lbl" id="proj-rotation-label">ROTATION 1 — WHERE TO GO NOW</div>
+<div id="proj-cards" style="display:grid;gap:10px;margin-bottom:14px"></div>
+<!-- Mini table -->
+<div class="card" style="padding:14px">
+<div class="lbl" style="margin-bottom:8px">FULL SCHEDULE</div>
+<table style="width:100%;border-collapse:collapse;font-size:12px" id="proj-table"></table>
+</div>
+</div>
+
+```
+<!-- Right: Timer -->
+<div style="position:sticky;top:16px">
+<div class="card" id="timer-card" style="text-align:center;border:2px solid #4ECDC4">
+<div class="timer-ring">
+<svg width="160" height="160">
+<circle cx="80" cy="80" r="70" fill="none" stroke="#30363D" stroke-width="10"/>
+<circle id="timer-ring-circle" cx="80" cy="80" r="70" fill="none" stroke="#4ECDC4" stroke-width="10"
+stroke-dasharray="439.8" stroke-dashoffset="0" stroke-linecap="round"
+style="transition:stroke-dashoffset 1s linear,stroke .5s"/>
+</svg>
+<div class="timer-display">
+<div class="timer-num" id="timer-display">00:00</div>
+<div style="font-size:11px;color:#8B949E;font-weight:700;margin-top:4px">remaining</div>
+</div>
+</div>
+<div style="font-size:14px;font-weight:800;margin-bottom:2px" id="timer-rotation-label">Rotation 1 of 4</div>
+<div style="font-size:12px;color:#8B949E;margin-bottom:16px" id="timer-per-rotation">15 min per rotation</div>
+<div id="timer-warning" style="display:none;background:rgba(255,107,107,.15);border:1px solid #FF6B6B;border-radius:8px;padding:8px 12px;font-size:12px;color:#FF6B6B;font-weight:700;margin-bottom:14px;animation:pulse .8s infinite">⚠️ Almost time — get ready to rotate!</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<button class="btn" id="timer-play-btn" onclick="toggleTimer()" style="width:100%;font-size:16px;background:#4ECDC4;color:#0D1117">▶ Start Timer</button>
+<button class="btn btn-dark" id="timer-next-btn" onclick="nextRotation()" style="width:100%;font-size:13px;display:none">Skip to Next →</button>
+<button style="background:transparent;color:#8B949E;border:1px solid #30363D;border-radius:10px;padding:8px;width:100%;font-size:12px;font-weight:600" onclick="resetTimer()">↺ Reset All</button>
+</div>
+</div>
+<div class="card" id="session-time-card" style="margin-top:10px;text-align:center;padding:14px">
+<div class="lbl" style="margin-bottom:4px">TOTAL SESSION LEFT</div>
+<div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:900" id="session-total">--:--</div>
+<div style="font-size:11px;color:#8B949E;margin-top:2px">across all remaining rotations</div>
+</div>
+</div>
+```
+
+</div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────
+const READLEAD_GROUPS = [
+{id:1,name:"Phonics Builders",emoji:"🔤",color:"#FF6B6B",students:["Marcus","Jaylen"],focus:"Blending & Phonics",level:"Level 3–4",weakSkill:"Phonics"},
+{id:2,name:"Fluency Focus",emoji:"⚡",color:"#FFD166",students:["Luca","Sofia"],focus:"Fluency & Sight Words",level:"Level 7–8",weakSkill:"Fluency"},
+{id:3,name:"Comprehension Crew",emoji:"🧠",color:"#4ECDC4",students:["Amara"],focus:"Comprehension",level:"Level 17",weakSkill:"Comprehension"},
+{id:4,name:"Independent Readers",emoji:"📖",color:"#6BCB77",students:["Eva","Carlos"],focus:"Extension & Vocabulary",level:"Level 14–15",weakSkill:"Vocabulary"}
+];
+
+const ALL_CENTRES = [
+{id:"teacher",name:"Teacher Table",emoji:"👩‍🏫"},
+{id:"tech",name:"Tech Station",emoji:"💻"},
+{id:"word",name:"Word Work",emoji:"🔡"},
+{id:"read",name:"Read to Self",emoji:"📚"},
+{id:"listen",name:"Listen to Reading",emoji:"🎧"},
+{id:"writing",name:"Writing Station",emoji:"✏️"}
+];
+
+const WHOLE_ACTIVITIES = {
+teacher:"Small group guided reading with teacher. Teacher selects focus based on group needs.",
+tech:"Independent reading practice on a device. Use a reading app or digital book at own level.",
+word:"Word work activity from the board. Today's task is posted at the centre.",
+read:"Read to self — choose a just-right book and read independently and quietly.",
+listen:"Listen to a read-aloud using headphones. Follow along in the text if available.",
+writing:"Independent writing — respond to today's prompt posted at the centre."
+};
+
+const SKILL_ACTIVITIES = {
+Phonics:{teacher:"Guided reading with CVC and blend word focus. Use letter tiles to build word families.",tech:"Phonics app — practice consonant blends. Target 10 min per blend pattern.",word:"Word sort: short vs long vowel sounds. Build 5 new blend words with magnetic letters.",read:"Choose a decodable book. Point to each word while reading.",listen:"Listen to a read-aloud. Tap when you hear a blend word.",writing:"Write 3 sentences using this week's blend words. Illustrate one sentence."},
+Fluency:{teacher:"Echo reading and partner reading. Model phrasing with expression. Target 65 WPM.",tech:"Record yourself reading a passage. Listen back and note where you paused.",word:"Sight word speed drills — Fry words list 1–50. Beat your own record.",read:"Reread a familiar book 3 times, getting smoother each time.",listen:"Listen to a fluent reader, then match their expression and phrasing.",writing:"Copy a favourite sentence from your book. Practice writing it smoothly."},
+Comprehension:{teacher:"Ask and answer questions before, during, and after reading. Focus on inference.",tech:"Digital story with comprehension questions. Explain answers using text evidence.",word:"Vocabulary web — pick 2 new words from today's reading. Define, draw, use in a sentence.",read:"Stop every paragraph and summarize in your head. Write one sentence per page.",listen:"Listen to a non-fiction passage. Identify 3 key facts and the main idea.",writing:"Write a response: 'What was the most important part of your reading? Why?'"},
+Vocabulary:{teacher:"Pre-teach tier 2 vocabulary from upcoming texts. Use word maps and context clues.",tech:"Digital vocabulary game — match words to definitions, then use in a sentence.",word:"Word of the day — etymology, synonyms, antonyms, and context sentences.",read:"Flag 3 unknown words with sticky notes. Try to figure them out from context.",listen:"Listen to a rich vocabulary read-aloud. List interesting words you want to learn.",writing:"Use 5 vocabulary words from this week in a short creative story."}
+};
+
+const ROTATION_TIMES = [10,15,20,25];
+const AV_COLORS = ["#FF6B6B","#4ECDC4","#FFD166","#6BCB77","#A78BFA","#FF9F43"];
+
+let currentMode = null;
+let selectedCentres = ["teacher","tech","word","read"];
+let rotationTime = 15;
+let schedule = [];
+let openCell = null;
+
+// Timer state
+let timerInterval = null;
+let timerRunning = false;
+let currentRotation = 0;
+let secondsLeft = 0;
+let totalSeconds = 0;
+let timerDone = false;
+
+// ── INIT ──────────────────────────────────────────────────────────
+function init() {
+// Mode card features
+document.getElementById('whole-features').innerHTML =
+["✓ Quick setup — 30 seconds","✓ Same activity for all groups","✓ Perfect for building routines","✓ Projector display + live timer"]
+.map(f=>`<div style="font-size:12px;color:#6BCB77;font-weight:600;margin-bottom:4px">${f}</div>`).join('');
+document.getElementById('skill-features').innerHTML =
+["✓ Activities matched to each group","✓ Groups auto-imported from ReadLead","✓ Full activity guide per centre","✓ Projector display + live timer"]
+.map(f=>`<div style="font-size:12px;color:#FFD166;font-weight:600;margin-bottom:4px">${f}</div>`).join('');
+}
+
+// ── MODE SELECT ───────────────────────────────────────────────────
+function selectMode(mode) {
+currentMode = mode;
+const isWhole = mode === 'whole';
+const accent = isWhole ? '#4ECDC4' : '#FFD166';
+
+document.getElementById('setup-logo').innerHTML = `Centre<span style="color:${accent}">Rotator</span>`;
+document.getElementById('setup-mode-badge').className = `badge ${isWhole?'badge-teal':'badge-gold'}`;
+document.getElementById('setup-mode-badge').textContent = isWhole ? '🏫 Whole Class' : '🎯 Skill-Based';
+document.getElementById('setup-title').textContent = `${isWhole?'Whole Class':'Skill-Based'} Setup`;
+document.getElementById('setup-sub').textContent = isWhole
+? 'Choose your centres and rotation time. Every group sees the same activity.'
+: 'Groups are loaded from ReadLead. Choose your centres and rotation time.';
+document.getElementById('groups-lbl').textContent = isWhole ? '👥 YOUR GROUPS' : '📊 GROUPS FROM READLEAD';
+document.getElementById('whole-note').style.display = isWhole ? 'block' : 'none';
+
+const note = document.getElementById('groups-note');
+if (isWhole) { note.style.display='block'; note.textContent='All groups will rotate through the same centres with the same activity posted at each one.'; }
+else { note.style.display='none'; }
+
+document.getElementById('gen-btn').className = `btn ${isWhole?'btn-teal':'btn-gold'}`;
+document.getElementById('gen-btn').style.padding = '14px 28px';
+
+renderGroupsPreview();
+renderCentrePicker();
+renderTimeBtns();
+updateGenSummary();
+showScreen('setup');
+}
+
+function renderGroupsPreview() {
+document.getElementById('groups-preview').innerHTML = READLEAD_GROUPS.map(g=>`
+<div style="background:#0D1117;border-radius:10px;padding:10px 14px;border:1px solid ${g.color}33;display:flex;gap:10px;align-items:center">
+<span style="font-size:20px">${g.emoji}</span>
+<div>
+<div style="font-weight:700;color:${g.color};font-size:13px">${g.name}</div>
+<div style="font-size:11px;color:#8B949E">${g.students.join(', ')}${currentMode==='skill'?` · <strong style="color:${g.color}">${g.weakSkill}</strong>`:''}</div>
+</div>
+</div>`).join('');
+}
+
+function renderCentrePicker() {
+const accent = currentMode==='whole' ? '#4ECDC4' : '#FFD166';
+const selClass = currentMode==='whole' ? 'selected-teal' : 'selected-gold';
+document.getElementById('centres-lbl').textContent = `🏫 SELECT YOUR CENTRES (${selectedCentres.length} selected)`;
+document.getElementById('centre-picker').innerHTML = ALL_CENTRES.map(c=>{
+const sel = selectedCentres.includes(c.id);
+return `<div class="centre-card${sel?' '+selClass:''}" onclick="toggleCentre('${c.id}')">
+<div style="font-size:22px;margin-bottom:6px">${c.emoji}</div>
+<div style="font-size:13px;font-weight:700;margin-bottom:2px">${c.name}</div>
+${sel?`<div style="font-size:11px;font-weight:700;color:${accent};margin-top:4px">✓ Selected</div>`:''}
+</div>`;
+}).join('');
+}
+
+function toggleCentre(id) {
+if (selectedCentres.includes(id)) {
+if (selectedCentres.length > 2) selectedCentres = selectedCentres.filter(c=>c!==id);
+} else {
+if (selectedCentres.length < 6) selectedCentres = [...selectedCentres, id];
+}
+renderCentrePicker();
+updateGenSummary();
+}
+
+function renderTimeBtns() {
+const accent = currentMode==='whole' ? 'teal' : 'gold';
+document.getElementById('time-btns').innerHTML = ROTATION_TIMES.map(t=>`
+<button class="time-btn${rotationTime===t?' active-'+accent:''}" onclick="setTime(${t})">${t} min</button>`).join('');
+document.getElementById('time-total').innerHTML = `Total: <strong style="color:#E8E6F0">${selectedCentres.length * rotationTime} minutes</strong> · ${selectedCentres.length} rotations`;
+}
+
+function setTime(t) {
+rotationTime = t;
+renderTimeBtns();
+updateGenSummary();
+}
+
+function updateGenSummary() {
+document.getElementById('gen-summary').textContent =
+`${selectedCentres.length} centres · ${rotationTime} min each · ${currentMode==='whole'?'Generic activities for all':'Skill-matched activities per group'}`;
+}
+
+// ── GENERATE SCHEDULE ─────────────────────────────────────────────
+function generateSchedule() {
+const centreList = ALL_CENTRES.filter(c=>selectedCentres.includes(c.id));
+const groups = READLEAD_GROUPS.slice(0, centreList.length);
+schedule = centreList.map((_,ri)=>
+groups.map((group,gi)=>{
+const centreIdx = (gi+ri)%centreList.length;
+const centre = centreList[centreIdx];
+const activity = currentMode==='whole'
+? WHOLE_ACTIVITIES[centre.id]
+: (SKILL_ACTIVITIES[group.weakSkill]?.[centre.id]||'Level-appropriate literacy activity.');
+return {group, centre, activity};
+})
+);
+renderSchedule();
+showScreen('schedule');
+}
+
+function renderSchedule() {
+const isWhole = currentMode==='whole';
+const accent = isWhole ? '#4ECDC4' : '#FFD166';
+const centreList = ALL_CENTRES.filter(c=>selectedCentres.includes(c.id));
+const groups = READLEAD_GROUPS.slice(0, centreList.length);
+
+document.getElementById('sched-logo').innerHTML = `Centre<span style="color:${accent}">Rotator</span>`;
+document.getElementById('sched-logo').style.marginLeft = '4px';
+document.getElementById('proj-btn').className = `btn btn-${isWhole?'teal':'gold'}`;
+document.getElementById('sched-sub').textContent = `${centreList.length} centres · ${rotationTime} min each · ${groups.length} groups · ${isWhole?'Same activity at every centre':'Activities matched to each group'}`;
+
+let html = '';
+
+// Whole class activity cards
+if (isWhole) {
+html += `<div class="card" style="border-left:4px solid #4ECDC4;margin-bottom:20px">
+<div style="font-size:13px;font-weight:700;color:#4ECDC4;margin-bottom:10px">📋 Post These at Each Centre</div>
+<div class="grid2">
+${centreList.map(c=>`
+<div style="background:#0D1117;border-radius:10px;padding:12px 14px;border:1px solid #30363D">
+<div style="font-size:18px;margin-bottom:4px">${c.emoji}</div>
+<div style="font-size:14px;font-weight:800;margin-bottom:6px">${c.name}</div>
+<div style="font-size:12px;color:#8B949E;line-height:1.6">${WHOLE_ACTIVITIES[c.id]}</div>
+</div>`).join('')}
+</div>
+</div>`;
+}
+
+// Rotation table
+html += `<div class="card">
+<div class="lbl" style="margin-bottom:12px">ROTATION SCHEDULE${!isWhole?' — TAP A CELL FOR ACTIVITY DETAILS':''}</div>
+<div style="overflow-x:auto">
+<table class="sched-table">
+<thead><tr>
+<th style="text-align:left;padding:10px 14px;font-size:12px;color:#8B949E;font-weight:700">GROUP</th>
+${schedule[0].map((_,i)=>`<th style="text-align:left;padding:10px 14px;font-size:12px;color:#8B949E;font-weight:700">Rotation ${i+1}<div style="font-size:11px;color:#555;font-weight:400">${i*rotationTime}–${(i+1)*rotationTime} min</div></th>`).join('')}
+</tr></thead>
+<tbody>
+${groups.map((group,gi)=>`
+<tr>
+<td style="padding:10px 14px;vertical-align:middle">
+<div style="font-weight:800;color:${group.color};font-size:14px">${group.emoji} ${group.name}</div>
+<div style="font-size:11px;color:#8B949E">${group.students.join(', ')}</div>
+${!isWhole?`<span class="tag" style="background:${group.color}22;color:${group.color};font-size:10px;margin-top:4px;display:inline-block">${group.weakSkill}</span>`:''}
+</td>
+${schedule.map((rot,ri)=>{
+const cell=rot[gi]; const key=`${gi}-${ri}`;
+return `<td style="padding:4px;vertical-align:top">
+<div class="sched-cell" id="cell-${key}" onclick="${!isWhole?`toggleCell('${key}','${group.color}')`:''}" style="${isWhole?'cursor:default':''}">
+<div style="font-size:16px;margin-bottom:3px">${cell.centre.emoji}</div>
+<div style="font-size:13px;font-weight:700">${cell.centre.name}</div>
+<div class="activity-detail" id="detail-${key}">${cell.activity}</div>
+</div>
+</td>`;
+}).join('')}
+</tr>`).join('')}
+</tbody>
+</table>
+</div>
+</div>`;
+
+// Skill-based full activity guide
+if (!isWhole) {
+html += `<div style="margin-top:8px"><div class="lbl">FULL ACTIVITY GUIDE</div>`;
+html += groups.map(group=>`
+<div class="card" style="border-left:4px solid ${group.color}">
+<div style="display:flex;gap:10px;align-items:center;margin-bottom:14px">
+<span style="font-size:22px">${group.emoji}</span>
+<div>
+<div style="font-size:15px;font-weight:800;color:${group.color}">${group.name}</div>
+<div style="font-size:12px;color:#8B949E">${group.students.join(', ')} · Focus: ${group.weakSkill}</div>
+</div>
+</div>
+<div class="grid2">
+${centreList.map(c=>`
+<div style="background:#0D1117;border-radius:10px;padding:10px 14px;border:1px solid #30363D">
+<div style="font-size:13px;font-weight:700;margin-bottom:4px">${c.emoji} ${c.name}</div>
+<div style="font-size:12px;color:#8B949E;line-height:1.6">${SKILL_ACTIVITIES[group.weakSkill]?.[c.id]||'Level-appropriate literacy activity.'}</div>
+</div>`).join('')}
+</div>
+</div>`).join('');
+html += '</div>';
+}
+
+document.getElementById('sched-content').innerHTML = html;
+}
+
+function toggleCell(key, color) {
+if (openCell === key) {
+document.getElementById(`cell-${key}`).classList.remove('open');
+document.getElementById(`detail-${key}`).classList.remove('open');
+openCell = null;
+} else {
+if (openCell) {
+document.getElementById(`cell-${openCell}`)?.classList.remove('open');
+document.getElementById(`detail-${openCell}`)?.classList.remove('open');
+}
+document.getElementById(`cell-${key}`).classList.add('open');
+document.getElementById(`detail-${key}`).classList.add('open');
+openCell = key;
+}
+}
+
+// ── PROJECTOR ─────────────────────────────────────────────────────
+function openProjector() {
+currentRotation = 0;
+totalSeconds = rotationTime * 60;
+secondsLeft = totalSeconds;
+timerRunning = false;
+timerDone = false;
+clearInterval(timerInterval);
+
+const centreList = ALL_CENTRES.filter(c=>selectedCentres.includes(c.id));
+const groups = READLEAD_GROUPS.slice(0, centreList.length);
+const isWhole = currentMode==='whole';
+
+document.getElementById('proj-mode-label').textContent = `· ${isWhole?'Whole Class':'Skill-Based'} Centres`;
+document.getElementById('timer-per-rotation').textContent = `${rotationTime} min per rotation`;
+
+// Dots
+renderDots();
+
+// Cards grid
+document.getElementById('proj-cards').style.gridTemplateColumns = `repeat(${Math.min(centreList.length,3)},1fr)`;
+
+// Mini table header
+const tableHead = `<thead><tr><th style="text-align:left;padding:5px 8px;color:#8B949E;font-weight:700">Group</th>${schedule[0].map((_,i)=>`<th id="proj-th-${i}" style="text-align:left;padding:5px 8px;color:${i===0?'#4ECDC4':'#8B949E'};font-weight:700">R${i+1} ${i===0?'◀':''}</th>`).join('')}</tr></thead>`;
+const tableBody = `<tbody>${groups.map((group,gi)=>`<tr><td style="padding:5px 8px;font-weight:700;color:${group.color}">${group.emoji} ${group.name}</td>${schedule.map((rot,ri)=>`<td id="proj-cell-${gi}-${ri}" style="padding:5px 8px;color:${ri===0?'#E8E6F0':'#555'};font-weight:${ri===0?700:400}">${rot[gi]?.centre.emoji} ${rot[gi]?.centre.name}</td>`).join('')}</tr>`).join('')}</tbody>`;
+document.getElementById('proj-table').innerHTML = tableHead + tableBody;
+
+renderProjectorRotation();
+updateTimerDisplay();
+updateNextBtn();
+
+document.getElementById('projector').classList.add('active');
+}
+
+function closeProjector() {
+clearInterval(timerInterval);
+timerRunning = false;
+document.getElementById('projector').classList.remove('active');
+}
+
+function renderDots() {
+document.getElementById('proj-dots').innerHTML = schedule.map((_,i)=>`
+<div style="width:${i===currentRotation?28:10}px;height:10px;border-radius:99px;background:${i<=currentRotation?'#4ECDC4':'#30363D'};opacity:${i>currentRotation?.3:1};transition:all .4s"></div>`).join('');
+}
+
+function renderProjectorRotation() {
+const centreList = ALL_CENTRES.filter(c=>selectedCentres.includes(c.id));
+const groups = READLEAD_GROUPS.slice(0, centreList.length);
+const rot = schedule[currentRotation]||schedule[0];
+
+document.getElementById('proj-rotation-label').textContent = `ROTATION ${currentRotation+1} OF ${schedule.length} — WHERE TO GO NOW`;
+document.getElementById('proj-cards').innerHTML = rot.map(cell=>`
+<div style="background:#161B22;border:2px solid ${cell.group.color};border-radius:14px;padding:16px">
+<div style="font-size:28px;margin-bottom:6px">${cell.centre.emoji}</div>
+<div style="font-size:15px;font-weight:800;margin-bottom:8px">${cell.centre.name}</div>
+<div style="background:${cell.group.color}22;border-radius:10px;padding:8px 12px">
+<div style="font-size:11px;font-weight:800;color:${cell.group.color};margin-bottom:4px">${cell.group.emoji} ${cell.group.name}</div>
+<div style="display:flex;gap:4px;flex-wrap:wrap">
+${cell.group.students.map(s=>`<span style="background:${cell.group.color};color:#fff;border-radius:20px;padding:2px 8px;font-size:11px;font-weight:700">${s}</span>`).join('')}
+</div>
+</div>
+</div>`).join('');
+
+// Update table highlights
+schedule.forEach((_,ri)=>{
+groups.forEach((_,gi)=>{
+const td = document.getElementById(`proj-cell-${gi}-${ri}`);
+if (td) { td.style.color=ri===currentRotation?'#E8E6F0':'#555'; td.style.fontWeight=ri===currentRotation?700:400; }
+});
+const th = document.getElementById(`proj-th-${ri}`);
+if (th) { th.style.color=ri===currentRotation?'#4ECDC4':'#8B949E'; th.textContent=`R${ri+1} ${ri===currentRotation?'◀':''}`; }
+});
+
+document.getElementById('timer-rotation-label').textContent = `Rotation ${currentRotation+1} of ${schedule.length}`;
+renderDots();
+}
+
+// ── TIMER ─────────────────────────────────────────────────────────
+const CIRC = 2 * Math.PI * 70;
+
+function fmt(s) {
+return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+}
+
+function updateTimerDisplay() {
+const pct = secondsLeft / totalSeconds;
+const color = pct > 0.5 ? '#4ECDC4' : pct > 0.2 ? '#FFD166' : '#FF6B6B';
+const isWarning = pct <= 0.2 && !timerDone && secondsLeft !== totalSeconds;
+
+document.getElementById('timer-display').textContent = fmt(secondsLeft);
+document.getElementById('timer-display').style.color = color;
+document.getElementById('timer-ring-circle').style.strokeDashoffset = CIRC * (1 - pct);
+document.getElementById('timer-ring-circle').style.stroke = color;
+document.getElementById('timer-card').style.borderColor = color;
+document.getElementById('timer-card').style.boxShadow = `0 0 ${isWarning?30:20}px ${color}${isWarning?'66':'22'}`;
+document.getElementById('timer-card').style.animation = isWarning ? 'shake .6s infinite' : 'none';
+document.getElementById('timer-warning').style.display = isWarning ? 'block' : 'none';
+
+// Session total
+const remaining = (schedule.length - currentRotation - 1) * totalSeconds + secondsLeft;
+document.getElementById('session-total').textContent = fmt(remaining);
+}
+
+function toggleTimer() {
+if (timerDone) return;
+timerRunning = !timerRunning;
+const btn = document.getElementById('timer-play-btn');
+if (timerRunning) {
+btn.textContent = '⏸ Pause';
+btn.style.background = '#FF6B6B';
+timerInterval = setInterval(tick, 1000);
+} else {
+btn.textContent = '▶ Resume';
+btn.style.background = '#4ECDC4';
+clearInterval(timerInterval);
+}
+}
+
+function tick() {
+if (secondsLeft <= 1) {
+clearInterval(timerInterval);
+timerRunning = false;
+if (currentRotation < schedule.length - 1) {
+currentRotation++;
+secondsLeft = totalSeconds;
+renderProjectorRotation();
+updateTimerDisplay();
+document.getElementById('timer-play-btn').textContent = '▶ Start Timer';
+document.getElementById('timer-play-btn').style.background = '#4ECDC4';
+updateNextBtn();
+} else {
+timerDone = true;
+secondsLeft = 0;
+showDoneState();
+}
+return;
+}
+secondsLeft--;
+updateTimerDisplay();
+}
+
+function nextRotation() {
+if (currentRotation >= schedule.length - 1) return;
+clearInterval(timerInterval);
+timerRunning = false;
+currentRotation++;
+secondsLeft = totalSeconds;
+renderProjectorRotation();
+updateTimerDisplay();
+document.getElementById('timer-play-btn').textContent = '▶ Start Timer';
+document.getElementById('timer-play-btn').style.background = '#4ECDC4';
+updateNextBtn();
+}
+
+function resetTimer() {
+clearInterval(timerInterval);
+timerRunning = false;
+timerDone = false;
+currentRotation = 0;
+secondsLeft = totalSeconds;
+document.getElementById('timer-play-btn').textContent = '▶ Start Timer';
+document.getElementById('timer-play-btn').style.background = '#4ECDC4';
+document.getElementById('session-time-card').style.display = 'block';
+renderProjectorRotation();
+updateTimerDisplay();
+updateNextBtn();
+// restore timer card if done state was shown
+document.getElementById('timer-card').innerHTML = `
+<div class="timer-ring">
+<svg width="160" height="160">
+<circle cx="80" cy="80" r="70" fill="none" stroke="#30363D" stroke-width="10"/>
+<circle id="timer-ring-circle" cx="80" cy="80" r="70" fill="none" stroke="#4ECDC4" stroke-width="10"
+stroke-dasharray="439.8" stroke-dashoffset="0" stroke-linecap="round"
+style="transition:stroke-dashoffset 1s linear,stroke .5s"/>
+</svg>
+<div class="timer-display">
+<div class="timer-num" id="timer-display">${fmt(totalSeconds)}</div>
+<div style="font-size:11px;color:#8B949E;font-weight:700;margin-top:4px">remaining</div>
+</div>
+</div>
+<div style="font-size:14px;font-weight:800;margin-bottom:2px" id="timer-rotation-label">Rotation 1 of ${schedule.length}</div>
+<div style="font-size:12px;color:#8B949E;margin-bottom:16px" id="timer-per-rotation">${rotationTime} min per rotation</div>
+<div id="timer-warning" style="display:none;background:rgba(255,107,107,.15);border:1px solid #FF6B6B;border-radius:8px;padding:8px 12px;font-size:12px;color:#FF6B6B;font-weight:700;margin-bottom:14px;animation:pulse .8s infinite">⚠️ Almost time — get ready to rotate!</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<button class="btn" id="timer-play-btn" onclick="toggleTimer()" style="width:100%;font-size:16px;background:#4ECDC4;color:#0D1117">▶ Start Timer</button>
+<button class="btn btn-dark" id="timer-next-btn" onclick="nextRotation()" style="width:100%;font-size:13px;display:none">Skip to Next →</button>
+<button style="background:transparent;color:#8B949E;border:1px solid #30363D;border-radius:10px;padding:8px;width:100%;font-size:12px;font-weight:600" onclick="resetTimer()">↺ Reset All</button>
+</div>`;
+updateTimerDisplay();
+updateNextBtn();
+}
+
+function updateNextBtn() {
+const btn = document.getElementById('timer-next-btn');
+if (btn) btn.style.display = currentRotation < schedule.length - 1 ? 'block' : 'none';
+}
+
+function showDoneState() {
+document.getElementById('timer-card').innerHTML = `
+<div style="font-size:52px;margin-bottom:12px">🎉</div>
+<div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:#4ECDC4;margin-bottom:6px">All Done!</div>
+<div style="font-size:13px;color:#8B949E;margin-bottom:20px">All ${schedule.length} rotations complete</div>
+<button class="btn btn-teal" style="width:100%" onclick="resetTimer()">↺ Restart</button>`;
+document.getElementById('session-time-card').style.display = 'none';
+}
+
+// ── SCREENS ───────────────────────────────────────────────────────
+function showScreen(name) {
+document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+document.getElementById('screen-'+name).classList.add('active');
+}
+
+// ── START ─────────────────────────────────────────────────────────
+init();
+</script>
+
+</body>
+</html>
