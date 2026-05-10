@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ReadLead — Guided Reading Assessment</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:#F5F3EE;color:#1A1A2E;min-height:100vh;}
+button,input,select,textarea{font-family:'DM Sans',sans-serif;}
+.nav{background:#1A1A2E;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100;}
+.nav-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#F5F3EE;}
+.nav-logo span{color:#4ECDC4;}
+.nav-links{display:flex;gap:6px;align-items:center;}
+.nav-link{background:transparent;color:#9999BB;border:none;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;}
+.nav-link.active{background:#4ECDC4;color:#1A1A2E;}
+.nav-home{background:transparent;color:#9999BB;border:2px solid #444;border-radius:10px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;}
+.main{max-width:920px;margin:0 auto;padding:28px 20px;}
+.h1{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;margin-bottom:4px;}
+.sub{font-size:14px;color:#666;margin-bottom:20px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.card{background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.06);margin-bottom:12px;}
+.btn{background:#1A1A2E;color:#fff;border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:700;cursor:pointer;}
+.btn-teal{background:#4ECDC4;color:#1A1A2E;}
+.btn-sm{padding:6px 12px;font-size:11px;}
+.btn-ghost{background:transparent;color:#555;border:2px solid #DDD;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;}
+.btn-danger{background:none;border:none;color:#CCC;cursor:pointer;font-size:18px;}
+.inp{padding:10px 14px;border-radius:10px;border:2px solid #E8E8E8;font-size:13px;width:100%;background:#fff;}
+.lbl{font-size:11px;font-weight:800;color:#999;display:block;margin-bottom:6px;letter-spacing:.05em;}
+.tag{border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;display:inline-block;}
+.row{display:flex;align-items:center;gap:8px;}
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;flex-shrink:0;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.screen{display:none;}
+.screen.active{display:block;}
+.student-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #F5F3EE;}
+.student-row:last-child{border-bottom:none;}
+.rating-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.rating-btn{background:#F5F3EE;color:#555;border:2px solid #EBEBEB;border-radius:8px;padding:8px;font-size:11px;cursor:pointer;text-align:left;line-height:1.3;}
+.rating-btn.selected{color:#fff;border-color:transparent;font-weight:700;}
+.error-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid #F5F3EE;}
+.seg-card{border-radius:12px;padding:16px;margin-bottom:10px;border-left:5px solid #ccc;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,0.05);}
+.seg-header{display:flex;justify-content:space-between;cursor:pointer;align-items:flex-start;}
+.seg-body{display:none;margin-top:14px;border-top:1px solid #F0F0F0;padding-top:14px;}
+.seg-body.open{display:block;}
+.progress-bar-bg{background:#F0F0F0;border-radius:99px;height:8px;margin-top:4px;}
+.progress-bar{height:8px;border-radius:99px;}
+.toggle-wrap{display:flex;align-items:center;gap:8px;}
+.toggle{width:44px;height:24px;border-radius:99px;background:#DDD;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;}
+.toggle.on{background:#4ECDC4;}
+.toggle-knob{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.2);}
+.toggle.on .toggle-knob{left:23px;}
+.pillar-bar{border-radius:10px;overflow:hidden;height:14px;display:flex;margin-bottom:6px;}
+.pillar-bar-seg{height:14px;}
+.time-labels{display:flex;justify-content:space-between;font-size:11px;color:#CCC;margin-bottom:18px;}
+.stat-card{border-top:4px solid #ccc;text-align:center;margin-bottom:0;}
+.stat-num{font-size:28px;font-weight:800;font-family:'Playfair Display',serif;}
+.spinner{display:inline-block;width:28px;height:28px;border:3px solid #444;border-top-color:#4ECDC4;border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.curr-badge{background:#4ECDC422;color:#4ECDC4;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;}
+.priority-badge{background:#FF6B6B;color:#fff;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:800;}
+.std-badge{background:#1A1A2E;color:#4ECDC4;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;}
+.gen-box{background:#1A1A2E;color:#fff;border-radius:14px;padding:20px;}
+.alert-box{padding:10px 14px;border-radius:10px;font-size:13px;font-weight:600;line-height:1.6;margin-top:12px;}
+@media(max-width:640px){.grid2{grid-template-columns:1fr;}.grid3{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+<div class="row" style="gap:10px">
+<a href="/" class="nav-home">← Home</a>
+<div class="nav-logo">Read<span>Lead</span></div>
+</div>
+<div class="nav-links">
+<button class="nav-link active" id="nav-dash" onclick="showScreen('dashboard')">Dashboard</button>
+<button class="nav-link" id="nav-groups" onclick="showScreen('groups')">Groups</button>
+<button class="nav-link" id="nav-add" onclick="showScreen('add')">+ Student</button>
+</div>
+</nav>
+
+<!-- DASHBOARD -->
+
+<div class="screen active" id="screen-dashboard">
+<div class="main">
+<div class="h1">Good morning! 👋</div>
+<div class="sub" id="dash-sub">Loading students…</div>
+<div class="grid3" id="dash-stats" style="margin-bottom:16px"></div>
+<div class="card">
+<div class="row" style="justify-content:space-between;margin-bottom:14px">
+<div style="font-size:16px;font-weight:700">Your Students</div>
+<button class="btn btn-teal btn-sm" onclick="showScreen('add')">+ Add Student</button>
+</div>
+<div id="student-list"></div>
+</div>
+</div>
+</div>
+
+<!-- ADD STUDENT -->
+
+<div class="screen" id="screen-add">
+<div class="main">
+<button class="btn-ghost" onclick="showScreen('dashboard')" style="margin-bottom:18px">← Back</button>
+<div class="h1">Add a Student</div>
+<div class="sub">First name only — no personal data stored.</div>
+<div class="card" style="max-width:440px">
+<div style="margin-bottom:14px"><label class="lbl">FIRST NAME</label>
+<input class="inp" id="new-name" placeholder="e.g. Marcus"/>
+</div>
+<div style="margin-bottom:14px"><label class="lbl">GRADE</label>
+<select class="inp" id="new-grade">
+<option>Kindergarten</option><option>1st Grade</option><option>2nd Grade</option>
+<option>3rd Grade</option><option>4th Grade</option><option>5th Grade</option><option>6th Grade</option>
+</select>
+</div>
+<div style="margin-bottom:20px"><label class="lbl">READLEAD LEVEL</label>
+<select class="inp" id="new-level"></select>
+</div>
+<button class="btn btn-teal" style="width:100%;font-size:14px" onclick="addStudent()">Add Student →</button>
+<div style="font-size:11px;color:#BBB;text-align:center;margin-top:8px">🔒 First name only · No sensitive data</div>
+</div>
+</div>
+</div>
+
+<!-- OBSERVE -->
+
+<div class="screen" id="screen-observe">
+<div class="main">
+<button class="btn-ghost" onclick="showScreen('dashboard')" style="margin-bottom:16px">← Back</button>
+<div class="h1" id="obs-title">Session</div>
+<div class="sub" id="obs-sub"></div>
+<div class="grid2">
+<div>
+<!-- Toggle -->
+<div class="card" style="margin-bottom:12px">
+<div class="row" style="justify-content:space-between">
+<div>
+<div style="font-size:14px;font-weight:700;margin-bottom:2px">📚 Reading Material</div>
+<div style="font-size:12px;color:#888" id="toggle-label">Using a ReadLead passage</div>
+</div>
+<div class="toggle-wrap">
+<span style="font-size:12px;font-weight:700" id="toggle-left">Our Passages</span>
+<div class="toggle" id="text-toggle" onclick="toggleOwnText()"><div class="toggle-knob"></div></div>
+<span style="font-size:12px;color:#AAA" id="toggle-right">My Own Text</span>
+</div>
+</div>
+<div id="own-text-msg" style="display:none" class="alert-box" style="background:#4ECDC415;border:1px solid #4ECDC433;color:#4ECDC4">
+✓ Using your own classroom text. Log errors below as the student reads aloud.
+</div>
+</div>
+
+```
+<!-- Errors -->
+<div class="card">
+<div class="lbl">✏️ ERRORS HEARD</div>
+<div class="grid2" style="margin-bottom:6px">
+<div>
+<div style="font-size:10px;font-weight:700;color:#AAA;margin-bottom:4px">ACTUAL WORD</div>
+<input class="inp" id="word-input" placeholder='"pet"' onkeydown="if(event.key==='Enter'){addError();}"/>
+</div>
+<div>
+<div style="font-size:10px;font-weight:700;color:#AAA;margin-bottom:4px">STUDENT SAID</div>
+<input class="inp" id="said-input" placeholder='"pit"' onkeydown="if(event.key==='Enter'){addError();}"/>
+</div>
+</div>
+<div class="row" style="margin-bottom:10px">
+<select class="inp" id="type-input" style="flex:1">
+<option>Substituted</option><option>Omitted</option><option>Added a word</option>
+<option>Skipped</option><option>Self-corrected</option><option>Re-read</option><option>Guessed</option>
+</select>
+<button class="btn btn-teal" style="padding:10px 14px" onclick="addError()">+ Add</button>
+</div>
+<div id="error-list"><div style="font-size:12px;color:#CCC">No errors logged yet</div></div>
+</div>
+
+<!-- Curriculum -->
+<div class="card" style="border-left:4px solid #4ECDC4">
+<div class="row" style="justify-content:space-between;margin-bottom:6px">
+<div class="lbl" style="margin-bottom:0">📋 CURRICULUM STANDARDS (OPTIONAL)</div>
+<span class="curr-badge" id="curr-badge" style="display:none">✓ Loaded</span>
+</div>
+<textarea class="inp" id="curriculum-input" rows="3" placeholder="Paste your district standards here to align each lesson activity to a specific outcome…" oninput="updateCurrBadge()" style="resize:none"></textarea>
+<div id="curr-msg" style="display:none;font-size:11px;color:#4ECDC4;font-weight:600;margin-top:6px">✓ Standards loaded — activities will be mapped to your specific curriculum</div>
+</div>
+</div>
+
+<div>
+<!-- Ratings -->
+<div class="card">
+<div class="lbl">⚡ QUICK RATINGS — TAP TO SELECT</div>
+<div style="font-size:11px;color:#AAA;margin-bottom:10px" id="rating-count">0/5 areas rated</div>
+<div id="ratings-list"></div>
+</div>
+
+<!-- Generate -->
+<div class="gen-box" id="gen-box">
+<div style="font-size:15px;font-weight:800;margin-bottom:4px">🤖 Generate Lesson Plan</div>
+<div style="font-size:12px;color:#9999BB;margin-bottom:14px" id="gen-desc">Builds a personalized 15-min lesson targeting all 6 pillars.</div>
+<button class="btn btn-teal" style="width:100%;font-size:14px" id="gen-btn" onclick="generateLesson()">Generate Lesson →</button>
+<div id="gen-error" style="display:none;margin-top:10px;padding:10px 12px;background:#FF6B6B22;border-radius:8px;font-size:12px;color:#FF6B6B"></div>
+</div>
+</div>
+</div>
+```
+
+</div>
+</div>
+
+<!-- LESSON -->
+
+<div class="screen" id="screen-lesson">
+<div class="main">
+<div class="row" style="margin-bottom:20px">
+<button class="btn-ghost" onclick="showScreen('observe')">← Back</button>
+<button class="btn-ghost" onclick="showScreen('dashboard')">Dashboard</button>
+<button class="btn btn-teal" onclick="window.print()" style="margin-left:auto">🖨 Print</button>
+</div>
+<div id="lesson-content"></div>
+</div>
+</div>
+
+<!-- PROGRESS -->
+
+<div class="screen" id="screen-progress">
+<div class="main">
+<button class="btn-ghost" onclick="showScreen('dashboard')" style="margin-bottom:16px">← Dashboard</button>
+<div class="h1" id="prog-title">Progress</div>
+<div class="sub" id="prog-sub"></div>
+<div id="prog-content"></div>
+</div>
+</div>
+
+<!-- GROUPS -->
+
+<div class="screen" id="screen-groups">
+<div class="main">
+<div class="h1">Small Groups</div>
+<div class="sub">Auto-grouped by shared skill needs from latest sessions.</div>
+<div id="groups-content"></div>
+</div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────
+const LEVEL_META = {
+"Level 1":{"grade":"Kindergarten","band":"Early K","color":"#FF6B6B"},
+"Level 2":{"grade":"Kindergarten","band":"Mid K","color":"#FF6B6B"},
+"Level 3":{"grade":"Kindergarten","band":"Late K","color":"#FF6B6B"},
+"Level 4":{"grade":"1st Grade","band":"Early 1","color":"#FF9F43"},
+"Level 5":{"grade":"1st Grade","band":"Mid 1","color":"#FF9F43"},
+"Level 6":{"grade":"1st Grade","band":"Late 1","color":"#FF9F43"},
+"Level 7":{"grade":"2nd Grade","band":"Early 2","color":"#FFD166"},
+"Level 8":{"grade":"2nd Grade","band":"Mid 2","color":"#FFD166"},
+"Level 9":{"grade":"2nd Grade","band":"Late 2","color":"#FFD166"},
+"Level 10":{"grade":"3rd Grade","band":"Early 3","color":"#6BCB77"},
+"Level 11":{"grade":"3rd Grade","band":"Mid 3","color":"#6BCB77"},
+"Level 12":{"grade":"3rd Grade","band":"Late 3","color":"#6BCB77"},
+"Level 13":{"grade":"4th Grade","band":"Early 4","color":"#4ECDC4"},
+"Level 14":{"grade":"4th Grade","band":"Mid 4","color":"#4ECDC4"},
+"Level 15":{"grade":"4th Grade","band":"Late 4","color":"#4ECDC4"},
+"Level 16":{"grade":"5th Grade","band":"Early 5","color":"#A78BFA"},
+"Level 17":{"grade":"5th Grade","band":"Mid 5","color":"#A78BFA"},
+"Level 18":{"grade":"5th Grade","band":"Late 5","color":"#A78BFA"},
+"Level 19":{"grade":"6th Grade","band":"Early 6","color":"#3B82F6"},
+"Level 20":{"grade":"6th Grade","band":"Mid 6","color":"#3B82F6"},
+"Level 21":{"grade":"6th Grade","band":"Late 6","color":"#3B82F6"}
+};
+
+const PILLARS = {
+phonemic: {label:"Phonemic Awareness",color:"#FF6B6B",emoji:"👂"},
+phonics: {label:"Phonics",color:"#FF9F43",emoji:"🔤"},
+fluency: {label:"Fluency",color:"#FFD166",emoji:"⚡"},
+vocabulary: {label:"Vocabulary",color:"#6BCB77",emoji:"📚"},
+comprehension:{label:"Comprehension",color:"#4ECDC4",emoji:"🧠"},
+writing: {label:"Writing",color:"#A78BFA",emoji:"✏️"}
+};
+
+const QUICK_RATINGS = [
+{id:"accuracy",label:"Accuracy",emoji:"🎯",options:[{v:96,l:"Strong 95%+"},{v:91,l:"Good 90-94%"},{v:86,l:"Some Errors"},{v:75,l:"Many Errors"}]},
+{id:"fluency",label:"Fluency",emoji:"⚡",options:[{v:95,l:"Smooth & Expressive"},{v:80,l:"Mostly Fluent"},{v:65,l:"Word-by-Word"},{v:50,l:"Very Choppy"}]},
+{id:"decoding",label:"Decoding",emoji:"🔤",options:[{v:95,l:"Sounds Out Well"},{v:75,l:"Partial Attempts"},{v:60,l:"Skips Words"},{v:45,l:"Guesses Only"}]},
+{id:"selfmon",label:"Self-Monitoring",emoji:"👁",options:[{v:95,l:"Corrects Often"},{v:75,l:"Sometimes"},{v:55,l:"Rarely"},{v:35,l:"Never"}]},
+{id:"comprehension",label:"Comprehension",emoji:"🧠",options:[{v:95,l:"Strong Retell"},{v:80,l:"Basic Retell"},{v:60,l:"Minimal Recall"},{v:40,l:"Cannot Retell"}]}
+];
+
+const AV_COLORS = ["#FF6B6B","#4ECDC4","#FFD166","#6BCB77","#A78BFA","#FF9F43"];
+const ALL_LEVELS = Object.keys(LEVEL_META);
+
+let students = [
+{id:1,name:"Marcus",level:"Level 3",grade:"Kindergarten",sessions:[]},
+{id:2,name:"Sofia",level:"Level 11",grade:"3rd Grade",sessions:[]},
+{id:3,name:"Jaylen",level:"Level 2",grade:"Kindergarten",sessions:[]},
+{id:4,name:"Amara",level:"Level 17",grade:"5th Grade",sessions:[]},
+{id:5,name:"Luca",level:"Level 7",grade:"2nd Grade",sessions:[]}
+];
+
+let currentStudent = null;
+let currentRatings = {};
+let currentErrors = [];
+let useOwnText = false;
+let currentLesson = null;
+let openSegIndex = null;
+
+// ── HELPERS ───────────────────────────────────────────────────────
+const lc = lv => LEVEL_META[lv]?.color || "#888";
+const lb = lv => LEVEL_META[lv]?.band || lv;
+
+function tag(text, color) {
+return `<span class="tag" style="background:${color}22;color:${color}">${text}</span>`;
+}
+
+function avgScore(r) {
+const v = Object.values(r||{});
+return v.length ? Math.round(v.reduce((a,b)=>a+b,0)/v.length) : 75;
+}
+
+function buildGroups() {
+const ws = students.filter(s=>s.sessions?.length>0);
+if (ws.length < 2) return [];
+const tagged = ws.map(s=>{
+const r = s.sessions[0]?.ratings||{};
+const weakest = QUICK_RATINGS.reduce((min,q)=>(r[q.id]||75)<(r[min.id]||75)?q:min, QUICK_RATINGS[0]);
+return {...s, weakestId:weakest.id, weakestLabel:weakest.label, avg:avgScore(r)};
+});
+const buckets = {};
+tagged.forEach(s=>{ if(!buckets[s.weakestId]) buckets[s.weakestId]=[]; buckets[s.weakestId].push(s); });
+const pc = {accuracy:"#FF6B6B",fluency:"#FFD166",decoding:"#FF9F43",selfmon:"#4ECDC4",comprehension:"#A78BFA"};
+return Object.entries(buckets).map(([id,members])=>{
+const q = QUICK_RATINGS.find(r=>r.id===id);
+return {id, name:q.label+" Group", focus:q.label, emoji:q.emoji, members, color:pc[id]||"#4ECDC4",
+avgScore:Math.round(members.reduce((a,s)=>a+s.avg,0)/members.length)};
+});
+}
+
+// ── SCREENS ───────────────────────────────────────────────────────
+function showScreen(name) {
+document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+document.getElementById('screen-'+name).classList.add('active');
+document.querySelectorAll('.nav-link').forEach(b=>b.classList.remove('active'));
+const navMap = {dashboard:'nav-dash',add:'nav-add',groups:'nav-groups'};
+if (navMap[name]) document.getElementById(navMap[name]).classList.add('active');
+if (name==='dashboard') renderDashboard();
+if (name==='groups') renderGroups();
+}
+
+// ── LEVEL SELECT ──────────────────────────────────────────────────
+function populateLevelSelect() {
+const sel = document.getElementById('new-level');
+sel.innerHTML = ALL_LEVELS.map(l=>`<option value="${l}">${l} — ${LEVEL_META[l].band} (${LEVEL_META[l].grade})</option>`).join('');
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────────
+function renderDashboard() {
+document.getElementById('dash-sub').textContent = `${students.length} students · tap Start to begin a session`;
+const groups = buildGroups();
+document.getElementById('dash-stats').innerHTML = [
+[students.length,"Students","#4ECDC4"],
+[students.filter(s=>s.sessions?.length>0).length,"Sessioned","#FFD166"],
+[groups.length||"—","Auto Groups","#6BCB77"]
+].map(([v,l,c])=>`
+<div class="card stat-card" style="border-top-color:${c}">
+<div class="stat-num" style="color:${c}">${v}</div>
+<div style="font-size:11px;color:#888;font-weight:600">${l}</div>
+</div>`).join('');
+document.getElementById('student-list').innerHTML = students.map((s,i)=>`
+<div class="student-row">
+<div class="row">
+<div class="av" style="width:40px;height:40px;background:${AV_COLORS[i%6]};font-size:15px">${s.name[0]}</div>
+<div>
+<div style="font-weight:700;font-size:14px">${s.name}</div>
+<div style="font-size:12px;color:#999;display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+<span>${s.grade}</span>
+${tag(s.level,lc(s.level))}
+<span style="color:#BBB">${lb(s.level)}</span>
+<span>· ${s.sessions?.length||0} session${s.sessions?.length!==1?'s':''}</span>
+</div>
+</div>
+</div>
+<div class="row">
+${s.sessions?.length>0?`<button class="btn-ghost" onclick="showProgress(${s.id})">📈</button>`:''}
+<button class="btn" onclick="startSession(${s.id})">▶ Start</button>
+</div>
+</div>`).join('');
+}
+
+// ── SESSION ───────────────────────────────────────────────────────
+function startSession(id) {
+currentStudent = students.find(s=>s.id===id);
+currentRatings = {...(currentStudent.sessions?.[0]?.ratings||{})};
+currentErrors = [];
+useOwnText = false;
+currentLesson = null;
+openSegIndex = null;
+
+document.getElementById('obs-title').textContent = `Session: ${currentStudent.name}`;
+const lvColor = lc(currentStudent.level);
+document.getElementById('obs-sub').innerHTML = `
+${tag(currentStudent.level, lvColor)}
+<span>${lb(currentStudent.level)} · ${currentStudent.grade}</span>`;
+
+// reset toggle
+const toggle = document.getElementById('text-toggle');
+toggle.classList.remove('on');
+document.getElementById('toggle-label').textContent = 'Using a ReadLead passage';
+document.getElementById('toggle-left').style.fontWeight = '700';
+document.getElementById('toggle-left').style.color = '#1A1A2E';
+document.getElementById('toggle-right').style.fontWeight = '400';
+document.getElementById('toggle-right').style.color = '#AAA';
+document.getElementById('own-text-msg').style.display = 'none';
+
+document.getElementById('word-input').value = '';
+document.getElementById('said-input').value = '';
+document.getElementById('curriculum-input').value = '';
+document.getElementById('curr-badge').style.display = 'none';
+document.getElementById('curr-msg').style.display = 'none';
+renderErrorList();
+renderRatings();
+resetGenBox();
+showScreen('observe');
+}
+
+function toggleOwnText() {
+useOwnText = !useOwnText;
+const toggle = document.getElementById('text-toggle');
+toggle.classList.toggle('on', useOwnText);
+document.getElementById('toggle-label').textContent = useOwnText ? 'Using classroom book or decodable' : 'Using a ReadLead passage';
+document.getElementById('toggle-left').style.fontWeight = useOwnText ? '400' : '700';
+document.getElementById('toggle-left').style.color = useOwnText ? '#AAA' : '#1A1A2E';
+document.getElementById('toggle-right').style.fontWeight = useOwnText ? '700' : '400';
+document.getElementById('toggle-right').style.color = useOwnText ? '#1A1A2E' : '#AAA';
+document.getElementById('own-text-msg').style.display = useOwnText ? 'block' : 'none';
+document.getElementById('own-text-msg').style.background = '#4ECDC415';
+document.getElementById('own-text-msg').style.border = '1px solid #4ECDC433';
+document.getElementById('own-text-msg').style.color = '#4ECDC4';
+}
+
+function addError() {
+const word = document.getElementById('word-input').value.trim();
+if (!word) return;
+const said = document.getElementById('said-input').value.trim();
+const type = document.getElementById('type-input').value;
+currentErrors.push({word, said, type});
+document.getElementById('word-input').value = '';
+document.getElementById('said-input').value = '';
+renderErrorList();
+}
+
+function removeError(i) {
+currentErrors.splice(i, 1);
+renderErrorList();
+}
+
+function renderErrorList() {
+const el = document.getElementById('error-list');
+if (!currentErrors.length) { el.innerHTML = '<div style="font-size:12px;color:#CCC">No errors logged yet</div>'; return; }
+el.innerHTML = currentErrors.map((e,i)=>`
+<div class="error-row">
+<div class="row">
+${tag(e.type,"#FF9F43")}
+<span style="font-size:12px;font-weight:700">"${e.word}"</span>
+${e.said?`<span style="font-size:12px;color:#888">→ said "<strong>${e.said}</strong>"</span>`:''}
+</div>
+<button class="btn-danger" onclick="removeError(${i})">×</button>
+</div>`).join('');
+}
+
+function renderRatings() {
+const el = document.getElementById('ratings-list');
+el.innerHTML = QUICK_RATINGS.map(r=>`
+<div style="margin-bottom:14px">
+<div style="font-size:13px;font-weight:700;margin-bottom:6px">${r.emoji} ${r.label}</div>
+<div class="rating-grid">
+${r.options.map(opt=>{
+const sel = currentRatings[r.id]===opt.v;
+const c = opt.v>=90?'#6BCB77':opt.v>=75?'#FFD166':opt.v>=60?'#FF9F43':'#FF6B6B';
+return `<button class="rating-btn${sel?' selected':''}" style="${sel?`background:${c};border-color:transparent`:''}" onclick="selectRating('${r.id}',${opt.v},'${c}')">${sel?'✓ ':''}${opt.l}</button>`;
+}).join('')}
+</div>
+</div>`).join('');
+updateRatingCount();
+}
+
+function selectRating(id, v, c) {
+currentRatings[id] = v;
+renderRatings();
+}
+
+function updateRatingCount() {
+document.getElementById('rating-count').textContent = `${Object.keys(currentRatings).length}/${QUICK_RATINGS.length} areas rated`;
+}
+
+function updateCurrBadge() {
+const hasCurr = document.getElementById('curriculum-input').value.trim().length > 0;
+document.getElementById('curr-badge').style.display = hasCurr ? 'inline-block' : 'none';
+document.getElementById('curr-msg').style.display = hasCurr ? 'block' : 'none';
+document.getElementById('gen-desc').textContent = hasCurr
+? 'Curriculum loaded — activities will cite specific standards.'
+: 'Builds a personalized 15-min lesson targeting all 6 pillars.';
+}
+
+function resetGenBox() {
+document.getElementById('gen-box').innerHTML = `
+<div style="font-size:15px;font-weight:800;margin-bottom:4px">🤖 Generate Lesson Plan</div>
+<div style="font-size:12px;color:#9999BB;margin-bottom:14px" id="gen-desc">Builds a personalized 15-min lesson targeting all 6 pillars.</div>
+<button class="btn btn-teal" style="width:100%;font-size:14px" id="gen-btn" onclick="generateLesson()">Generate ${currentStudent?.name}'s Lesson →</button>
+<div id="gen-error" style="display:none;margin-top:10px;padding:10px 12px;background:#FF6B6B22;border-radius:8px;font-size:12px;color:#FF6B6B"></div>`;
+}
+
+// ── GENERATE ──────────────────────────────────────────────────────
+async function generateLesson() {
+const curriculum = document.getElementById('curriculum-input')?.value?.trim()||'';
+const hasCurr = curriculum.length > 0;
+const rStr = QUICK_RATINGS.map(r=>`${r.label}:${currentRatings[r.id]||75}${(currentRatings[r.id]||75)<75?'(WEAK)':''}`).join(', ');
+const eStr = currentErrors.length ? currentErrors.map(e=>`"${e.word}"${e.said?` (said "${e.said}")`:''}=${e.type}`).join('; ') : 'none';
+const weak = QUICK_RATINGS.filter(r=>(currentRatings[r.id]||75)<75).map(r=>r.label).join(', ')||'none';
+const meta = LEVEL_META[currentStudent.level]||{};
+
+const prompt = `Expert reading interventionist: create a 15-min guided reading lesson.
+Student:${currentStudent.name} Grade:${currentStudent.grade} Level:${currentStudent.level}(${meta.band||''})
+${useOwnText?'Using teacher\'s own classroom text/decodable':''}
+Ratings:${rStr} Errors:${eStr} Weak:${weak}
+${hasCurr?`Curriculum: ${curriculum}\nCRITICAL: cite exact standard codes in each segment "standard" field.`:'No curriculum. Leave "standard" as "".'}
+Reply ONLY raw JSON:
+{"lessonTitle":"...","focusSummary":"...","hasCurriculumAlignment":${hasCurr},"segments":[{"pillar":"phonemic","title":"...","timeRange":"0-2 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":"..."},{"pillar":"phonics","title":"...","timeRange":"2-5 min","minutes":3,"emphasis":true,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":"..."},{"pillar":"fluency","title":"...","timeRange":"5-8 min","minutes":3,"emphasis":true,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":"..."},{"pillar":"vocabulary","title":"...","timeRange":"8-11 min","minutes":3,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":"..."},{"pillar":"comprehension","title":"...","timeRange":"11-13 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":"..."},{"pillar":"writing","title":"...","timeRange":"13-15 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":"..."}],"afterLesson":"..."}
+Real content for ${currentStudent.name}. emphasis:true on 2 weakest.`;
+
+document.getElementById('gen-box').innerHTML = `
+<div style="text-align:center;padding:8px 0">
+<div class="spinner" style="margin-bottom:8px"></div>
+<div style="font-size:14px;font-weight:700;margin-bottom:4px">Building lesson plan…</div>
+<div style="font-size:12px;color:#9999BB">${hasCurr?'Aligning to your curriculum…':'Personalizing for '+currentStudent.name}</div>
+</div>`;
+
+try {
+const res = await fetch('https://api.anthropic.com/v1/messages', {
+method:'POST', headers:{'content-type':'application/json'},
+body: JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
+});
+const data = await res.json();
+let text = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim();
+let lesson;
+try { lesson = JSON.parse(text); }
+catch(_) { try { lesson = JSON.parse(text.replace(/```json/gi,'').replace(/```/g,'').trim()); }
+catch(_) { const a=text.indexOf('{'),b=text.lastIndexOf('}'); lesson = JSON.parse(text.slice(a,b+1)); } }
+
+currentLesson = lesson;
+const rec = {date:new Date().toLocaleDateString(), ratings:{...currentRatings}, errors:[...currentErrors]};
+const idx = students.findIndex(s=>s.id===currentStudent.id);
+students[idx].sessions = [rec,...(students[idx].sessions||[])].slice(0,10);
+currentStudent = students[idx];
+
+document.getElementById('gen-box').innerHTML = `
+<div style="font-size:14px;font-weight:800;color:#4ECDC4;margin-bottom:4px">✅ Lesson Ready!</div>
+${lesson.hasCurriculumAlignment?'<div style="font-size:11px;color:#4ECDC4;margin-bottom:8px;font-weight:600">📋 Curriculum standards mapped to each activity</div>':''}
+<div style="font-size:12px;color:#9999BB;margin-bottom:12px">${lesson.focusSummary||''}</div>
+<button class="btn btn-teal" style="width:100%;font-size:14px" onclick="viewLesson()">View Lesson Plan →</button>`;
+} catch(e) {
+document.getElementById('gen-box').innerHTML = `
+<div style="font-size:15px;font-weight:800;margin-bottom:4px">🤖 Generate Lesson Plan</div>
+<div style="font-size:12px;color:#9999BB;margin-bottom:14px">Something went wrong. Please try again.</div>
+<button class="btn btn-teal" style="width:100%;font-size:14px" onclick="generateLesson()">Retry →</button>
+<div style="margin-top:10px;padding:10px 12px;background:#FF6B6B22;border-radius:8px;font-size:12px;color:#FF6B6B">⚠️ ${e.message}</div>`;
+}
+}
+
+// ── LESSON VIEW ───────────────────────────────────────────────────
+function viewLesson() {
+if (!currentLesson) return;
+openSegIndex = null;
+const lesson = currentLesson;
+const label = `${currentStudent.name} · ${currentStudent.level} (${lb(currentStudent.level)})`;
+
+const pillarsHtml = Object.entries(PILLARS).map(([k,p])=>`<span class="tag" style="background:${p.color}22;color:${p.color};font-size:11px">${p.emoji} ${p.label}</span>`).join('');
+const barHtml = lesson.segments?.map(seg=>`<div class="pillar-bar-seg" style="width:${(seg.minutes/15)*100}%;background:${PILLARS[seg.pillar]?.color||'#ccc'};opacity:${seg.emphasis?1:0.5}"></div>`).join('')||'';
+const segsHtml = lesson.segments?.map((seg,i)=>{
+const p = PILLARS[seg.pillar]||{label:seg.pillar,color:'#888',emoji:'📌'};
+return `
+<div class="seg-card" id="seg-${i}" style="border-left-color:${p.color};background:${seg.emphasis?p.color+'0A':'#fff'}">
+<div class="seg-header" onclick="toggleSeg(${i})">
+<div style="flex:1">
+<div class="row" style="flex-wrap:wrap;gap:6px;margin-bottom:5px">
+<span class="tag" style="background:${p.color}22;color:${p.color}">${p.emoji} ${p.label}</span>
+${seg.emphasis?'<span class="priority-badge">⚠ PRIORITY</span>':''}
+<span style="font-size:11px;color:#CCC">${seg.timeRange}</span>
+${seg.standard?.trim()?`<span class="std-badge">📋 ${seg.standard}</span>`:''}
+</div>
+<div style="font-size:15px;font-weight:800">${seg.title}</div>
+<div style="font-size:12px;color:#777;margin-top:4px;line-height:1.5">${seg.tip||''}</div>
+</div>
+<div style="font-size:14px;color:#DDD;margin-left:10px;padding-top:4px" id="seg-arrow-${i}">▼</div>
+</div>
+<div class="seg-body" id="seg-body-${i}">
+${seg.standard?.trim()?`
+<div style="background:#1A1A2E;border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;gap:10px">
+<span style="font-size:16px">📋</span>
+<div><div style="font-size:10px;font-weight:800;color:#4ECDC4;margin-bottom:2px">CURRICULUM STANDARD</div>
+<div style="font-size:13px;color:#F5F3EE">${seg.standard}</div></div>
+</div>`:''}
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+<div style="background:#F5F3EE;border-radius:10px;padding:12px">
+<div class="lbl">👩‍🏫 TEACHER DOES</div>
+<div style="font-size:13px;line-height:1.7">${seg.teacherDoes||''}</div>
+</div>
+<div style="background:#F5F3EE;border-radius:10px;padding:12px">
+<div class="lbl">🧒 STUDENT DOES</div>
+<div style="font-size:13px;line-height:1.7">${seg.studentDoes||''}</div>
+</div>
+</div>
+<div style="background:#FFF8E1;border-radius:8px;padding:9px 12px;font-size:12px">
+<strong>📦 Materials: </strong>${seg.materials||''}
+</div>
+</div>
+</div>`;
+}).join('')||'';
+
+document.getElementById('lesson-content').innerHTML = `
+<div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;margin-bottom:4px">${lesson.lessonTitle}</div>
+<div style="font-size:14px;color:#555;margin-bottom:4px"><strong>${label}</strong> · ${new Date().toLocaleDateString()}</div>
+<div style="font-size:14px;color:#666;margin-bottom:20px">${lesson.focusSummary||''}</div>
+${lesson.hasCurriculumAlignment?`
+<div class="card" style="background:#1A1A2E;color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:12px">
+<span style="font-size:24px">📋</span>
+<div><div style="font-size:13px;font-weight:800;color:#4ECDC4;margin-bottom:2px">Curriculum Aligned</div>
+<div style="font-size:12px;color:#9999BB">Each activity is mapped to a standard from your uploaded curriculum.</div></div>
+</div>`:''}
+<div class="card" style="margin-bottom:14px">
+<div style="font-size:12px;font-weight:700;margin-bottom:8px">6 PILLARS OF READING</div>
+<div style="display:flex;flex-wrap:wrap;gap:6px">${pillarsHtml}</div>
+</div>
+<div class="pillar-bar">${barHtml}</div>
+<div class="time-labels"><span>0 min</span><span>5 min</span><span>10 min</span><span>15 min</span></div>
+${segsHtml}
+${lesson.afterLesson?`
+<div class="card" style="background:#1A1A2E;color:#fff">
+<div style="font-size:13px;font-weight:700;margin-bottom:5px">✅ After the Lesson</div>
+<div style="font-size:13px;color:#9999BB;line-height:1.6">${lesson.afterLesson}</div>
+</div>`:''}`;
+
+showScreen('lesson');
+}
+
+function toggleSeg(i) {
+const body = document.getElementById(`seg-body-${i}`);
+const arrow = document.getElementById(`seg-arrow-${i}`);
+const isOpen = body.classList.contains('open');
+document.querySelectorAll('.seg-body').forEach(b=>b.classList.remove('open'));
+document.querySelectorAll('[id^="seg-arrow-"]').forEach(a=>a.textContent='▼');
+if (!isOpen) { body.classList.add('open'); arrow.textContent='▲'; }
+}
+
+// ── ADD STUDENT ───────────────────────────────────────────────────
+function addStudent() {
+const name = document.getElementById('new-name').value.trim();
+if (!name) return;
+const grade = document.getElementById('new-grade').value;
+const level = document.getElementById('new-level').value;
+students.push({id:Date.now(), name, grade, level, sessions:[]});
+document.getElementById('new-name').value = '';
+showScreen('dashboard');
+}
+
+// ── PROGRESS ─────────────────────────────────────────────────────
+function showProgress(id) {
+const stu = students.find(s=>s.id===id);
+currentStudent = stu;
+document.getElementById('prog-title').textContent = `Progress: ${stu.name}`;
+document.getElementById('prog-sub').innerHTML = `${tag(stu.level,lc(stu.level))} <span>${lb(stu.level)} · ${stu.sessions?.length||0} sessions</span>`;
+const sess = stu.sessions||[];
+if (!sess.length) {
+document.getElementById('prog-content').innerHTML = `
+<div class="card" style="text-align:center;padding:40px">
+<div style="font-size:36px;margin-bottom:10px">📈</div>
+<div style="font-weight:700;margin-bottom:10px">No sessions yet</div>
+<button class="btn" onclick="startSession(${stu.id})">Start First Session</button>
+</div>`;
+} else {
+const ratingBars = QUICK_RATINGS.map(r=>{
+const curr=sess[0]?.ratings?.[r.id]??75, prev=sess.length>1?sess[1]?.ratings?.[r.id]??75:null, diff=prev!==null?curr-prev:null;
+const c=curr>=90?'#6BCB77':curr>=75?'#FFD166':'#FF6B6B';
+return `
+<div style="margin-bottom:12px">
+<div style="display:flex;justify-content:space-between;margin-bottom:4px">
+<span style="font-size:13px;font-weight:600">${r.emoji} ${r.label}</span>
+<div class="row">
+${diff!==null&&diff!==0?`<span style="font-size:12px;font-weight:800;color:${diff>0?'#6BCB77':'#FF6B6B'}">${diff>0?'+':''}${diff}</span>`:''}
+<span style="font-weight:800;color:${c}">${curr}</span>
+</div>
+</div>
+<div class="progress-bar-bg"><div class="progress-bar" style="width:${curr}%;background:${c}"></div></div>
+</div>`;
+}).join('');
+const history = sess.map((s,i)=>`
+<div style="padding:10px 0;border-bottom:${i<sess.length-1?'1px solid #F5F3EE':'none'}">
+<div style="display:flex;justify-content:space-between;margin-bottom:6px">
+<span style="font-weight:700;font-size:13px">${s.date}</span>
+${tag(i===0?'Latest':'#'+(sess.length-i),i===0?'#4ECDC4':'#DDD')}
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:5px">
+${QUICK_RATINGS.map(r=>{const v=s.ratings?.[r.id]??75;const c=v>=90?'#6BCB77':v>=75?'#FFD166':'#FF6B6B';return`<span style="font-size:11px;background:${c}22;color:${c};border-radius:6px;padding:2px 7px;font-weight:700">${r.emoji} ${v}</span>`;}).join('')}
+</div>
+</div>`).join('');
+document.getElementById('prog-content').innerHTML = `
+${sess.length>=2?`<div class="card"><div style="font-size:14px;font-weight:700;margin-bottom:12px">📊 Latest vs Previous</div>${ratingBars}</div>`:''}
+<div class="card"><div style="font-size:14px;font-weight:700;margin-bottom:12px">📅 Session History</div>${history}</div>`;
+}
+showScreen('progress');
+}
+
+// ── GROUPS ────────────────────────────────────────────────────────
+function renderGroups() {
+const groups = buildGroups();
+if (!groups.length) {
+document.getElementById('groups-content').innerHTML = `
+<div class="card" style="text-align:center;padding:40px">
+<div style="font-size:36px;margin-bottom:10px">👥</div>
+<div style="font-weight:700;margin-bottom:6px">No Groups Yet</div>
+<div style="font-size:13px;color:#888;margin-bottom:16px">Complete sessions with at least 2 students to auto-generate groups.</div>
+<button class="btn" onclick="showScreen('dashboard')">← Dashboard</button>
+</div>`;
+return;
+}
+document.getElementById('groups-content').innerHTML = groups.map((g,gi)=>`
+<div class="card" style="border-left:5px solid ${g.color}">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+<div>
+<div style="font-size:17px;font-weight:800">${g.emoji} ${g.name}</div>
+<div style="font-size:12px;color:#888">${g.members.length} student${g.members.length!==1?'s':''} · Avg: ${g.avgScore}</div>
+</div>
+${tag('Focus: '+g.focus, g.color)}
+</div>
+<div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+${g.members.map((m,j)=>`
+<div class="row">
+<div class="av" style="width:32px;height:32px;background:${AV_COLORS[j%6]};font-size:12px">${m.name[0]}</div>
+<div><div style="font-size:13px;font-weight:700">${m.name}</div><div style="font-size:11px;color:#AAA">${m.level} · ${lb(m.level)}</div></div>
+</div>`).join('')}
+</div>
+<button class="btn" style="background:${g.color};font-size:13px;padding:9px 18px" onclick="generateGroupLesson(${gi})">
+🤖 Generate Group Lesson Plan
+</button>
+</div>`).join('');
+window._currentGroups = groups;
+}
+
+async function generateGroupLesson(gi) {
+const group = window._currentGroups[gi];
+const level = group.members[0]?.level||'Level 5';
+const prompt = `Reading teacher: 15-min small group lesson. Group:${group.name} Level:${level} Students:${group.members.map(m=>m.name).join(',')} WeakArea:${group.focus}
+Reply ONLY raw JSON: {"lessonTitle":"...","focusSummary":"...","hasCurriculumAlignment":false,"segments":[{"pillar":"phonemic","title":"...","timeRange":"0-2 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"phonics","title":"...","timeRange":"2-5 min","minutes":3,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"fluency","title":"...","timeRange":"5-8 min","minutes":3,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"vocabulary","title":"...","timeRange":"8-11 min","minutes":3,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"comprehension","title":"...","timeRange":"11-13 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"writing","title":"...","timeRange":"13-15 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""}],"afterLesson":"..."}
+Real content. emphasis:true on 2 segments targeting ${group.focus}.`;
+
+document.getElementById('groups-content').innerHTML = `
+<div style="text-align:center;padding:60px">
+<div class="spinner" style="margin:0 auto 12px"></div>
+<div style="font-weight:700;margin-bottom:6px">Building group lesson…</div>
+<div style="font-size:13px;color:#888">For ${group.name}</div>
+</div>`;
+
+try {
+const res = await fetch('https://api.anthropic.com/v1/messages', {
+method:'POST', headers:{'content-type':'application/json'},
+body: JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
+});
+const data = await res.json();
+let text = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim();
+let lesson;
+try{lesson=JSON.parse(text);}catch(_){try{lesson=JSON.parse(text.replace(/```json/gi,'').replace(/```/g,'').trim());}catch(_){const a=text.indexOf('{'),b=text.lastIndexOf('}');lesson=JSON.parse(text.slice(a,b+1));}}
+currentLesson = lesson;
+currentStudent = {name:group.name, level:group.members[0]?.level||'Level 5'};
+viewLesson();
+} catch(e) {
+renderGroups();
+alert('Error generating lesson: '+e.message);
+}
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+populateLevelSelect();
+renderDashboard();
+</script>
+
+</body>
+</html>
