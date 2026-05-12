@@ -490,7 +490,7 @@ function bldGroups(){
 function rdGroups(){
   var grps=bldGroups();
   if(!grps.length){
-    document.getElementById('grp-out').innerHTML='<div class="card" style="text-align:center;padding:40px"><div style="font-size:36px;margin-bottom:10px">👥</div><div style="font-weight:700;margin-bottom:6px">No Groups Yet</div><div style="font-size:13px;color:#888;margin-bottom:16px">Complete sessions with at least 2 students to auto-generate groups.</div><button class="btn" onclick="go(\'dash\')">Back to Dashboard</button></div>';
+    document.getElementById('grp-out').innerHTML='<div class="card" style="text-align:center;padding:40px"><div style="font-size:36px;margin-bottom:10px"></div><div style="font-weight:700;margin-bottom:6px">No Groups Yet</div><div style="font-size:13px;color:#888;margin-bottom:16px">Complete sessions with at least 2 students to auto-generate groups.</div><button class="btn" onclick="go(\'dash\')">Back to Dashboard</button></div>';
     return;
   }
   window._grps=grps;
@@ -544,7 +544,7 @@ function viewLes(){
       '<div style="font-size:12px;color:#777;margin-top:4px;line-height:1.5">'+sg.tip+'</div></div>'+
       '<div style="font-size:14px;color:#DDD;margin-left:10px;padding-top:4px" id="sa-'+i+'">v</div></div>'+
       '<div class="seg-body" id="sb-'+i+'">'+
-      (sg.standard?'<div style="background:#1A1A2E;border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;gap:10px"><span style="font-size:16px">📋</span><div><div style="font-size:10px;font-weight:800;color:#4ECDC4;margin-bottom:2px">CURRICULUM STANDARD</div><div style="font-size:13px;color:#F5F3EE">'+sg.standard+'</div></div></div>':'')+
+      (sg.standard?'<div style="background:#1A1A2E;border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;gap:10px"><span style="font-size:16px"></span><div><div style="font-size:10px;font-weight:800;color:#4ECDC4;margin-bottom:2px">CURRICULUM STANDARD</div><div style="font-size:13px;color:#F5F3EE">'+sg.standard+'</div></div></div>':'')+
       '<div class="grid2" style="gap:10px;margin-bottom:10px">'+
       '<div style="background:#F5F3EE;border-radius:10px;padding:12px"><div class="lbl">TEACHER DOES</div><div style="font-size:13px;line-height:1.7">'+sg.teacherDoes+'</div></div>'+
       '<div style="background:#F5F3EE;border-radius:10px;padding:12px"><div class="lbl">STUDENT DOES</div><div style="font-size:13px;line-height:1.7">'+sg.studentDoes+'</div></div></div>'+
@@ -555,7 +555,7 @@ function viewLes(){
     '<div style="font-family:Playfair Display,serif;font-size:28px;font-weight:700;margin-bottom:4px">'+les.lessonTitle+'</div>'+
     '<div style="font-size:14px;color:#555;margin-bottom:4px"><strong>'+label+'</strong> - '+new Date().toLocaleDateString()+'</div>'+
     '<div style="font-size:14px;color:#666;margin-bottom:20px">'+les.focusSummary+'</div>'+
-    (les.hasCurriculumAlignment?'<div class="card" style="background:#1A1A2E;color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:12px"><span style="font-size:24px">📋</span><div><div style="font-size:13px;font-weight:800;color:#4ECDC4;margin-bottom:2px">Curriculum Aligned</div><div style="font-size:12px;color:#9999BB">Each activity mapped to your curriculum standards.</div></div></div>':'')+
+    (les.hasCurriculumAlignment?'<div class="card" style="background:#1A1A2E;color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:12px"><span style="font-size:24px"></span><div><div style="font-size:13px;font-weight:800;color:#4ECDC4;margin-bottom:2px">Curriculum Aligned</div><div style="font-size:12px;color:#9999BB">Each activity mapped to your curriculum standards.</div></div></div>':'')+
     '<div class="card" style="margin-bottom:14px"><div style="font-size:12px;font-weight:700;margin-bottom:8px">6 PILLARS OF READING</div><div style="display:flex;flex-wrap:wrap;gap:6px">'+pillHtml+'</div></div>'+
     '<div class="pbar-wrap">'+barHtml+'</div>'+
     '<div class="tlabels"><span>0 min</span><span>5 min</span><span>10 min</span><span>15 min</span></div>'+
