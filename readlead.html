@@ -450,7 +450,7 @@ var sel=document.getElementById("new-level");
 sel.innerHTML=LEVELS.map(function(l){return"<option value='"+l+"'>"+l+" - "+LM[l][1]+" ("+LM[l][0]+")</option>";}).join("");
 }
 function startSess(id){
-cur=students.find(function(s){return s.id===id;});
+cur=students.find(function(s){return s.id==id;});
 rats=Object.assign({},(cur.sessions[0]&&cur.sessions[0].ratings)||{});
 errs=[];ownText=false;lesson=null;pidx=0;
 document.getElementById("obs-title").textContent="Session: "+cur.name;
