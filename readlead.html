@@ -262,9 +262,22 @@ if(scr==="groups")rdGroups();
 function rdDash(){
 document.getElementById("dash-sub").textContent=students.length+" students";
 var grps=bldGroups();
-var stats=[[students.length,"Students","#4ECDC4"],[students.filter(function(s){return s.sessions.length>0;}).length,"Sessioned","#FFD166"],[grps.length||"--","Groups","#6BCB77"]];
-document.getElementById("dash-stats").innerHTML=stats.map(function(x){var d=document.createElement("div");d.className="card";d.style="margin-bottom:0;border-top:4px solid "+x[2]+";text-align:center";d.innerHTML="<div style='font-size:28px;font-weight:800;color:"+x[2]+";font-family:Playfair Display,serif'>"+x[0]+"</div><div style='font-size:11px;color:#888;font-weight:600'>"+x[1]+"</div>";return d.outerHTML;}).join("");
-document.getElementById("student-list").innerHTML=students.map(function(s,i){var d=document.createElement("div");d.className="srow";var prog=s.sessions.length>0?"<button class='btn-ghost' onclick='showProg("+s.id+")'>Progress</button>":"";d.innerHTML="<div class='row'><div class='av' style='width:40px;height:40px;background:"+AVC[i%6]+";font-size:15px'>"+s.name[0]+"</div><div><div style='font-weight:700;font-size:14px'>"+s.name+"</div><div style='font-size:12px;color:#999'>"+s.grade+" "+tag(s.level,lc(s.level))+" "+lb(s.level)+" - "+s.sessions.length+" sessions</div></div></div><div class='row'>"+prog+"<button class='btn' onclick='startSess("+s.id+")'>Start</button></div>";return d.outerHTML;}).join("");
+var html="";
+students.forEach(function(s,i){
+html+="<div class='srow'>";
+html+="<div class='row'>";
+html+="<div class='av' style='width:40px;height:40px;background:"+AVC[i%6]+";font-size:15px'>"+s.name[0]+"</div>";
+html+="<div><div style='font-weight:700;font-size:14px'>"+s.name+"</div>";
+html+="<div style='font-size:12px;color:#999'>"+s.grade+" - "+lb(s.level)+" - "+s.sessions.length+" sessions</div>";
+html+="</div></div>";
+html+="<div class='row'>";
+html+="<button class='btn' id='btn-"+s.id+"'>Start</button>";
+html+="</div></div>";
+});
+document.getElementById("student-list").innerHTML=html;
+students.forEach(function(s){
+document.getElementById("btn-"+s.id).addEventListener("click",function(){startSess(s.id);});
+});
 }
 function rdErrs(){
 var el=document.getElementById("err-list");
