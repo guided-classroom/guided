@@ -276,9 +276,7 @@ html+="<button class='btn' id='btn-"+s.id+"'>Start</button>";
 html+="</div></div>";
 });
 document.getElementById("student-list").innerHTML=html;
-students.forEach(function(s){
-document.getElementById("btn-"+s.id).addEventListener("click",function(){startSess(s.id);});
-});
+setTimeout(function(){students.forEach(function(s){var btn=document.getElementById("btn-"+s.id);if(btn){btn.addEventListener("click",function(){startSess(s.id);});}});},100);
 }
 function rdErrs(){
 var el=document.getElementById("err-list");

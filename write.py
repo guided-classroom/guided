@@ -1,6 +1,5 @@
 f=open('readlead.html','r')
 h=f.read()
 f.close()
-h=h.replace('<script>','<script>\ndocument.title="RL-"+Date.now();console.log("JS RUNNING",new Date());')
-open('readlead.html','w').write(h)
-print('done')
+i=h.find('addEventListener')
+print(repr(h[i-100:i+100]))
