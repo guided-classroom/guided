@@ -449,6 +449,26 @@ function populateLvl(){
 var sel=document.getElementById("new-level");
 sel.innerHTML=LEVELS.map(function(l){return"<option value='"+l+"'>"+l+" - "+LM[l][1]+" ("+LM[l][0]+")</option>";}).join("");
 }
+function startSess(id){
+cur=students.find(function(s){return s.id===id;});
+rats=Object.assign({},(cur.sessions[0]&&cur.sessions[0].ratings)||{});
+errs=[];ownText=false;lesson=null;pidx=0;
+document.getElementById("obs-title").textContent="Session: "+cur.name;
+document.getElementById("obs-sub").innerHTML=tag(cur.level,lc(cur.level))+" "+lb(cur.level)+" - "+cur.grade;
+document.getElementById("tog").classList.remove("on");
+document.getElementById("tog-lbl").textContent="Using a ReadLead passage";
+document.getElementById("tog-l").style.fontWeight="700";
+document.getElementById("tog-r").style.fontWeight="400";
+document.getElementById("own-msg").style.display="none";
+document.getElementById("passage-card").style.display="block";
+document.getElementById("w-in").value="";
+document.getElementById("s-in").value="";
+document.getElementById("curr-in").value="";
+document.getElementById("curr-badge").style.display="none";
+rdErrs();rdRats();rdPass();
+document.getElementById("gen-box").innerHTML="<div style='font-size:15px;font-weight:800;margin-bottom:4px'>Generate Lesson Plan</div><button class='btn btn-teal' style='width:100%;font-size:14px' onclick='doGen()'>Generate "+cur.name+" Lesson</button>";
+go("observe");
+}
 populateLvl();
 rdDash();
 </script>
