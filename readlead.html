@@ -182,6 +182,7 @@ button,input,select,textarea{font-family:inherit;cursor:pointer;}
 <div id="grp-out"></div>
 </div></div>
 <script>
+document.title="RL-"+Date.now();console.log("JS RUNNING",new Date());
 var PASSAGES={};
 PASSAGES["Level 1"]=[{title:"My Cat",text:"I have a cat.\nMy cat is big.\nShe can sit.\nShe can nap.\nI love my cat.",qs:["What can the cat do?","Is the cat big or small?","Do you have a pet?"]},{title:"The Sun",text:"I see the sun.\nThe sun is hot.\nThe sun is big.\nI like the sun.",qs:["What is the sun like?","When do you see the sun?","Do you like sunny days?"]},{title:"My Ball",text:"I have a ball.\nIt is red.\nI kick the ball.\nI throw the ball.\nFun, fun, fun!",qs:["What color is the ball?","What do you do with the ball?","What is your favorite toy?"]}];
 PASSAGES["Level 2"]=[{title:"My Dog",text:"I have a dog.\nMy dog can run.\nMy dog can jump.\nHe is so fun.\nI like my dog.",qs:["What can the dog do?","How does the child feel?","What pet would you want?"]},{title:"The Rain",text:"It is raining.\nI see the rain.\nI have my coat.\nI have my boots.\nI like the rain!",qs:["What does the child wear?","How does the child feel?","What do you do on rainy days?"]},{title:"At School",text:"I go to school.\nI see my friends.\nWe read and write.\nWe play at lunch.\nI like school!",qs:["What do they do at school?","Who does the child see?","What is your favorite thing about school?"]}];
@@ -484,6 +485,8 @@ go("observe");
 }
 populateLvl();
 rdDash();
+console.log("students:",students.length);
+console.log("startSess type:",typeof startSess);
 </script>
 </body>
 </html>
