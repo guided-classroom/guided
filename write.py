@@ -1,12 +1,8 @@
 f=open('readlead.html','r')
 h=f.read()
 f.close()
-insert='function rdErrs(){\n'
-insert+='var el=document.getElementById("err-list");\n'
-insert+='if(!errs.length){el.innerHTML="<div style=\'font-size:12px;color:#CCC\'>No errors logged yet</div>";return;}\n'
-insert+='el.innerHTML=errs.map(function(e,i){return"<div class=\'erow\'><div class=\'row\'>"+tag(e.type,"#FF9F43")+"<span style=\'font-size:12px;font-weight:700\'>"+e.word+"</span>"+(e.said?"<span style=\'font-size:12px;color:#888\'>said "+e.said+"</span>":"")+"</div><button style=\'background:none;border:none;color:#CCC;cursor:pointer;font-size:18px\' onclick=\'rmErr("+i+")\'>x</button></div>";}).join("");\n'
-insert+='}\n'
-insert+='function rmErr(i){errs.splice(i,1);rdErrs();}\n'
-h=h.replace('function rdRats()',insert+'function rdRats()')
+old='function startSess(id){'
+new='function startSess(id){\ncur=students.find(function(s){return s.id===id;});\nrats=Object.assign({},(cur.sessions[0]&&cur.sessions[0].ratings)||{});\nerrs=[];ownText=false;lesson=null;pidx=0;\ndocument.getElementById("obs-title").textContent="Session: "+cur.name;\ndocument.getElementById("obs-sub").innerHTML=tag(cur.level,lc(cur.level))+" "+lb(cur.level)+" - "+cur.grade;\nvar tog=document.getElementById("tog");tog.classList.remove("on");\ndocument.getElementById("tog-lbl").textContent="Using a ReadLead passage";\ndocument.getElementById("tog-l").style.fontWeight="700";\ndocument.getElementById("tog-l").style.color="#1A1A2E";\ndocument.getElementById("tog-r").style.fontWeight="400";\ndocument.getElementById("tog-r").style.color="#AAA";\ndocument.getElementById("own-msg").style.display="none";\ndocument.getElementById("passage-card").style.display="block";\ndocument.getElementById("w-in").value="";\ndocument.getElementById("s-in").value="";\ndocument.getElementById("curr-in").value="";\ndocument.getElementById("curr-badge").style.display="none";\ndocument.getElementById("curr-msg").style.display="none";\nrdErrs();rdRats();rdPass();\ndocument.getElementById("gen-box").innerHTML="<div style=\'font-size:15px;font-weight:800;margin-bottom:4px\'>Generate Lesson Plan</div><div style=\'font-size:12px;color:#9999BB;margin-bottom:14px\'>Builds a personalized 15-min lesson.</div><button class=\'btn btn-teal\' style=\'width:100%;font-size:14px\' onclick=\'doGen()\'>Generate "+cur.name+" Lesson</button>";\ngo("observe");'
+h=h.replace(old,new,1)
 open('readlead.html','w').write(h)
-print('done rdErrs:','function rdErrs' in h)
+print('done')
