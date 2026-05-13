@@ -1,29 +1,12 @@
 f=open('readlead.html','r')
 h=f.read()
 f.close()
-insert='''function startSess(id){
-cur=students.find(function(s){return s.id===id;});
-rats=Object.assign({},(cur.sessions[0]&&cur.sessions[0].ratings)||{});
-errs=[];ownText=false;lesson=null;pidx=0;
-document.getElementById("obs-title").textContent="Session: "+cur.name;
-document.getElementById("obs-sub").innerHTML=tag(cur.level,lc(cur.level))+" "+lb(cur.level)+" - "+cur.grade;
-var tog=document.getElementById("tog");tog.classList.remove("on");
-document.getElementById("tog-lbl").textContent="Using a ReadLead passage";
-document.getElementById("tog-l").style.fontWeight="700";
-document.getElementById("tog-l").style.color="#1A1A2E";
-document.getElementById("tog-r").style.fontWeight="400";
-document.getElementById("tog-r").style.color="#AAA";
-document.getElementById("own-msg").style.display="none";
-document.getElementById("passage-card").style.display="block";
-document.getElementById("w-in").value="";
-document.getElementById("s-in").value="";
-document.getElementById("curr-in").value="";
-document.getElementById("curr-badge").style.display="none";
-document.getElementById("curr-msg").style.display="none";
-rdErrs();rdRats();rdPass();
-document.getElementById("gen-box").innerHTML="<div style=\'font-size:15px;font-weight:800;margin-bottom:4px\'>Generate Lesson Plan</div><div style=\'font-size:12px;color:#9999BB;margin-bottom:14px\'>Builds a personalized 15-min lesson targeting all 6 pillars.</div><button class=\'btn btn-teal\' style=\'width:100%;font-size:14px\' onclick=\'doGen()\'>Generate "+cur.name+" Lesson</button>";
-go("observe");
-}
-'''
-h=h.replace('function rdPass()',insert+'function rdPass()')
+insert='function rdErrs(){\n'
+insert+='var el=document.getElementById("err-list");\n'
+insert+='if(!errs.length){el.innerHTML="<div style=\'font-size:12px;color:#CCC\'>No errors logged yet</div>";return;}\n'
+insert+='el.innerHTML=errs.map(function(e,i){return"<div class=\'erow\'><div class=\'row\'>"+tag(e.type,"#FF9F43")+"<span style=\'font-size:12px;font-weight:700\'>"+e.word+"</span>"+(e.said?"<span style=\'font-size:12px;color:#888\'>said "+e.said+"</span>":"")+"</div><button style=\'background:none;border:none;color:#CCC;cursor:pointer;font-size:18px\' onclick=\'rmErr("+i+")\'>x</button></div>";}).join("");\n'
+insert+='}\n'
+insert+='function rmErr(i){errs.splice(i,1);rdErrs();}\n'
+h=h.replace('function rdRats()',insert+'function rdRats()')
 open('readlead.html','w').write(h)
+print('done rdErrs:','function rdErrs' in h)
