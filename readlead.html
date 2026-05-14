@@ -354,7 +354,7 @@ document.getElementById("gen-box").innerHTML="<div style='text-align:center;padd
 try{
 var res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"content-type":"application/json","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2000,messages:[{role:"user",content:prompt}]})});
 var data=await res.json();
-var text=(data.content||[]).filter(function(b){return b.type==="text";}).map(function(b){return b.text;}).join("").trim();
+var text=(data.content||[]).filter(function(b){return b.type==="text";}).map(function(b){return b.text;}).join("").trim();console.log("API response:",JSON.stringify(data).substring(0,200));console.log("text:",text.substring(0,200));
 var les;
 try{les=JSON.parse(text);}catch(e){try{les=JSON.parse(text.replace(/```json/gi,"").replace(/```/g,"").trim());}catch(e2){var a=text.indexOf("{"),b=text.lastIndexOf("}");les=JSON.parse(text.slice(a,b+1));}}
 lesson=les;
@@ -478,7 +478,7 @@ document.getElementById("grp-out").innerHTML="<div style='text-align:center;padd
 try{
 var res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"content-type":"application/json","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2000,messages:[{role:"user",content:prompt}]})});
 var data=await res.json();
-var text=(data.content||[]).filter(function(b){return b.type==="text";}).map(function(b){return b.text;}).join("").trim();
+var text=(data.content||[]).filter(function(b){return b.type==="text";}).map(function(b){return b.text;}).join("").trim();console.log("API response:",JSON.stringify(data).substring(0,200));console.log("text:",text.substring(0,200));
 var les;
 try{les=JSON.parse(text);}catch(e){try{les=JSON.parse(text.replace(/```json/gi,"").replace(/```/g,"").trim());}catch(e2){var a=text.indexOf("{"),b=text.lastIndexOf("}");les=JSON.parse(text.slice(a,b+1));}}
 lesson=les;
