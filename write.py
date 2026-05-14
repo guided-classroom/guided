@@ -1,8 +1,9 @@
 f=open('readlead.html','r')
 h=f.read()
 f.close()
-old='var text=(data.content||[]).filter(function(b){return b.type==="text";}).map(function(b){return b.text;}).join("").trim();'
-new='var text=(data.content||[]).filter(function(b){return b.type==="text";}).map(function(b){return b.text;}).join("").trim();console.log("API response:",JSON.stringify(data).substring(0,200));console.log("text:",text.substring(0,200));'
-h=h.replace(old,new)
+h=h.replace(
+'headers:{"content-type":"application/json","anthropic-dangerous-direct-browser-access":"true"}',
+'headers:{"content-type":"application/json","anthropic-dangerous-direct-browser-access":"true","x-api-key":"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"}'
+)
 open('readlead.html','w').write(h)
-print('done')
+print('done count:',h.count('x-api-key'))
