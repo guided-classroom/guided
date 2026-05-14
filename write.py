@@ -1,6 +1,7 @@
-f=open('api/lesson.js','r')
+f=open('readlead.html','r')
 h=f.read()
 f.close()
-h=h.replace('claude-sonnet-4-20250514','claude-sonnet-4-5')
-open('api/lesson.js','w').write(h)
-print('api done')
+old='<button onclick="startSess(1)" style="background:red;color:white;padding:20px;font-size:20px">TEST START MARCUS</button>'
+h=h.replace(old,'')
+open('readlead.html','w').write(h)
+print('done removed:',old not in h)
