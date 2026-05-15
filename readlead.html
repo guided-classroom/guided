@@ -245,13 +245,9 @@ var QR=[
 var AVC=["#FF6B6B","#4ECDC4","#FFD166","#6BCB77","#A78BFA","#FF9F43"];
 var LEVELS=Object.keys(LM);
 var cur=null,rats={},errs=[],ownText=false,lesson=null,pidx=0;
-var students=[
-{id:1,name:"Marcus",level:"Level 3",grade:"Kindergarten",sessions:[]},
-{id:2,name:"Sofia",level:"Level 11",grade:"3rd Grade",sessions:[]},
-{id:3,name:"Jaylen",level:"Level 2",grade:"Kindergarten",sessions:[]},
-{id:4,name:"Amara",level:"Level 17",grade:"5th Grade",sessions:[]},
-{id:5,name:"Luca",level:"Level 7",grade:"2nd Grade",sessions:[]}
-];
+function loadStudents(){try{var d=localStorage.getItem("guided_students");return d?JSON.parse(d):[]}catch(e){return[]}}
+function saveStudents(){try{localStorage.setItem("guided_students",JSON.stringify(students));}catch(e){}}
+var students=loadStudents();
 function lc(lv){return(LM[lv]||["","","#888"])[2];}
 function lb(lv){return(LM[lv]||["","lv",""])[1];}
 function tag(t,c){return'<span class="tag" style="background:'+c+'22;color:'+c+'">'+t+'</span>';}
@@ -366,6 +362,7 @@ var rec={date:new Date().toLocaleDateString(),ratings:Object.assign({},rats),err
 var idx=students.findIndex(function(s){return s.id===cur.id;});
 students[idx].sessions=[rec].concat(students[idx].sessions).slice(0,10);
 cur=students[idx];
+saveStudents();
 document.getElementById("gen-box").innerHTML="<div style='font-size:14px;font-weight:800;color:#4ECDC4;margin-bottom:4px'>Lesson Ready!</div><div style='font-size:12px;color:#9999BB;margin-bottom:12px'>"+les.focusSummary+"</div><button class='btn btn-teal' style='width:100%;font-size:14px' onclick='viewLes()'>View Lesson Plan</button>";
 }catch(e){
 document.getElementById("gen-box").innerHTML="<div style='font-size:15px;font-weight:800;margin-bottom:4px'>Generate Lesson Plan</div><div style='font-size:12px;color:#9999BB;margin-bottom:14px'>Something went wrong. Please try again.</div><button class='btn btn-teal' style='width:100%;font-size:14px' onclick='doGen()'>Retry</button><div style='margin-top:10px;padding:10px;background:#FF6B6B22;border-radius:8px;font-size:12px;color:#FF6B6B'>"+e.message+"</div>";
@@ -447,6 +444,7 @@ document.getElementById("grp-out").innerHTML=html;
 function addStu(){
 var n=document.getElementById("new-name").value.trim();if(!n)return;
 students.push({id:Date.now(),name:n,grade:document.getElementById("new-grade").value,level:document.getElementById("new-level").value,sessions:[]});
+saveStudents();
 document.getElementById("new-name").value="";
 go("dash");
 }
