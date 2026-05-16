@@ -303,9 +303,22 @@ document.getElementById("r-count").textContent=Object.keys(rats).length+"/"+QR.l
 }
 function selR(id,v){rats[id]=v;rdRats();}
 function chkCurr(){
-var has=document.getElementById("curr-in").value.trim().length>0;
+var val=document.getElementById("curr-in").value.trim();
+var has=val.length>0;
 document.getElementById("curr-badge").style.display=has?"inline-block":"none";
 document.getElementById("curr-msg").style.display=has?"block":"none";
+if(has){
+try{localStorage.setItem("guided_curriculum",val);}catch(e){}
+}
+}
+function loadSavedCurriculum(){
+try{
+var saved=localStorage.getItem("guided_curriculum");
+if(saved){
+var el=document.getElementById("curr-in");
+if(el){el.value=saved;chkCurr();}
+}
+}catch(e){}
 }
 function rdPass(){
 var ps=PASSAGES[cur.level]||PASSAGES["Level 5"]||[];
@@ -507,7 +520,7 @@ document.getElementById("w-in").value="";
 document.getElementById("s-in").value="";
 document.getElementById("curr-in").value="";
 document.getElementById("curr-badge").style.display="none";
-rdErrs();rdRats();rdPass();
+rdErrs();rdRats();rdPass();loadSavedCurriculum();
 document.getElementById("gen-box").innerHTML="<div style='font-size:15px;font-weight:800;margin-bottom:4px'>Generate Lesson Plan</div><button class='btn btn-teal' style='width:100%;font-size:14px' onclick='doGen()'>Generate "+cur.name+" Lesson</button>";
 go("observe");
 }
