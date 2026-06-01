@@ -193,10 +193,10 @@ var defaults=[
 ];
 var currList=[];
 if(curriculum){
-var lines=curriculum.split("\n").map(function(l){return l.trim();}).filter(function(l){return l.length>10;});
-currList=lines.slice(0,10);
+var lines=curriculum.split("\n").map(function(l){return l.trim();}).filter(function(l){return l.length>15;});
+currList=lines.slice(0,12);
 }
-var allOutcomes=currList.length?currList.concat(defaults):defaults;
+var allOutcomes=currList.length?currList:defaults;
 outcomes=allOutcomes.map(function(o){return{text:o,status:"none"};});
 renderOutcomes();
 }
