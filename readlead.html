@@ -532,10 +532,15 @@ document.getElementById("grp-out").innerHTML=html;
 function editLevel(id){
 var stu=students.find(function(s){return s.id==id;});
 if(!stu)return;
-var newLevel=prompt("Current level: "+stu.level+"\nEnter new level (e.g. Level 5):");
+var options=Object.keys(LM).map(function(l){return l+" ("+LM[l][0]+")";}).join("\n");
+var newLevel=prompt("Current: "+stu.level+" ("+LM[stu.level][0]+")\n\nChoose a new level:\n"+options);
 if(!newLevel)return;
 newLevel=newLevel.trim();
-if(!LM[newLevel]){alert("Invalid level. Please use format: Level 1 through Level 21");return;}
+if(newLevel.indexOf("(")<0&&!LM[newLevel]){
+newLevel="Level "+newLevel.replace(/[^0-9]/g,"");
+}
+if(newLevel.indexOf("(")>0)newLevel=newLevel.split("(")[0].trim();
+if(!LM[newLevel]){alert("Invalid. Please type exactly e.g. Level 5");return;}
 var idx=students.findIndex(function(s){return s.id==id;});
 students[idx].level=newLevel;
 students[idx].grade=LM[newLevel][0];
