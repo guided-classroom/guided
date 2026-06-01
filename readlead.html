@@ -144,7 +144,7 @@ button,input,select,textarea{font-family:inherit;cursor:pointer;}
 <div class="lbl" style="margin-bottom:0">CURRICULUM STANDARDS (OPTIONAL)</div>
 <span id="curr-badge" style="display:none;background:#4ECDC422;color:#4ECDC4;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700">Loaded</span>
 </div>
-<textarea class="inp" id="curr-in" rows="3" oninput="chkCurr()" style="resize:none" placeholder="Copy and paste specific curriculum expectations for this student (e.g. Reading 1.2: Uses phonics strategies to decode unknown words)"></textarea>
+<div id="curr-items"></div><button onclick="addCurrItem()" style="background:transparent;border:2px dashed #4ECDC4;color:#4ECDC4;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;width:100%;margin-top:6px;cursor:pointer">+ Add Expectation</button><input type="hidden" id="curr-in"/>
 <div id="curr-msg" style="display:none;font-size:11px;color:#4ECDC4;font-weight:600;margin-top:6px">Standards loaded</div>
 </div>
 </div>
@@ -302,21 +302,44 @@ el.innerHTML=html;
 document.getElementById("r-count").textContent=Object.keys(rats).length+"/"+QR.length+" rated";
 }
 function selR(id,v){rats[id]=v;rdRats();}
-function chkCurr(){
-var val=document.getElementById("curr-in").value.trim();
-var has=val.length>0;
+var currItems=[];
+function addCurrItem(val){
+currItems.push(val||"");
+renderCurrItems();
+if(!val)setTimeout(function(){var inputs=document.querySelectorAll(".curr-item-input");inputs[inputs.length-1].focus();},50);
+}
+function removeCurrItem(i){
+currItems.splice(i,1);
+renderCurrItems();
+saveCurr();
+}
+function renderCurrItems(){
+var el=document.getElementById("curr-items");
+if(!currItems.length){el.innerHTML="";return;}
+el.innerHTML=currItems.map(function(v,i){
+return"<div style='display:flex;gap:6px;margin-bottom:6px'><input class='inp curr-item-input' value='"+v.replace(/'/g,"&#39;")+"' placeholder='e.g. Reading 1.2: Uses phonics strategies...' oninput='updateCurr("+i+",this.value)' style='flex:1'/><button onclick='removeCurrItem("+i+")' style='background:#FF6B6B;color:#fff;border:none;border-radius:8px;padding:0 10px;font-weight:700;cursor:pointer'>x</button></div>";
+}).join("");
+}
+function updateCurr(i,val){
+currItems[i]=val;
+saveCurr();
+}
+function saveCurr(){
+var joined=currItems.filter(function(v){return v.trim().length>0;}).join("\n");
+document.getElementById("curr-in").value=joined;
+var has=joined.length>0;
 document.getElementById("curr-badge").style.display=has?"inline-block":"none";
 document.getElementById("curr-msg").style.display=has?"block":"none";
-if(has){
-try{localStorage.setItem("guided_curriculum",val);}catch(e){}
+try{localStorage.setItem("guided_curriculum",joined);}catch(e){}
 }
-}
+function chkCurr(){saveCurr();}
 function loadSavedCurriculum(){
 try{
 var saved=localStorage.getItem("guided_curriculum");
-if(saved){
-var el=document.getElementById("curr-in");
-if(el){el.value=saved;chkCurr();}
+if(saved&&saved.trim()){
+currItems=saved.split("\n").filter(function(l){return l.trim().length>0;});
+renderCurrItems();
+saveCurr();
 }
 }catch(e){}
 }
