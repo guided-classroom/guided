@@ -532,21 +532,35 @@ document.getElementById("grp-out").innerHTML=html;
 function editLevel(id){
 var stu=students.find(function(s){return s.id==id;});
 if(!stu)return;
-var options=Object.keys(LM).map(function(l){return l+" ("+LM[l][0]+")";}).join("\n");
-var newLevel=prompt("Current: "+stu.level+" ("+LM[stu.level][0]+")\n\nChoose a new level:\n"+options);
-if(!newLevel)return;
-newLevel=newLevel.trim();
-if(newLevel.indexOf("(")<0&&!LM[newLevel]){
-newLevel="Level "+newLevel.replace(/[^0-9]/g,"");
-}
-if(newLevel.indexOf("(")>0)newLevel=newLevel.split("(")[0].trim();
-if(!LM[newLevel]){alert("Invalid. Please type exactly e.g. Level 5");return;}
+var overlay=document.createElement("div");
+overlay.style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:999;display:flex;align-items:center;justify-content:center;";
+var box=document.createElement("div");
+box.style="background:#fff;border-radius:16px;padding:24px;width:320px;max-height:80vh;overflow-y:auto;";
+box.innerHTML="<div style='font-size:16px;font-weight:700;margin-bottom:4px'>Edit Reading Level</div><div style='font-size:13px;color:#888;margin-bottom:16px'>"+stu.name+" - currently "+stu.level+"</div>";
+Object.keys(LM).forEach(function(l){
+var btn=document.createElement("button");
+var grade=LM[l][0];
+var sublevel=LM[l][1];
+btn.style="display:block;width:100%;text-align:left;padding:10px 14px;margin-bottom:6px;border-radius:10px;border:2px solid "+(l===stu.level?"#4ECDC4":"#E8E8E8")+";background:"+(l===stu.level?"#4ECDC422":"#fff")+";font-size:13px;font-weight:600;cursor:pointer;";
+btn.textContent=l+" - "+sublevel+" ("+grade+")";
+btn.addEventListener("click",function(){
 var idx=students.findIndex(function(s){return s.id==id;});
-students[idx].level=newLevel;
-students[idx].grade=LM[newLevel][0];
+students[idx].level=l;
+students[idx].grade=LM[l][0];
 saveStudents();
+document.body.removeChild(overlay);
 rdDash();
 loadDashCurr();
+});
+box.appendChild(btn);
+});
+var cancel=document.createElement("button");
+cancel.textContent="Cancel";
+cancel.style="width:100%;padding:10px;margin-top:8px;border:none;border-radius:10px;background:#F5F3EE;font-weight:700;cursor:pointer;";
+cancel.addEventListener("click",function(){document.body.removeChild(overlay);});
+box.appendChild(cancel);
+overlay.appendChild(box);
+document.body.appendChild(overlay);
 }
 function addStu(){
 var n=document.getElementById("new-name").value.trim();if(!n)return;
