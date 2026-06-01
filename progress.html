@@ -236,7 +236,7 @@ var sess=cur.sessions||[];
 var rats=sess.length?sess[0].ratings||{}:{};
 var period=document.getElementById("rep-period").value;
 var notes=document.getElementById("extra-notes").value.trim();
-var rStr=QR.map(function(r){var v=rats[r.id]||0;return r.l+": "+v+"%";}).join(", ");
+var rStr=QR.map(function(r){var v=rats[r.id]||0;var level=v>=90?"strong":v>=75?"developing well":v>=60?"developing":"working toward";return r.l+": "+level;}).join(", ");
 var trend="";
 if(sess.length>=2){
 var prev=sess[1].ratings||{};
