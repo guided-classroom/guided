@@ -13,7 +13,7 @@ button,input,select,textarea{font-family:inherit;cursor:pointer;}
 .nav-logo{font-family:"Playfair Display",serif;font-size:22px;font-weight:700;color:#F5F3EE;}
 .nav-logo span{color:#A78BFA;}
 .nav-home{color:#9999BB;border:2px solid #444;border-radius:10px;padding:6px 12px;font-size:12px;font-weight:600;text-decoration:none;background:transparent;}
-.main{max-width:920px;margin:0 auto;padding:28px 20px;}
+.main{max-width:860px;margin:0 auto;padding:28px 20px;}
 .h1{font-family:"Playfair Display",serif;font-size:28px;font-weight:700;margin-bottom:4px;}
 .sub{font-size:14px;color:#666;margin-bottom:20px;}
 .card{background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.06);margin-bottom:12px;}
@@ -23,20 +23,24 @@ button,input,select,textarea{font-family:inherit;cursor:pointer;}
 .btn-ghost{background:transparent;color:#555;border:2px solid #DDD;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;}
 .inp{padding:10px 14px;border-radius:10px;border:2px solid #E8E8E8;font-size:13px;width:100%;background:#fff;}
 .lbl{font-size:11px;font-weight:800;color:#999;display:block;margin-bottom:6px;letter-spacing:.05em;}
-.tag{border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;display:inline-block;}
 .row{display:flex;align-items:center;gap:8px;}
 .av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;flex-shrink:0;}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 .srow{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #F5F3EE;}
 .srow:last-child{border-bottom:none;}
-.pbg{background:#F0F0F0;border-radius:99px;height:8px;margin-top:4px;}
-.pbar{height:8px;border-radius:99px;}
-.comment-box{background:#F5F3EE;border-radius:12px;padding:16px;margin-bottom:10px;position:relative;}
-.copy-btn{position:absolute;top:10px;right:10px;background:#A78BFA;color:#1A1A2E;border:none;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;}
 .screen{display:none;}
 .screen.active{display:block;}
-.outcome-btn{background:#F5F3EE;border:2px solid #E8E8E8;border-radius:10px;padding:10px 14px;font-size:13px;text-align:left;cursor:pointer;width:100%;margin-bottom:8px;}
-.outcome-btn.sel{background:#A78BFA22;border-color:#A78BFA;color:#1A1A2E;font-weight:600;}
+.comment-box{background:#F5F3EE;border-radius:12px;padding:16px;margin-bottom:12px;position:relative;}
+.copy-btn{background:#A78BFA;color:#1A1A2E;border:none;border-radius:8px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;margin-top:10px;}
+.outcome-row{background:#fff;border:2px solid #E8E8E8;border-radius:12px;padding:14px;margin-bottom:8px;}
+.outcome-row.selected{border-color:#A78BFA;background:#A78BFA08;}
+.strength-btn{border:2px solid #6BCB77;border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;background:transparent;color:#6BCB77;cursor:pointer;}
+.strength-btn.active{background:#6BCB77;color:#fff;}
+.developing-btn{border:2px solid #FFD166;border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;background:transparent;color:#C4952A;cursor:pointer;}
+.developing-btn.active{background:#FFD166;color:#1A1A2E;}
+.support-btn{border:2px solid #FF6B6B;border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;background:transparent;color:#FF6B6B;cursor:pointer;}
+.support-btn.active{background:#FF6B6B;color:#fff;}
+.pbg{background:#F0F0F0;border-radius:99px;height:8px;}
+.pbar{height:8px;border-radius:99px;}
 </style>
 </head>
 <body>
@@ -49,7 +53,7 @@ button,input,select,textarea{font-family:inherit;cursor:pointer;}
 <div class="screen active" id="s-home">
 <div class="main">
 <div class="h1">ProgressReporter</div>
-<div class="sub">Generate polished report card comments from your ReadLead data</div>
+<div class="sub">Generate specific report card comments from your ReadLead session data</div>
 <div class="card">
 <div class="row" style="justify-content:space-between;margin-bottom:14px">
 <div style="font-size:16px;font-weight:700">Your Students</div>
@@ -64,23 +68,32 @@ button,input,select,textarea{font-family:inherit;cursor:pointer;}
 <button class="btn-ghost" onclick="go('home')" style="margin-bottom:18px">Back</button>
 <div class="h1" id="rep-title">Report</div>
 <div class="sub" id="rep-sub"></div>
+<div class="card" id="data-summary" style="margin-bottom:12px"></div>
 <div class="card" style="margin-bottom:12px">
 <div class="lbl">REPORTING PERIOD</div>
-<select class="inp" id="rep-period" style="margin-bottom:14px">
+<select class="inp" id="rep-period" style="margin-bottom:16px">
 <option>Term 1</option><option>Term 2</option><option>Term 3</option>
 <option>Semester 1</option><option>Semester 2</option>
 <option>Mid-Year</option><option>End of Year</option>
 </select>
-<div class="lbl">CURRICULUM OUTCOMES (select all that apply)</div>
+<div class="lbl" style="margin-bottom:10px">CURRICULUM EXPECTATIONS — SELECT AND RATE EACH ONE</div>
+<div id="curr-info" style="font-size:12px;color:#A78BFA;font-weight:600;margin-bottom:10px;display:none">Curriculum loaded from ReadLead</div>
 <div id="outcomes-list"></div>
+<div style="margin-top:12px">
+<div class="lbl">ADD YOUR OWN EXPECTATION</div>
+<div class="row">
+<input class="inp" id="custom-outcome" placeholder="e.g. Reading 1.2: Uses phonics strategies..."/>
+<button class="btn btn-sm" onclick="addCustom()" style="white-space:nowrap;margin-left:8px">Add</button>
+</div>
+</div>
 </div>
 <div class="card" style="margin-bottom:12px">
-<div class="lbl">ADDITIONAL NOTES (optional)</div>
+<div class="lbl">TEACHER NOTES (OPTIONAL)</div>
 <textarea class="inp" id="extra-notes" rows="3" style="resize:none" placeholder="Any specific observations, goals, or context to include..."></textarea>
 </div>
 <div class="card" style="background:#1A1A2E;color:#fff;margin-bottom:12px" id="gen-box">
 <div style="font-size:15px;font-weight:800;margin-bottom:4px">Generate Report Comments</div>
-<div style="font-size:12px;color:#9999BB;margin-bottom:14px">Creates polished report card comments based on ReadLead session data.</div>
+<div style="font-size:12px;color:#9999BB;margin-bottom:14px">Creates specific student-focused comments from real ReadLead data.</div>
 <button class="btn btn-purple" style="width:100%;font-size:14px" onclick="doGen()">Generate Comments</button>
 </div>
 <div id="comments-out"></div>
@@ -89,31 +102,9 @@ button,input,select,textarea{font-family:inherit;cursor:pointer;}
 <script>
 var AVC=["#FF6B6B","#4ECDC4","#FFD166","#6BCB77","#A78BFA","#FF9F43"];
 var cur=null;
-var selectedOutcomes=[];
-var OUTCOMES=[
-"Reads grade-level text with accuracy and fluency",
-"Decodes unfamiliar words using phonics strategies",
-"Uses self-monitoring strategies while reading",
-"Demonstrates comprehension through retelling",
-"Makes inferences and connections to text",
-"Uses context clues to determine word meaning",
-"Reads with expression and appropriate pacing",
-"Identifies main idea and supporting details",
-"Responds to text with supporting evidence",
-"Applies phonemic awareness skills",
-"Demonstrates sight word knowledge",
-"Engages with a variety of text types"
-];
-var QR=[
-{id:"accuracy",l:"Accuracy"},
-{id:"fluency",l:"Fluency"},
-{id:"decoding",l:"Decoding"},
-{id:"selfmon",l:"Self-Monitoring"},
-{id:"comprehension",l:"Comprehension"}
-];
-function loadStudents(){
-try{var d=localStorage.getItem("guided_students");return d?JSON.parse(d):[];}catch(e){return[];}
-}
+var outcomes=[];
+var QR=[{id:"accuracy",l:"Accuracy"},{id:"fluency",l:"Fluency"},{id:"decoding",l:"Decoding"},{id:"selfmon",l:"Self-Monitoring"},{id:"comprehension",l:"Comprehension"}];
+function loadStudents(){try{var d=localStorage.getItem("guided_students");return d?JSON.parse(d):[];}catch(e){return[];}}
 function go(scr){
 document.querySelectorAll(".screen").forEach(function(s){s.classList.remove("active");});
 document.getElementById("s-"+scr).classList.add("active");
@@ -123,7 +114,7 @@ function rdHome(){
 var students=loadStudents();
 var el=document.getElementById("student-list");
 if(!students.length){
-el.innerHTML="<div style='text-align:center;padding:40px'><div style='font-size:14px;color:#888;margin-bottom:12px'>No students yet. Add students in ReadLead first.</div><a href='readlead.html' class='btn btn-purple' style='display:inline-block;text-decoration:none'>Go to ReadLead</a></div>";
+el.innerHTML="<div style='text-align:center;padding:40px'><div style='font-size:14px;color:#888;margin-bottom:12px'>No students yet. Add students in ReadLead first.</div><a href='readlead.html' class='btn btn-purple' style='display:inline-block;text-decoration:none;padding:11px 20px'>Go to ReadLead</a></div>";
 return;
 }
 var html="";
@@ -134,7 +125,7 @@ html+="<div class='srow'><div class='row'>";
 html+="<div class='av' style='width:40px;height:40px;background:"+AVC[i%6]+";font-size:15px'>"+s.name[0]+"</div>";
 html+="<div><div style='font-weight:700;font-size:14px'>"+s.name+"</div>";
 html+="<div style='font-size:12px;color:#999'>"+s.grade+" - "+s.level+" - "+sessions.length+" sessions</div></div></div>";
-html+="<button class='btn btn-purple btn-sm' id='rbtn-"+s.id+"'"+(hasData?"":" disabled style='opacity:0.4'")+">Generate</button>";
+html+="<button class='btn btn-purple btn-sm' id='rbtn-"+s.id+"'"+(hasData?"":" style='opacity:0.4;cursor:not-allowed' disabled")+">Generate Report</button>";
 html+="</div>";
 });
 el.innerHTML=html;
@@ -151,53 +142,123 @@ cur=students.find(function(s){return s.id==id;});
 if(!cur)return;
 document.getElementById("rep-title").textContent="Report: "+cur.name;
 document.getElementById("rep-sub").textContent=cur.grade+" - "+cur.level+" - "+cur.sessions.length+" sessions";
-selectedOutcomes=[];
-var ol=document.getElementById("outcomes-list");
-ol.innerHTML=OUTCOMES.map(function(o,i){
-return"<button class='outcome-btn' id='out-"+i+"' onclick='toggleOutcome("+i+")'>"+ o+"</button>";
-}).join("");
+var sess=cur.sessions||[];
+var rats=sess.length?sess[0].ratings||{}:{};
+var prev=sess.length>1?sess[1].ratings||{}:null;
+var dataHtml="<div style='font-size:14px;font-weight:700;margin-bottom:12px'>ReadLead Data Summary</div>";
+dataHtml+="<div style='display:grid;grid-template-columns:1fr 1fr;gap:8px'>";
+QR.forEach(function(r){
+var v=rats[r.id]||0;
+var pv=prev?prev[r.id]||0:null;
+var diff=pv!==null?v-pv:null;
+var c=v>=90?"#6BCB77":v>=75?"#FFD166":"#FF6B6B";
+dataHtml+="<div style='background:#F5F3EE;border-radius:10px;padding:10px'>";
+dataHtml+="<div style='font-size:11px;font-weight:800;color:#999;margin-bottom:4px'>"+r.l+"</div>";
+dataHtml+="<div style='display:flex;align-items:center;gap:6px'>";
+dataHtml+="<div style='font-size:20px;font-weight:800;color:"+c+"'>"+v+"%</div>";
+if(diff!==null&&diff!==0)dataHtml+="<div style='font-size:11px;font-weight:700;color:"+(diff>0?"#6BCB77":"#FF6B6B")+"'>"+(diff>0?"+":"")+diff+"</div>";
+dataHtml+="</div>";
+dataHtml+="<div class='pbg' style='margin-top:6px'><div class='pbar' style='width:"+v+"%;background:"+c+"'></div></div>";
+dataHtml+="</div>";
+});
+dataHtml+="</div>";
+if(sess.length>0&&sess[0].errors&&sess[0].errors.length){
+dataHtml+="<div style='margin-top:12px;font-size:12px;color:#666'><strong>Recent errors:</strong> "+sess[0].errors.map(function(e){return e.word+(e.said?" said "+e.said:"");}).join(", ")+"</div>";
+}
+document.getElementById("data-summary").innerHTML=dataHtml;
+outcomes=[];
+var saved=localStorage.getItem("guided_curriculum")||"";
+var currInfo=document.getElementById("curr-info");
+if(saved){currInfo.style.display="block";}else{currInfo.style.display="none";}
+rdOutcomes(saved);
 document.getElementById("extra-notes").value="";
 document.getElementById("comments-out").innerHTML="";
-document.getElementById("gen-box").innerHTML="<div style='font-size:15px;font-weight:800;margin-bottom:4px'>Generate Report Comments</div><div style='font-size:12px;color:#9999BB;margin-bottom:14px'>Creates polished report card comments based on ReadLead session data.</div><button class='btn btn-purple' style='width:100%;font-size:14px' onclick='doGen()'>Generate Comments for "+cur.name+"</button>";
+document.getElementById("gen-box").innerHTML="<div style='font-size:15px;font-weight:800;margin-bottom:4px'>Generate Report Comments</div><div style='font-size:12px;color:#9999BB;margin-bottom:14px'>Creates specific student-focused comments from real ReadLead data.</div><button class='btn btn-purple' style='width:100%;font-size:14px' onclick='doGen()'>Generate Comments for "+cur.name+"</button>";
 go("report");
 }
-function toggleOutcome(i){
-var btn=document.getElementById("out-"+i);
-var o=OUTCOMES[i];
-if(selectedOutcomes.includes(o)){
-selectedOutcomes=selectedOutcomes.filter(function(x){return x!==o;});
-btn.classList.remove("sel");
-}else{
-selectedOutcomes.push(o);
-btn.classList.add("sel");
+function rdOutcomes(curriculum){
+var defaults=[
+"Reads grade-level text with accuracy and fluency",
+"Decodes unfamiliar words using phonics strategies",
+"Uses self-monitoring strategies while reading",
+"Demonstrates comprehension through retelling",
+"Makes inferences and connections to text",
+"Uses context clues to determine word meaning",
+"Reads with expression and appropriate pacing",
+"Identifies main idea and supporting details",
+"Responds to text with supporting evidence",
+"Applies phonemic awareness skills",
+"Demonstrates sight word knowledge",
+"Engages with a variety of text types"
+];
+var currList=[];
+if(curriculum){
+var lines=curriculum.split("\n").map(function(l){return l.trim();}).filter(function(l){return l.length>10;});
+currList=lines.slice(0,10);
 }
+var allOutcomes=currList.length?currList.concat(defaults):defaults;
+outcomes=allOutcomes.map(function(o){return{text:o,status:"none"};});
+renderOutcomes();
+}
+function renderOutcomes(){
+var el=document.getElementById("outcomes-list");
+el.innerHTML=outcomes.map(function(o,i){
+var sel=o.status!=="none";
+return"<div class='outcome-row"+(sel?" selected":"")+"'><div style='font-size:13px;font-weight:600;margin-bottom:8px'>"+o.text+"</div><div class='row'>"+
+"<button class='strength-btn"+(o.status==='strength'?" active":"")+"'  onclick='setStatus("+i+",\'strength\')'>Strength</button>"+
+"<button class='developing-btn"+(o.status==='developing'?" active":"")+"'  onclick='setStatus("+i+",\'developing\')'>Developing</button>"+
+"<button class='support-btn"+(o.status==='support'?" active":"")+"'  onclick='setStatus("+i+",\'support\')'>Needs Support</button>"+
+"</div></div>";
+}).join("");
+}
+function setStatus(i,status){
+outcomes[i].status=outcomes[i].status===status?"none":status;
+renderOutcomes();
+}
+function addCustom(){
+var val=document.getElementById("custom-outcome").value.trim();
+if(!val)return;
+outcomes.unshift({text:val,status:"none"});
+document.getElementById("custom-outcome").value="";
+renderOutcomes();
 }
 async function doGen(){
 if(!cur)return;
-var sessions=cur.sessions||[];
+var selected=outcomes.filter(function(o){return o.status!=="none";});
+if(!selected.length){alert("Please rate at least one curriculum expectation first.");return;}
+var sess=cur.sessions||[];
+var rats=sess.length?sess[0].ratings||{}:{};
 var period=document.getElementById("rep-period").value;
 var notes=document.getElementById("extra-notes").value.trim();
-var latest=sessions[0]||{};
-var rats=latest.ratings||{};
-var rStr=QR.map(function(r){var v=rats[r.id]||75;var level=v>=90?"strong":v>=75?"developing":"needs support";return r.l+": "+v+"% ("+level+")";}).join(", ");
+var rStr=QR.map(function(r){var v=rats[r.id]||0;return r.l+": "+v+"%";}).join(", ");
 var trend="";
-if(sessions.length>=2){
-var prev=sessions[1].ratings||{};
-var improvements=QR.filter(function(r){return(rats[r.id]||75)>(prev[r.id]||75);}).map(function(r){return r.l;});
-if(improvements.length)trend="Showing improvement in: "+improvements.join(", ")+".";
+if(sess.length>=2){
+var prev=sess[1].ratings||{};
+var imp=QR.filter(function(r){return(rats[r.id]||0)>(prev[r.id]||0);}).map(function(r){return r.l;});
+if(imp.length)trend="Showing improvement in: "+imp.join(", ")+".";
 }
-var outcomes=selectedOutcomes.length?selectedOutcomes.join("; "):"General reading development";
-var prompt="You are an experienced teacher writing formal report card comments.\n";
+var strengths=selected.filter(function(o){return o.status==="strength";}).map(function(o){return o.text;});
+var developing=selected.filter(function(o){return o.status==="developing";}).map(function(o){return o.text;});
+var support=selected.filter(function(o){return o.status==="support";}).map(function(o){return o.text;});
+var prompt="You are an experienced teacher writing formal report card comments about a student.\n";
+prompt+="IMPORTANT: Write all comments FROM THE STUDENT'S PERSPECTIVE. Describe what the student does, knows, and is working toward. Never say what the teacher will do. Next steps should be about what the student will do next.\n\n";
 prompt+="Student: "+cur.name+"\n";
 prompt+="Grade: "+cur.grade+"\n";
 prompt+="Reading Level: "+cur.level+"\n";
 prompt+="Reporting Period: "+period+"\n";
-prompt+="Reading Assessment Data: "+rStr+"\n";
-if(trend)prompt+="Progress Trend: "+trend+"\n";
-prompt+="Curriculum Outcomes to Address: "+outcomes+"\n";
+prompt+="ReadLead Skill Scores: "+rStr+"\n";
+if(trend)prompt+="Progress: "+trend+"\n";
+if(strengths.length)prompt+="Strengths (expectations being met): "+strengths.join("; ")+"\n";
+if(developing.length)prompt+="Developing (partially meeting): "+developing.join("; ")+"\n";
+if(support.length)prompt+="Needs Support (not yet meeting): "+support.join("; ")+"\n";
 if(notes)prompt+="Teacher Notes: "+notes+"\n";
-prompt+="\nGenerate 3 report card comment options. Each should be 3-4 sentences, professional, positive, specific to the data, include a strength and next step.\n";
-prompt+="Reply ONLY with raw JSON: {\"comments\":[{\"label\":\"Strength Focus\",\"text\":\"...\"},{\"label\":\"Growth Focus\",\"text\":\"...\"},{\"label\":\"Balanced\",\"text\":\"...\"}]}";
+prompt+="\nGenerate 3 different report card comment options. Rules:\n";
+prompt+="1. Each comment is 3-5 sentences\n";
+prompt+="2. Student-focused language only (e.g. Marcus demonstrates... Marcus is developing... Marcus will...)\n";
+prompt+="3. Reference specific expectations and skill scores\n";
+prompt+="4. Include a clear student-focused next step\n";
+prompt+="5. Professional, positive, specific tone\n";
+prompt+="\nReply ONLY with raw JSON: {\"comments\":[{\"label\":\"Strength Focus\",\"text\":\"...\"},{\"label\":\"Growth Focus\",\"text\":\"...\"},{\"label\":\"Balanced\",\"text\":\"...\"}]}";
 document.getElementById("gen-box").innerHTML="<div style='text-align:center;padding:16px'><div style='font-size:14px;font-weight:700;color:#A78BFA'>Generating comments for "+cur.name+"...</div></div>";
 document.getElementById("comments-out").innerHTML="";
 try{
@@ -211,12 +272,12 @@ var html="";
 comments.forEach(function(c,ci){
 html+="<div class='comment-box'>";
 html+="<div style='font-size:11px;font-weight:800;color:#A78BFA;margin-bottom:8px'>"+c.label+"</div>";
-html+="<div style='font-size:14px;line-height:1.7;margin-bottom:28px' id='ct-"+ci+"'>"+c.text+"</div>";
-html+="<button class='copy-btn' onclick='copyText("+ci+")'>Copy</button>";
+html+="<div style='font-size:14px;line-height:1.8;margin-bottom:10px' id='ct-"+ci+"'>"+c.text+"</div>";
+html+="<button class='copy-btn' onclick='copyText("+ci+")'>Copy to Clipboard</button>";
 html+="</div>";
 });
 document.getElementById("comments-out").innerHTML=html;
-document.getElementById("gen-box").innerHTML="<div style='font-size:14px;font-weight:800;color:#A78BFA;margin-bottom:8px'>Comments Generated!</div><button class='btn btn-purple' style='width:100%;font-size:14px' onclick='doGen()'>Regenerate</button>";
+document.getElementById("gen-box").innerHTML="<div style='font-size:14px;font-weight:800;color:#A78BFA;margin-bottom:8px'>Comments Ready!</div><button class='btn btn-purple' style='width:100%;font-size:14px' onclick='doGen()'>Regenerate</button>";
 }catch(e){
 document.getElementById("gen-box").innerHTML="<div style='font-size:15px;font-weight:800;margin-bottom:4px'>Generate Report Comments</div><div style='font-size:12px;color:#FF6B6B;margin-bottom:14px'>Error: "+e.message+"</div><button class='btn btn-purple' style='width:100%;font-size:14px' onclick='doGen()'>Try Again</button>";
 }
@@ -224,9 +285,9 @@ document.getElementById("gen-box").innerHTML="<div style='font-size:15px;font-we
 function copyText(i){
 var el=document.getElementById("ct-"+i);
 navigator.clipboard.writeText(el.textContent).then(function(){
-var btn=el.nextElementSibling;
-btn.textContent="Copied!";
-setTimeout(function(){btn.textContent="Copy";},2000);
+var btns=document.querySelectorAll(".copy-btn");
+btns[i].textContent="Copied!";
+setTimeout(function(){btns[i].textContent="Copy to Clipboard";},2000);
 });
 }
 rdHome();
