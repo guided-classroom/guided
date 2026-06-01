@@ -285,10 +285,11 @@ html+="<div style='font-size:12px;color:#999'>"+s.grade+" - "+lb(s.level)+" - "+
 html+="</div></div>";
 html+="<div class='row'>";
 html+="<button class='btn' id='btn-"+s.id+"'>Start</button>";
+html+="<button class='btn-ghost btn-sm' id='ebtn-"+s.id+"'>Edit Level</button>";
 html+="</div></div>";
 });
 document.getElementById("student-list").innerHTML=html;
-setTimeout(function(){students.forEach(function(s){var btn=document.getElementById("btn-"+s.id);if(btn){btn.addEventListener("click",function(){startSess(s.id);});}});},100);
+setTimeout(function(){students.forEach(function(s){var btn=document.getElementById("btn-"+s.id);if(btn){btn.addEventListener("click",function(){startSess(s.id);});}var ebtn=document.getElementById("ebtn-"+s.id);if(ebtn){ebtn.addEventListener("click",function(){editLevel(s.id);});}});},100);
 }
 function rdErrs(){
 var el=document.getElementById("err-list");
@@ -527,6 +528,20 @@ html+="<button class='btn' style='background:"+g.color+";font-size:13px;padding:
 html+="</div>";
 });
 document.getElementById("grp-out").innerHTML=html;
+}
+function editLevel(id){
+var stu=students.find(function(s){return s.id==id;});
+if(!stu)return;
+var newLevel=prompt("Current level: "+stu.level+"\nEnter new level (e.g. Level 5):");
+if(!newLevel)return;
+newLevel=newLevel.trim();
+if(!LM[newLevel]){alert("Invalid level. Please use format: Level 1 through Level 21");return;}
+var idx=students.findIndex(function(s){return s.id==id;});
+students[idx].level=newLevel;
+students[idx].grade=LM[newLevel][0];
+saveStudents();
+rdDash();
+loadDashCurr();
 }
 function addStu(){
 var n=document.getElementById("new-name").value.trim();if(!n)return;
