@@ -202,16 +202,22 @@ renderOutcomes();
 }
 function renderOutcomes(){
 var el=document.getElementById("outcomes-list");
-el.innerHTML=outcomes.map(function(o,i){
+var html="";
+outcomes.forEach(function(o,i){
 var sel=o.status!=="none";
-return"<div class='outcome-row"+(sel?" selected":"")+"'><div style='font-size:13px;font-weight:600;margin-bottom:8px'>"+o.text+"</div><div class='row'>"+
-"<button class='strength-btn"+(o.status==='strength'?" active":"")+"'  onclick='setStatus("+i+",\'strength\')'>Strength</button>"+
-"<button class='developing-btn"+(o.status==='developing'?" active":"")+"'  onclick='setStatus("+i+",\'developing\')'>Developing</button>"+
-"<button class='support-btn"+(o.status==='support'?" active":"")+"'  onclick='setStatus("+i+",\'support\')'>Needs Support</button>"+
-"</div></div>";
-}).join("");
+html+="<div class='outcome-row"+(sel?" selected":"")+"'>";
+html+="<div style='font-size:13px;font-weight:600;margin-bottom:8px'>"+o.text+"</div>";
+html+="<div class='row'>";
+html+="<button class='strength-btn"+(o.status==="strength"?" active":"")+"'  onclick='setStatus("+i+",0)'>Strength</button>";
+html+="<button class='developing-btn"+(o.status==="developing"?" active":"")+"'  onclick='setStatus("+i+",1)'>Developing</button>";
+html+="<button class='support-btn"+(o.status==="support"?" active":"")+"'  onclick='setStatus("+i+",2)'>Needs Support</button>";
+html+="</div></div>";
+});
+el.innerHTML=html;
 }
-function setStatus(i,status){
+var statusMap=["strength","developing","support"];
+function setStatus(i,s){
+var status=statusMap[s];
 outcomes[i].status=outcomes[i].status===status?"none":status;
 renderOutcomes();
 }
