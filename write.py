@@ -1,56 +1,17 @@
 f=open('readlead.html','r')
 h=f.read()
 f.close()
-i1=h.find('function showProg(id)')
-j1=h.find('function bldGroups()')
-old=h[i1:j1]
-new='function showProg(id){\n'
-new+='var stu=students.find(function(s){return s.id===id;});\n'
-new+='cur=stu;\n'
-new+='document.getElementById("prog-h").textContent=stu.name;\n'
-new+='document.getElementById("prog-sub").innerHTML=tag(stu.level,lc(stu.level))+" "+lb(stu.level)+" - "+stu.grade;\n'
-new+='var sess=stu.sessions||[];\n'
-new+='if(!sess.length){\n'
-new+='document.getElementById("prog-out").innerHTML="<div class=\'card\' style=\'text-align:center;padding:40px\'><div style=\'font-size:20px;font-weight:700;margin-bottom:10px\'>No sessions yet</div><button class=\'btn\' onclick=\'startSess("+stu.id+")\'>Start First Session</button></div>";\n'
-new+='go("progress");return;\n'
-new+='}\n'
-new+='var QRL=[{id:"accuracy",l:"Accuracy",c:"#FF6B6B"},{id:"fluency",l:"Fluency",c:"#FFD166"},{id:"decoding",l:"Decoding",c:"#FF9F43"},{id:"selfmon",l:"Self-Monitoring",c:"#4ECDC4"},{id:"comprehension",l:"Comprehension",c:"#A78BFA"}];\n'
-new+='var latest=sess[0].ratings||{};\n'
-new+='var strengths=QRL.filter(function(r){return(latest[r.id]||0)>=85;}).map(function(r){return r.l;});\n'
-new+='var focus=QRL.filter(function(r){return(latest[r.id]||0)<75;}).map(function(r){return r.l;});\n'
-new+='var html="";\n'
-new+='html+="<div class=\'card\' style=\'margin-bottom:12px\'><div class=\'grid2\' style=\'gap:12px\'>";\n'
-new+='html+="<div><div style=\'font-size:11px;font-weight:800;color:#6BCB77;margin-bottom:6px\'>STRENGTHS</div><div style=\'font-size:13px\'>"+(strengths.length?strengths.join(", "):"Complete more sessions to identify")+"</div></div>";\n'
-new+='html+="<div><div style=\'font-size:11px;font-weight:800;color:#FF6B6B;margin-bottom:6px\'>FOCUS AREAS</div><div style=\'font-size:13px\'>"+(focus.length?focus.join(", "):"No significant concerns")+"</div></div>";\n'
-new+='html+="</div></div>";\n'
-new+='html+="<div class=\'card\' style=\'margin-bottom:12px\'><div style=\'font-size:14px;font-weight:700;margin-bottom:12px\'>Sessions ("+sess.length+" total)</div>";\n'
-new+='sess.forEach(function(s,si){\n'
-new+='var rats=s.ratings||{};\n'
-new+='var rvals=Object.values(rats);\n'
-new+='var avg=rvals.length?Math.round(rvals.reduce(function(a,b){return a+b;},0)/rvals.length):0;\n'
-new+='var c=avg>=90?"#6BCB77":avg>=75?"#FFD166":"#FF6B6B";\n'
-new+='html+="<div style=\'border-bottom:1px solid #F5F3EE\'>";\n'
-new+='html+="<div style=\'display:flex;justify-content:space-between;align-items:center;padding:12px 0;cursor:pointer\' onclick=\'togSession("+si+")\'>"; \n'
-new+='html+="<div><div style=\'font-size:13px;font-weight:700\'>"+s.date+"</div><div style=\'font-size:11px;color:#AAA;margin-top:2px\'>"+(si===0?"Most recent":"Session "+(sess.length-si))+"</div></div>";\n'
-new+='html+="<div style=\'display:flex;align-items:center;gap:8px\'><div style=\'font-size:15px;font-weight:800;color:"+c+"\'>"+avg+"%</div><div style=\'font-size:12px;color:#CCC\' id=\'sarrow-"+si+"\'>v</div></div>";\n'
-new+='html+="</div>";\n'
-new+='html+="<div id=\'sdet-"+si+"\' style=\'display:none;padding-bottom:12px\'>";\n'
-new+='html+=QRL.map(function(r){var v=rats[r.id]||0;var rc=v>=90?"#6BCB77":v>=75?"#FFD166":"#FF6B6B";return"<div style=\'margin-bottom:8px\'><div style=\'display:flex;justify-content:space-between;margin-bottom:3px\'><span style=\'font-size:12px;font-weight:600\'>"+r.l+"</span><span style=\'font-size:12px;font-weight:800;color:"+rc+"\'>"+v+"%</span></div><div class=\'pbg\'><div class=\'pbar\' style=\'width:"+v+"%;background:"+rc+"\'></div></div></div>";}).join("");\n'
-new+='if(s.errors&&s.errors.length){html+="<div style=\'margin-top:8px;font-size:12px;font-weight:700;color:#999;margin-bottom:4px\'>ERRORS LOGGED</div>";html+=s.errors.map(function(e){return"<div style=\'font-size:12px;padding:3px 0\'><strong>"+e.word+"</strong>"+(e.said?" said "+e.said:"")+" ("+e.type+")</div>";}).join("");}\n'
-new+='html+="</div></div>";\n'
-new+='});\n'
-new+='html+="</div>";\n'
-new+='html+="<div style=\'display:flex;gap:10px\'><button class=\'btn\' onclick=\'startSess("+stu.id+")\' style=\'flex:1\'>Start New Session</button><button class=\'btn\' style=\'flex:1;background:#A78BFA\' onclick=\'window.location=\\\"progress.html\\\"\'>Generate Report</button></div>";\n'
-new+='document.getElementById("prog-out").innerHTML=html;\n'
-new+='go("progress");\n'
-new+='}\n'
-new+='function togSession(si){\n'
-new+='var det=document.getElementById("sdet-"+si);\n'
-new+='var arrow=document.getElementById("sarrow-"+si);\n'
-new+='var isOpen=det.style.display!=="none";\n'
-new+='det.style.display=isOpen?"none":"block";\n'
-new+='arrow.textContent=isOpen?"v":"^";\n'
-new+='}\n'
-h=h[:i1]+new+h[j1:]
+while h.count('</body>')>1:
+    i=h.find('</body>')
+    h=h[:i]+h[i+7:]
+while h.count('</html>')>1:
+    i=h.find('</html>')
+    h=h[:i]+h[i+7:]
+while h.count('</script>')>1:
+    i=h.find('</script>')
+    h=h[:i]+h[i+9:]
 open('readlead.html','w').write(h)
 print('done')
+print('</body>:',h.count('</body>'))
+print('</html>:',h.count('</html>'))
+print('</script>:',h.count('</script>'))
