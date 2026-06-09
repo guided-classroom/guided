@@ -566,7 +566,9 @@ document.getElementById("new-name").value="";
 go("dash");
 }
 function showProg(id){
+console.log("showProg called with id:",id);
 var stu=students.find(function(s){return s.id===id;});
+console.log("student found:",stu?stu.name:"not found");
 cur=stu;
 document.getElementById("prog-h").textContent=stu.name;
 document.getElementById("prog-sub").innerHTML=tag(stu.level,lc(stu.level))+" "+lb(stu.level)+" - "+stu.grade;
@@ -1028,7 +1030,9 @@ document.getElementById("new-name").value="";
 go("dash");
 }
 function showProg(id){
+console.log("showProg called with id:",id);
 var stu=students.find(function(s){return s.id===id;});
+console.log("student found:",stu?stu.name:"not found");
 cur=stu;
 document.getElementById("prog-h").textContent="Progress: "+stu.name;
 document.getElementById("prog-sub").innerHTML=tag(stu.level,lc(stu.level))+" "+lb(stu.level)+" - "+stu.sessions.length+" sessions";
