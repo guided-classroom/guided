@@ -550,6 +550,7 @@ students[idx].level=l;
 students[idx].grade=LM[l][0];
 saveStudents();
 document.body.removeChild(overlay);
+if(cur&&cur.id==id){cur=students[idx];pidx=0;}
 rdDash();
 loadDashCurr();
 });
