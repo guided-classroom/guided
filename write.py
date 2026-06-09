@@ -1,8 +1,6 @@
 f=open('readlead.html','r')
 h=f.read()
 f.close()
-h=h.rstrip()
-h+='\n</script>\n</body>\n</html>\n'
-open('readlead.html','w').write(h)
-print('done')
-print('last 50 chars:',repr(h[-50:]))
+print('Level 16 in script:',h.find('PASSAGES["Level 16"]')<h.find('</script>'))
+print('Level 16 found:','PASSAGES["Level 16"]' in h)
+print('Level 21 found:','PASSAGES["Level 21"]' in h)
