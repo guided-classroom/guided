@@ -1,17 +1,8 @@
 f=open('readlead.html','r')
 h=f.read()
 f.close()
-while h.count('</body>')>1:
-    i=h.find('</body>')
-    h=h[:i]+h[i+7:]
-while h.count('</html>')>1:
-    i=h.find('</html>')
-    h=h[:i]+h[i+7:]
-while h.count('</script>')>1:
-    i=h.find('</script>')
-    h=h[:i]+h[i+9:]
+h=h.rstrip()
+h+='\n</script>\n</body>\n</html>\n'
 open('readlead.html','w').write(h)
 print('done')
-print('</body>:',h.count('</body>'))
-print('</html>:',h.count('</html>'))
-print('</script>:',h.count('</script>'))
+print('last 50 chars:',repr(h[-50:]))
