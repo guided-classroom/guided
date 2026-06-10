@@ -363,7 +363,7 @@ document.getElementById('groups-preview').innerHTML = READLEAD_GROUPS.map(g=>`
 <span style="font-size:20px">${g.emoji}</span>
 <div>
 <div style="font-weight:700;color:${g.color};font-size:13px">${g.name}</div>
-<div style="font-size:11px;color:#8B949E">${g.students.join(', ')}${currentMode==='skill'?` · <strong style="color:${g.color}">${g.weakSkill}</strong>`:''}<br><button onclick="genGroupActivity('${g.name}','${g.weakSkill}','${g.students.toString()}')" style="background:#A78BFA;color:#1A1A2E;border:none;border-radius:8px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;margin-top:6px">Get Activity Ideas</button></div>
+<div style="font-size:11px;color:#8B949E">${g.students.join(', ')}${currentMode==='skill'?` · <strong style="color:${g.color}">${g.weakSkill}</strong>`:''}</div>
 </div>
 </div>`.join('');
 }
