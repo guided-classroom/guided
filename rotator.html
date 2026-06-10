@@ -258,8 +258,8 @@ var keys=Object.keys(rats);
 if(keys.length>0){
 var weak=keys.reduce(function(a,b){return rats[a]<rats[b]?a:b;});
 key=weak;focus=skillNames[weak]||weak;
-}
-}
+addActivityButtons();
+}}
 if(!groups[key])groups[key]={name:focus+" Group",focus:focus,students:[],color:colors[Object.keys(groups).length%6]};
 groups[key].students.push(s.name+" ("+s.level+")");
 });
@@ -322,7 +322,6 @@ function init() {
 document.getElementById('whole-features').innerHTML =
 ["✓ Quick setup — 30 seconds","✓ Same activity for all groups","✓ Perfect for building routines","✓ Projector display + live timer"]
 .map(f=>`<div style="font-size:12px;color:#6BCB77;font-weight:600;margin-bottom:4px">${f}</div>`).join('');
-setTimeout(addActivityButtons,100);
 document.getElementById('skill-features').innerHTML =
 ["✓ Activities matched to each group","✓ Groups auto-imported from ReadLead","✓ Full activity guide per centre","✓ Projector display + live timer"]
 .map(f=>`<div style="font-size:12px;color:#FFD166;font-weight:600;margin-bottom:4px">${f}</div>`).join('');
@@ -367,6 +366,7 @@ document.getElementById('groups-preview').innerHTML = READLEAD_GROUPS.map(g=>`
 <div style="font-size:11px;color:#8B949E">${g.students.join(', ')}${currentMode==='skill'?` · <strong style="color:${g.color}">${g.weakSkill}</strong>`:''}</div>
 </div>
 </div>`).join('');
+addActivityButtons();
 }
 
 function addActivityButtons(){
@@ -394,6 +394,7 @@ return `<div class="centre-card${sel?' '+selClass:''}" onclick="toggleCentre('${
 ${sel?`<div style="font-size:11px;font-weight:700;color:${accent};margin-top:4px">✓ Selected</div>`:''}
 </div>`;
 }).join('');
+addActivityButtons();
 }
 
 function toggleCentre(id) {
@@ -588,6 +589,7 @@ document.getElementById('projector').classList.remove('active');
 function renderDots() {
 document.getElementById('proj-dots').innerHTML = schedule.map((_,i)=>`
 <div style="width:${i===currentRotation?28:10}px;height:10px;border-radius:99px;background:${i<=currentRotation?'#4ECDC4':'#30363D'};opacity:${i>currentRotation?.3:1};transition:all .4s"></div>`).join('');
+addActivityButtons();
 }
 
 function renderProjectorRotation() {
