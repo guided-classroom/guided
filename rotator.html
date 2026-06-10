@@ -398,13 +398,13 @@ btn.disabled=false;
 function addActivityButtons(){
 var preview=document.getElementById("groups-preview");
 if(!preview)return;
-var cards=preview.querySelectorAll("div[style]");
+var cards=Array.from(preview.children);
 READLEAD_GROUPS.forEach(function(g,i){
 if(!cards[i])return;
 var btn=document.createElement("button");
 btn.textContent="Get Activity Ideas";
-btn.style="background:#A78BFA;color:#1A1A2E;border:none;border-radius:8px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;margin-top:8px;display:block;";
-btn.onclick=function(){genGroupActivity(g.name,g.weakSkill,g.students.join(","));}
+btn.style="background:#A78BFA;color:#1A1A2E;border:none;border-radius:8px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;margin-top:8px;display:block;width:100%;";
+btn.addEventListener("click",function(){genGroupActivity(g.name,g.weakSkill,g.students.join(","));});
 cards[i].appendChild(btn);
 });
 }

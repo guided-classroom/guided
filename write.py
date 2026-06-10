@@ -1,9 +1,9 @@
-f=open('readlead.html','r')
+f=open('rotator.html','r')
 h=f.read()
 f.close()
-old='"<div style=\'font-size:15px;font-weight:800;margin-bottom:4px\'>Generate Lesson Plan</div><button class=\'btn btn-teal\' style=\'width:100%;font-size:14px\' onclick=\'doGen()\'>Generate "+cur.name+" Lesson</button>"'
-new='"<div style=\'font-size:15px;font-weight:800;margin-bottom:4px\'>Generate Lesson Plan</div><button class=\'btn btn-teal\' style=\'width:100%;font-size:14px;margin-bottom:8px\' onclick=\'doGen()\'>Generate "+cur.name+" Lesson</button><button class=\'btn-ghost\' style=\'width:100%;font-size:13px;margin-top:4px\' onclick=\'saveSessionOnly()\'>Save Session Without Lesson</button>"'
+old='function addActivityButtons(){\nvar preview=document.getElementById("groups-preview");\nif(!preview)return;\nvar cards=preview.querySelectorAll("div[style]");\nREADLEAD_GROUPS.forEach(function(g,i){\nif(!cards[i])return;\nvar btn=document.createElement("button");\nbtn.textContent="Get Activity Ideas";\nbtn.style="background:#A78BFA;color:#1A1A2E;border:none;border-radius:8px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;margin-top:8px;display:block;";\nbtn.onclick=function(){genGroupActivity(g.name,g.weakSkill,g.students.join(","));}\ncards[i].appendChild(btn);\n});\n}'
+new='function addActivityButtons(){\nvar preview=document.getElementById("groups-preview");\nif(!preview)return;\nvar cards=Array.from(preview.children);\nREADLEAD_GROUPS.forEach(function(g,i){\nif(!cards[i])return;\nvar btn=document.createElement("button");\nbtn.textContent="Get Activity Ideas";\nbtn.style="background:#A78BFA;color:#1A1A2E;border:none;border-radius:8px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;margin-top:8px;display:block;width:100%;";\nbtn.addEventListener("click",function(){genGroupActivity(g.name,g.weakSkill,g.students.join(","));});\ncards[i].appendChild(btn);\n});\n}'
 print('found:',old in h)
 h=h.replace(old,new)
-open('readlead.html','w').write(h)
+open('rotator.html','w').write(h)
 print('done')
