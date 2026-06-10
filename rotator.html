@@ -363,34 +363,11 @@ document.getElementById('groups-preview').innerHTML = READLEAD_GROUPS.map(g=>`
 <span style="font-size:20px">${g.emoji}</span>
 <div>
 <div style="font-weight:700;color:${g.color};font-size:13px">${g.name}</div>
-<div style="font-size:11px;color:#8B949E">${g.students.join(", ")}${currentMode==="skill"?" · "+g.weakSkill:""}</div>
+<div style="font-size:11px;color:#8B949E">${g.students.join(', ')}${currentMode==='skill'?` · <strong style="color:${g.color}">${g.weakSkill}</strong>`:''}</div>
 </div>
-</div>`.join('');
+</div>`).join('');
 }
 
-async function genGroupActivity(name,skill,students){
-var prompt="You are a reading teacher. Generate 3 specific centre rotation activities for a small group.\n";
-prompt+="Group: "+name+"\n";
-prompt+="Weak skill: "+skill+"\n";
-prompt+="Students: "+students+"\n";
-prompt+="For each activity provide: title, what students do, materials needed.\n";
-prompt+="Make activities specific, hands-on and targeting "+skill+".\n";
-prompt+="Reply ONLY with raw JSON: {\"activities\":[{\"title\":\"...\",\"description\":\"...\",\"materials\":\"...\"},{\"title\":\"...\",\"description\":\"...\",\"materials\":\"...\"},{\"title\":\"...\",\"description\":\"...\"}]}";
-var box=document.createElement("div");
-box.style="background:#1A1A2E;color:#fff;border-radius:12px;padding:16px;margin-top:10px";
-box.innerHTML="<div style='font-size:13px;font-weight:700;color:#A78BFA'>Generating activities...</div>";
-var btn=event.target;
-btn.parentNode.appendChild(box);
-try{
-var res=await fetch("/api/lesson",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:1000,messages:[{role:"user",content:prompt}]})});
-var data=await res.json();
-var text=(data.content||[]).filter(function(b){return b.type==="text";}).map(function(b){return b.text;}).join("").trim();
-var parsed;
-try{parsed=JSON.parse(text);}catch(e){var a=text.indexOf("{"),b=text.lastIndexOf("}");parsed=JSON.parse(text.slice(a,b+1));}
-var acts=parsed.activities||[];
-box.innerHTML=acts.map(function(a){return"<div style='margin-bottom:12px;border-bottom:1px solid #333;padding-bottom:12px'><div style='font-size:13px;font-weight:700;color:#A78BFA;margin-bottom:4px'>"+a.title+"</div><div style='font-size:12px;color:#CCC;margin-bottom:4px'>"+a.description+"</div><div style='font-size:11px;color:#888'>Materials: "+a.materials+"</div></div>";}).join("");
-}catch(e){box.innerHTML="<div style='color:#FF6B6B;font-size:12px'>Error: "+e.message+"</div>";}
-}
 function renderCentrePicker() {
 const accent = currentMode==='whole' ? '#4ECDC4' : '#FFD166';
 const selClass = currentMode==='whole' ? 'selected-teal' : 'selected-gold';
