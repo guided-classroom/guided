@@ -251,21 +251,21 @@ var colors=["#FF6B6B","#FFD166","#4ECDC4","#6BCB77","#A78BFA","#FF9F43"];
 var skillNames={accuracy:"Accuracy",fluency:"Fluency",decoding:"Decoding",selfmon:"Self-Monitoring",comprehension:"Comprehension"};
 var groups={};
 students.forEach(function(s){
-var key="all";
-var focus="Mixed Skills";
+var key="no-data";var focus="No Session Data";
 if(s.sessions&&s.sessions.length>0){
 var rats=s.sessions[0].ratings||{};
 var keys=Object.keys(rats);
 if(keys.length>0){
 var weak=keys.reduce(function(a,b){return rats[a]<rats[b]?a:b;});
-key=weak;
-focus=skillNames[weak]||weak;
+key=weak;focus=skillNames[weak]||weak;
 }
 }
 if(!groups[key])groups[key]={name:focus+" Group",focus:focus,students:[],color:colors[Object.keys(groups).length%6]};
-groups[key].students.push(s.name);
+groups[key].students.push(s.name+" ("+s.level+")");
 });
-return Object.values(groups).map(function(g,i){return{id:i+1,name:g.name,emoji:"📚",color:g.color,students:g.students,focus:g.focus,level:"Mixed",weakSkill:g.focus};});
+var result=Object.values(groups).map(function(g,gi){return{id:gi+1,name:g.name,emoji:"📚",color:g.color,students:g.students,focus:g.focus,level:"Mixed",weakSkill:g.focus};});
+if(result.length===1&&result[0].focus==="No Session Data")return getDefaultGroups();
+return result;
 }catch(e){return getDefaultGroups();}
 }
 function getDefaultGroups(){
