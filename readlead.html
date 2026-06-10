@@ -558,6 +558,53 @@ box.appendChild(cancel);
 overlay.appendChild(box);
 document.body.appendChild(overlay);
 }
+function showProg(id){
+var stu=students.find(function(s){return s.id===id;});
+if(!stu)return;
+cur=stu;
+document.getElementById("prog-h").textContent=stu.name;
+document.getElementById("prog-sub").innerHTML=tag(stu.level,lc(stu.level))+" "+lb(stu.level)+" - "+stu.grade;
+var sess=stu.sessions||[];
+if(!sess.length){
+document.getElementById("prog-out").innerHTML="<div class='card' style='text-align:center;padding:40px'><div style='font-size:20px;font-weight:700;margin-bottom:10px'>No sessions yet</div><button class='btn' onclick='startSess("+stu.id+")'>Start First Session</button></div>";
+go("progress");return;
+}
+var QRL=[{id:"accuracy",l:"Accuracy",c:"#FF6B6B"},{id:"fluency",l:"Fluency",c:"#FFD166"},{id:"decoding",l:"Decoding",c:"#FF9F43"},{id:"selfmon",l:"Self-Monitoring",c:"#4ECDC4"},{id:"comprehension",l:"Comprehension",c:"#A78BFA"}];
+var latest=sess[0].ratings||{};
+var strengths=QRL.filter(function(r){return(latest[r.id]||0)>=85;}).map(function(r){return r.l;});
+var focus=QRL.filter(function(r){return(latest[r.id]||0)<75;}).map(function(r){return r.l;});
+var html="";
+html+="<div class='card' style='margin-bottom:12px'><div class='grid2' style='gap:12px'>";
+html+="<div><div style='font-size:11px;font-weight:800;color:#6BCB77;margin-bottom:6px'>STRENGTHS</div><div style='font-size:13px'>"+(strengths.length?strengths.join(", "):"Complete more sessions to identify")+"</div></div>";
+html+="<div><div style='font-size:11px;font-weight:800;color:#FF6B6B;margin-bottom:6px'>FOCUS AREAS</div><div style='font-size:13px'>"+(focus.length?focus.join(", "):"No significant concerns")+"</div></div>";
+html+="</div></div>";
+html+="<div class='card' style='margin-bottom:12px'><div style='font-size:14px;font-weight:700;margin-bottom:12px'>Sessions ("+sess.length+")</div>";
+sess.forEach(function(s,si){
+var rats=s.ratings||{};
+var rvals=Object.values(rats);
+var avg=rvals.length?Math.round(rvals.reduce(function(a,b){return a+b;},0)/rvals.length):0;
+var c=avg>=90?"#6BCB77":avg>=75?"#FFD166":"#FF6B6B";
+html+="<div style='border-bottom:1px solid #F5F3EE'>";
+html+="<div style='display:flex;justify-content:space-between;align-items:center;padding:12px 0;cursor:pointer' onclick='togSess("+si+")'>"; 
+html+="<div><div style='font-size:13px;font-weight:700'>"+s.date+"</div><div style='font-size:11px;color:#AAA'>"+(si===0?"Most recent":"Session "+(sess.length-si))+"</div></div>";
+html+="<div style='display:flex;align-items:center;gap:8px'><span style='font-size:15px;font-weight:800;color:"+c+"'>"+avg+"%</span><span id='arr"+si+"' style='color:#CCC'>v</span></div></div>";
+html+="<div id='det"+si+"' style='display:none;padding-bottom:12px'>";
+html+=QRL.map(function(r){var v=rats[r.id]||0;var rc=v>=90?"#6BCB77":v>=75?"#FFD166":"#FF6B6B";return"<div style='margin-bottom:8px'><div style='display:flex;justify-content:space-between;margin-bottom:3px'><span style='font-size:12px;font-weight:600'>"+r.l+"</span><span style='font-size:12px;font-weight:800;color:"+rc+"'>"+v+"%</span></div><div class='pbg'><div class='pbar' style='width:"+v+"%;background:"+rc+"'></div></div></div>";}).join("");
+if(s.errors&&s.errors.length){html+="<div style='margin-top:8px;font-size:11px;font-weight:800;color:#999;margin-bottom:4px'>ERRORS</div>";html+=s.errors.map(function(e){return"<div style='font-size:12px;padding:2px 0'><b>"+e.word+"</b>"+(e.said?" said "+e.said:"")+" - "+e.type+"</div>";}).join("");}
+html+="</div></div>";
+});
+html+="</div>";
+html+="<div style='display:flex;gap:10px'><button class='btn' onclick='startSess("+stu.id+")' style='flex:1'>New Session</button><button class='btn' style='flex:1;background:#A78BFA' onclick='window.location=\"progress.html\"'>Generate Report</button></div>";
+document.getElementById("prog-out").innerHTML=html;
+go("progress");
+}
+function togSess(si){
+var det=document.getElementById("det"+si);
+var arr=document.getElementById("arr"+si);
+var open=det.style.display!=="none";
+det.style.display=open?"none":"block";
+arr.textContent=open?"v":"^";
+}
 function addStu(){
 var n=document.getElementById("new-name").value.trim();if(!n)return;
 students.push({id:Date.now(),name:n,grade:document.getElementById("new-grade").value,level:document.getElementById("new-level").value,sessions:[]});
@@ -566,13 +613,7 @@ document.getElementById("new-name").value="";
 go("dash");
 }
 
-function togSession(si){
-var det=document.getElementById("sdet-"+si);
-var arrow=document.getElementById("sarrow-"+si);
-var isOpen=det.style.display!=="none";
-det.style.display=isOpen?"none":"block";
-arrow.textContent=isOpen?"v":"^";
-}
+
 function bldGroups(){
 var ws=students.filter(function(s){return s.sessions.length>0;});
 if(ws.length<2)return[];
@@ -981,6 +1022,53 @@ box.appendChild(cancel);
 overlay.appendChild(box);
 document.body.appendChild(overlay);
 }
+function showProg(id){
+var stu=students.find(function(s){return s.id===id;});
+if(!stu)return;
+cur=stu;
+document.getElementById("prog-h").textContent=stu.name;
+document.getElementById("prog-sub").innerHTML=tag(stu.level,lc(stu.level))+" "+lb(stu.level)+" - "+stu.grade;
+var sess=stu.sessions||[];
+if(!sess.length){
+document.getElementById("prog-out").innerHTML="<div class='card' style='text-align:center;padding:40px'><div style='font-size:20px;font-weight:700;margin-bottom:10px'>No sessions yet</div><button class='btn' onclick='startSess("+stu.id+")'>Start First Session</button></div>";
+go("progress");return;
+}
+var QRL=[{id:"accuracy",l:"Accuracy",c:"#FF6B6B"},{id:"fluency",l:"Fluency",c:"#FFD166"},{id:"decoding",l:"Decoding",c:"#FF9F43"},{id:"selfmon",l:"Self-Monitoring",c:"#4ECDC4"},{id:"comprehension",l:"Comprehension",c:"#A78BFA"}];
+var latest=sess[0].ratings||{};
+var strengths=QRL.filter(function(r){return(latest[r.id]||0)>=85;}).map(function(r){return r.l;});
+var focus=QRL.filter(function(r){return(latest[r.id]||0)<75;}).map(function(r){return r.l;});
+var html="";
+html+="<div class='card' style='margin-bottom:12px'><div class='grid2' style='gap:12px'>";
+html+="<div><div style='font-size:11px;font-weight:800;color:#6BCB77;margin-bottom:6px'>STRENGTHS</div><div style='font-size:13px'>"+(strengths.length?strengths.join(", "):"Complete more sessions to identify")+"</div></div>";
+html+="<div><div style='font-size:11px;font-weight:800;color:#FF6B6B;margin-bottom:6px'>FOCUS AREAS</div><div style='font-size:13px'>"+(focus.length?focus.join(", "):"No significant concerns")+"</div></div>";
+html+="</div></div>";
+html+="<div class='card' style='margin-bottom:12px'><div style='font-size:14px;font-weight:700;margin-bottom:12px'>Sessions ("+sess.length+")</div>";
+sess.forEach(function(s,si){
+var rats=s.ratings||{};
+var rvals=Object.values(rats);
+var avg=rvals.length?Math.round(rvals.reduce(function(a,b){return a+b;},0)/rvals.length):0;
+var c=avg>=90?"#6BCB77":avg>=75?"#FFD166":"#FF6B6B";
+html+="<div style='border-bottom:1px solid #F5F3EE'>";
+html+="<div style='display:flex;justify-content:space-between;align-items:center;padding:12px 0;cursor:pointer' onclick='togSess("+si+")'>"; 
+html+="<div><div style='font-size:13px;font-weight:700'>"+s.date+"</div><div style='font-size:11px;color:#AAA'>"+(si===0?"Most recent":"Session "+(sess.length-si))+"</div></div>";
+html+="<div style='display:flex;align-items:center;gap:8px'><span style='font-size:15px;font-weight:800;color:"+c+"'>"+avg+"%</span><span id='arr"+si+"' style='color:#CCC'>v</span></div></div>";
+html+="<div id='det"+si+"' style='display:none;padding-bottom:12px'>";
+html+=QRL.map(function(r){var v=rats[r.id]||0;var rc=v>=90?"#6BCB77":v>=75?"#FFD166":"#FF6B6B";return"<div style='margin-bottom:8px'><div style='display:flex;justify-content:space-between;margin-bottom:3px'><span style='font-size:12px;font-weight:600'>"+r.l+"</span><span style='font-size:12px;font-weight:800;color:"+rc+"'>"+v+"%</span></div><div class='pbg'><div class='pbar' style='width:"+v+"%;background:"+rc+"'></div></div></div>";}).join("");
+if(s.errors&&s.errors.length){html+="<div style='margin-top:8px;font-size:11px;font-weight:800;color:#999;margin-bottom:4px'>ERRORS</div>";html+=s.errors.map(function(e){return"<div style='font-size:12px;padding:2px 0'><b>"+e.word+"</b>"+(e.said?" said "+e.said:"")+" - "+e.type+"</div>";}).join("");}
+html+="</div></div>";
+});
+html+="</div>";
+html+="<div style='display:flex;gap:10px'><button class='btn' onclick='startSess("+stu.id+")' style='flex:1'>New Session</button><button class='btn' style='flex:1;background:#A78BFA' onclick='window.location=\"progress.html\"'>Generate Report</button></div>";
+document.getElementById("prog-out").innerHTML=html;
+go("progress");
+}
+function togSess(si){
+var det=document.getElementById("det"+si);
+var arr=document.getElementById("arr"+si);
+var open=det.style.display!=="none";
+det.style.display=open?"none":"block";
+arr.textContent=open?"v":"^";
+}
 function addStu(){
 var n=document.getElementById("new-name").value.trim();if(!n)return;
 students.push({id:Date.now(),name:n,grade:document.getElementById("new-grade").value,level:document.getElementById("new-level").value,sessions:[]});
@@ -988,20 +1076,7 @@ saveStudents();
 document.getElementById("new-name").value="";
 go("dash");
 }
-function showProg(id){
-var stu=students.find(function(s){return s.id===id;});
-cur=stu;
-document.getElementById("prog-h").textContent="Progress: "+stu.name;
-document.getElementById("prog-sub").innerHTML=tag(stu.level,lc(stu.level))+" "+lb(stu.level)+" - "+stu.sessions.length+" sessions";
-var sess=stu.sessions||[];
-if(!sess.length){document.getElementById("prog-out").innerHTML="<div class='card' style='text-align:center;padding:40px'><div style='font-weight:700;margin-bottom:10px'>No sessions yet</div><button class='btn' onclick='startSess("+stu.id+")'>Start First Session</button></div>";}
-else{
-var bars=QR.map(function(r){var curr=sess[0].ratings[r.id]||75,prev=sess.length>1?(sess[1].ratings[r.id]||75):null,diff=prev!==null?curr-prev:null;var c=curr>=90?"#6BCB77":curr>=75?"#FFD166":"#FF6B6B";return"<div style='margin-bottom:12px'><div style='display:flex;justify-content:space-between;margin-bottom:4px'><span style='font-size:13px;font-weight:600'>"+r.l+"</span><span style='font-weight:800;color:"+c+"'>"+curr+"</span></div><div class='pbg'><div class='pbar' style='width:"+curr+"%;background:"+c+"'></div></div></div>";}).join("");
-var hist=sess.map(function(s,i){return"<div style='padding:10px 0'><div style='display:flex;justify-content:space-between;margin-bottom:6px'><span style='font-weight:700;font-size:13px'>"+s.date+"</span>"+tag(i===0?"Latest":"#"+(sess.length-i),i===0?"#4ECDC4":"#DDD")+"</div></div>";}).join("");
-document.getElementById("prog-out").innerHTML=(sess.length>=2?"<div class='card'><div style='font-size:14px;font-weight:700;margin-bottom:12px'>Latest vs Previous</div>"+bars+"</div>":"")+"<div class='card'><div style='font-size:14px;font-weight:700;margin-bottom:12px'>Session History</div>"+hist+"</div>";
-}
-go("progress");
-}
+
 function bldGroups(){
 var ws=students.filter(function(s){return s.sessions.length>0;});
 if(ws.length<2)return[];
