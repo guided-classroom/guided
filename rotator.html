@@ -258,7 +258,6 @@ var keys=Object.keys(rats);
 if(keys.length>0){
 var weak=keys.reduce(function(a,b){return rats[a]<rats[b]?a:b;});
 key=weak;focus=skillNames[weak]||weak;
-addActivityButtons();
 }}
 if(!groups[key])groups[key]={name:focus+" Group",focus:focus,students:[],color:colors[Object.keys(groups).length%6]};
 groups[key].students.push(s.name+" ("+s.level+")");
@@ -366,9 +365,35 @@ document.getElementById('groups-preview').innerHTML = READLEAD_GROUPS.map(g=>`
 <div style="font-size:11px;color:#8B949E">${g.students.join(', ')}${currentMode==='skill'?` · <strong style="color:${g.color}">${g.weakSkill}</strong>`:''}</div>
 </div>
 </div>`).join('');
-addActivityButtons();
 }
 
+async function genGroupActivity(name,skill,students){
+var btn=event.target;
+btn.textContent="Generating...";
+btn.disabled=true;
+var prompt="You are a reading teacher. Generate 3 specific literacy centre activities for a small group.\n";
+prompt+="Group focus: "+skill+"\n";
+prompt+="Students: "+students+"\n";
+prompt+="Each activity should be hands-on, specific, and target "+skill+".\n";
+prompt+="Reply ONLY with raw JSON: {\"activities\":[{\"title\":\"...\",\"description\":\"...\",\"materials\":\"...\"},{\"title\":\"...\",\"description\":\"...\",\"materials\":\"...\"},{\"title\":\"...\",\"description\":\"...\",\"materials\":\"...\"}]}";
+try{
+var res=await fetch("/api/lesson",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:1000,messages:[{role:"user",content:prompt}]})});
+var data=await res.json();
+var text=(data.content||[]).filter(function(b){return b.type==="text";}).map(function(b){return b.text;}).join("").trim();
+var parsed;
+try{parsed=JSON.parse(text);}catch(e){var a=text.indexOf("{"),b=text.lastIndexOf("}");parsed=JSON.parse(text.slice(a,b+1));}
+var acts=parsed.activities||[];
+var box=document.createElement("div");
+box.style="margin-top:10px;background:#1A1A2E;border-radius:10px;padding:14px";
+box.innerHTML=acts.map(function(a){return"<div style='margin-bottom:10px;border-bottom:1px solid #333;padding-bottom:10px'><div style='font-size:12px;font-weight:700;color:#A78BFA;margin-bottom:4px'>"+a.title+"</div><div style='font-size:12px;color:#CCC;margin-bottom:4px'>"+a.description+"</div><div style='font-size:11px;color:#888'>Materials: "+a.materials+"</div></div>";}).join("");
+btn.parentNode.appendChild(box);
+btn.textContent="Get Activity Ideas";
+btn.disabled=false;
+}catch(e){
+btn.textContent="Error - Try Again";
+btn.disabled=false;
+}
+}
 function addActivityButtons(){
 var preview=document.getElementById("groups-preview");
 if(!preview)return;
@@ -394,7 +419,6 @@ return `<div class="centre-card${sel?' '+selClass:''}" onclick="toggleCentre('${
 ${sel?`<div style="font-size:11px;font-weight:700;color:${accent};margin-top:4px">✓ Selected</div>`:''}
 </div>`;
 }).join('');
-addActivityButtons();
 }
 
 function toggleCentre(id) {
