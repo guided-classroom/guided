@@ -322,6 +322,7 @@ function init() {
 document.getElementById('whole-features').innerHTML =
 ["✓ Quick setup — 30 seconds","✓ Same activity for all groups","✓ Perfect for building routines","✓ Projector display + live timer"]
 .map(f=>`<div style="font-size:12px;color:#6BCB77;font-weight:600;margin-bottom:4px">${f}</div>`).join('');
+setTimeout(addActivityButtons,100);
 document.getElementById('skill-features').innerHTML =
 ["✓ Activities matched to each group","✓ Groups auto-imported from ReadLead","✓ Full activity guide per centre","✓ Projector display + live timer"]
 .map(f=>`<div style="font-size:12px;color:#FFD166;font-weight:600;margin-bottom:4px">${f}</div>`).join('');
@@ -368,6 +369,19 @@ document.getElementById('groups-preview').innerHTML = READLEAD_GROUPS.map(g=>`
 </div>`).join('');
 }
 
+function addActivityButtons(){
+READLEAD_GROUPS.forEach(function(g,i){
+var cards=document.querySelectorAll(".group-card");
+if(!cards[i])return;
+var btn=document.createElement("button");
+btn.textContent="Get Activity Ideas";
+btn.style="background:#A78BFA;color:#1A1A2E;border:none;border-radius:8px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;margin-top:8px;display:block;";
+btn.onclick=function(){genGroupActivity(g.name,g.weakSkill,g.students.join(","));}
+var container=document.createElement("div");
+container.appendChild(btn);
+cards[i].appendChild(container);
+});
+}
 function renderCentrePicker() {
 const accent = currentMode==='whole' ? '#4ECDC4' : '#FFD166';
 const selClass = currentMode==='whole' ? 'selected-teal' : 'selected-gold';
