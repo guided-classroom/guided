@@ -1,6 +1,9 @@
 f=open('rotator.html','r')
 h=f.read()
 f.close()
-h=h.replace('setTimeout(addActivityButtons,200)','setTimeout(addActivityButtons,1000)')
+old=").join('');\n}"
+new=").join('');\nsetTimeout(addActivityButtons,500);\n}"
+print('found:',old in h)
+h=h.replace(old,new,1)
 open('rotator.html','w').write(h)
-print('done count:',h.count('setTimeout(addActivityButtons,1000)'))
+print('done')

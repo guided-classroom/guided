@@ -366,6 +366,7 @@ document.getElementById('groups-preview').innerHTML = READLEAD_GROUPS.map(g=>`
 <div style="font-size:11px;color:#8B949E">${g.students.join(', ')}${currentMode==='skill'?` · <strong style="color:${g.color}">${g.weakSkill}</strong>`:''}</div>
 </div>
 </div>`).join('');
+setTimeout(addActivityButtons,500);
 }
 
 async function genGroupActivity(name,skill,students){
