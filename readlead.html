@@ -597,7 +597,7 @@ if(s.errors&&s.errors.length){html+="<div style='margin-top:8px;font-size:11px;f
 html+="</div></div>";
 });
 html+="</div>";
-html+="<div style='display:flex;gap:10px'><button class='btn' onclick='startSess("+stu.id+")' style='flex:1'>New Session</button><button class='btn' style='flex:1;background:#A78BFA' onclick='window.location=\"progress.html\"'>Generate Report</button></div>";
+html+="<div style='display:flex;gap:10px'><button class='btn' onclick='startSess("+stu.id+")' style='flex:1'>New Session</button><button class='btn' style='flex:1;background:#A78BFA' onclick='window.location=\"progress.html\"'>Generate Report</button><button class='btn' style='flex:1;background:#6BCB77;color:#1A1A2E' onclick='exportPDF()'>Export PDF</button></div>";
 document.getElementById("prog-out").innerHTML=html;
 go("progress");
 }
@@ -616,6 +616,50 @@ students[idx].sessions=[rec].concat(students[idx].sessions).slice(0,10);
 cur=students[idx];
 saveStudents();
 document.getElementById("gen-box").innerHTML="<div style='font-size:14px;font-weight:800;color:#4ECDC4;margin-bottom:8px'>Session Saved!</div><div style='font-size:12px;color:#9999BB;margin-bottom:12px'>Data saved to student profile.</div><button class='btn btn-teal' style='width:100%;font-size:14px;margin-bottom:8px' onclick='doGen()'>Generate Lesson</button><button class='btn-ghost' style='width:100%;font-size:13px' onclick='saveSessionOnly()'>Save Again</button>";
+}
+function exportPDF(){
+if(!cur)return;
+var QRL=[{id:"accuracy",l:"Accuracy"},{id:"fluency",l:"Fluency"},{id:"decoding",l:"Decoding"},{id:"selfmon",l:"Self-Monitoring"},{id:"comprehension",l:"Comprehension"}];
+var sess=cur.sessions||[];
+var latest=sess.length?sess[0].ratings||{}:{};
+var html="<html><head><style>";
+html+="body{font-family:Arial,sans-serif;max-width:700px;margin:40px auto;padding:20px;color:#1A1A2E;}";
+html+="h1{font-size:28px;margin-bottom:4px;}";
+html+="h2{font-size:16px;font-weight:700;margin:20px 0 10px;border-bottom:2px solid #4ECDC4;padding-bottom:4px;}";
+html+=".badge{display:inline-block;background:#4ECDC422;color:#2BBDB5;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700;margin-left:8px;}";
+html+=".skill{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}";
+html+=".bar{height:10px;border-radius:99px;background:#F0F0F0;flex:1;margin:0 12px;}";
+html+=".fill{height:10px;border-radius:99px;}";
+html+=".session{border:1px solid #E8E8E8;border-radius:10px;padding:12px;margin-bottom:10px;}";
+html+=".error{font-size:12px;color:#666;padding:3px 0;}";
+html+="</style></head><body>";
+html+="<h1>"+cur.name+"<span class='badge'>"+cur.level+"</span></h1>";
+html+="<div style='font-size:14px;color:#888;margin-bottom:20px'>"+cur.grade+" &bull; "+sess.length+" sessions &bull; Exported "+new Date().toLocaleDateString()+"</div>";
+html+="<h2>Latest Skill Ratings</h2>";
+QRL.forEach(function(r){
+var v=latest[r.id]||0;
+var c=v>=90?"#6BCB77":v>=75?"#FFD166":"#FF6B6B";
+html+="<div class='skill'><span style='font-size:13px;font-weight:600;width:140px'>"+r.l+"</span><div class='bar'><div class='fill' style='width:"+v+"%;background:"+c+"'></div></div><span style='font-weight:700;color:"+c+";width:40px;text-align:right'>"+v+"%</span></div>";
+});
+html+="<h2>Session History</h2>";
+sess.forEach(function(s,si){
+var rats=s.ratings||{};
+var avg=Object.values(rats).length?Math.round(Object.values(rats).reduce(function(a,b){return a+b;},0)/Object.values(rats).length):0;
+html+="<div class='session'><div style='display:flex;justify-content:space-between;margin-bottom:8px'><strong>"+s.date+"</strong><span style='font-weight:700;color:"+(avg>=90?"#6BCB77":avg>=75?"#FFD166":"#FF6B6B")+"'>Avg: "+avg+"%</span></div>";
+html+="<div style='display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px'>";
+QRL.forEach(function(r){var v=rats[r.id]||0;var c=v>=90?"#6BCB77":v>=75?"#FFD166":"#FF6B6B";html+="<span style='font-size:11px;background:"+c+"22;color:"+c+";border-radius:6px;padding:2px 8px;font-weight:700'>"+r.l+" "+v+"%</span>";});
+html+="</div>";
+if(s.errors&&s.errors.length){
+html+="<div style='font-size:12px;font-weight:700;color:#999;margin-bottom:4px'>Errors Logged</div>";
+s.errors.forEach(function(e){html+="<div class='error'><b>"+e.word+"</b>"+(e.said?" said "+e.said:"")+" ("+e.type+")</div>";});
+}
+html+="</div>";
+});
+html+="</body></html>";
+var w=window.open("","_blank");
+w.document.write(html);
+w.document.close();
+setTimeout(function(){w.print();},500);
 }
 function deleteStu(id){
 var stu=students.find(function(s){return s.id==id;});
@@ -1099,7 +1143,7 @@ if(s.errors&&s.errors.length){html+="<div style='margin-top:8px;font-size:11px;f
 html+="</div></div>";
 });
 html+="</div>";
-html+="<div style='display:flex;gap:10px'><button class='btn' onclick='startSess("+stu.id+")' style='flex:1'>New Session</button><button class='btn' style='flex:1;background:#A78BFA' onclick='window.location=\"progress.html\"'>Generate Report</button></div>";
+html+="<div style='display:flex;gap:10px'><button class='btn' onclick='startSess("+stu.id+")' style='flex:1'>New Session</button><button class='btn' style='flex:1;background:#A78BFA' onclick='window.location=\"progress.html\"'>Generate Report</button><button class='btn' style='flex:1;background:#6BCB77;color:#1A1A2E' onclick='exportPDF()'>Export PDF</button></div>";
 document.getElementById("prog-out").innerHTML=html;
 go("progress");
 }
@@ -1118,6 +1162,50 @@ students[idx].sessions=[rec].concat(students[idx].sessions).slice(0,10);
 cur=students[idx];
 saveStudents();
 document.getElementById("gen-box").innerHTML="<div style='font-size:14px;font-weight:800;color:#4ECDC4;margin-bottom:8px'>Session Saved!</div><div style='font-size:12px;color:#9999BB;margin-bottom:12px'>Data saved to student profile.</div><button class='btn btn-teal' style='width:100%;font-size:14px;margin-bottom:8px' onclick='doGen()'>Generate Lesson</button><button class='btn-ghost' style='width:100%;font-size:13px' onclick='saveSessionOnly()'>Save Again</button>";
+}
+function exportPDF(){
+if(!cur)return;
+var QRL=[{id:"accuracy",l:"Accuracy"},{id:"fluency",l:"Fluency"},{id:"decoding",l:"Decoding"},{id:"selfmon",l:"Self-Monitoring"},{id:"comprehension",l:"Comprehension"}];
+var sess=cur.sessions||[];
+var latest=sess.length?sess[0].ratings||{}:{};
+var html="<html><head><style>";
+html+="body{font-family:Arial,sans-serif;max-width:700px;margin:40px auto;padding:20px;color:#1A1A2E;}";
+html+="h1{font-size:28px;margin-bottom:4px;}";
+html+="h2{font-size:16px;font-weight:700;margin:20px 0 10px;border-bottom:2px solid #4ECDC4;padding-bottom:4px;}";
+html+=".badge{display:inline-block;background:#4ECDC422;color:#2BBDB5;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700;margin-left:8px;}";
+html+=".skill{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}";
+html+=".bar{height:10px;border-radius:99px;background:#F0F0F0;flex:1;margin:0 12px;}";
+html+=".fill{height:10px;border-radius:99px;}";
+html+=".session{border:1px solid #E8E8E8;border-radius:10px;padding:12px;margin-bottom:10px;}";
+html+=".error{font-size:12px;color:#666;padding:3px 0;}";
+html+="</style></head><body>";
+html+="<h1>"+cur.name+"<span class='badge'>"+cur.level+"</span></h1>";
+html+="<div style='font-size:14px;color:#888;margin-bottom:20px'>"+cur.grade+" &bull; "+sess.length+" sessions &bull; Exported "+new Date().toLocaleDateString()+"</div>";
+html+="<h2>Latest Skill Ratings</h2>";
+QRL.forEach(function(r){
+var v=latest[r.id]||0;
+var c=v>=90?"#6BCB77":v>=75?"#FFD166":"#FF6B6B";
+html+="<div class='skill'><span style='font-size:13px;font-weight:600;width:140px'>"+r.l+"</span><div class='bar'><div class='fill' style='width:"+v+"%;background:"+c+"'></div></div><span style='font-weight:700;color:"+c+";width:40px;text-align:right'>"+v+"%</span></div>";
+});
+html+="<h2>Session History</h2>";
+sess.forEach(function(s,si){
+var rats=s.ratings||{};
+var avg=Object.values(rats).length?Math.round(Object.values(rats).reduce(function(a,b){return a+b;},0)/Object.values(rats).length):0;
+html+="<div class='session'><div style='display:flex;justify-content:space-between;margin-bottom:8px'><strong>"+s.date+"</strong><span style='font-weight:700;color:"+(avg>=90?"#6BCB77":avg>=75?"#FFD166":"#FF6B6B")+"'>Avg: "+avg+"%</span></div>";
+html+="<div style='display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px'>";
+QRL.forEach(function(r){var v=rats[r.id]||0;var c=v>=90?"#6BCB77":v>=75?"#FFD166":"#FF6B6B";html+="<span style='font-size:11px;background:"+c+"22;color:"+c+";border-radius:6px;padding:2px 8px;font-weight:700'>"+r.l+" "+v+"%</span>";});
+html+="</div>";
+if(s.errors&&s.errors.length){
+html+="<div style='font-size:12px;font-weight:700;color:#999;margin-bottom:4px'>Errors Logged</div>";
+s.errors.forEach(function(e){html+="<div class='error'><b>"+e.word+"</b>"+(e.said?" said "+e.said:"")+" ("+e.type+")</div>";});
+}
+html+="</div>";
+});
+html+="</body></html>";
+var w=window.open("","_blank");
+w.document.write(html);
+w.document.close();
+setTimeout(function(){w.print();},500);
 }
 function deleteStu(id){
 var stu=students.find(function(s){return s.id==id;});
