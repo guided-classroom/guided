@@ -8,41 +8,41 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'DM Sans',sans-serif;background:#0D1117;color:#E8E6F0;min-height:100vh;}
+body{font-family:'DM Sans',sans-serif;background:#0D1117;color:#fff;min-height:100vh;}
 button{font-family:'DM Sans',sans-serif;cursor:pointer;}
-.nav{background:#161B22;border-bottom:1px solid #30363D;padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.nav{background:#1A1A2E;border-bottom:1px solid #30363D;padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
 .logo{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;}
 .logo span{color:#4ECDC4;}
-.nav-home{background:transparent;color:#8B949E;border:1px solid #30363D;border-radius:10px;padding:6px 14px;font-size:12px;font-weight:600;text-decoration:none;}
+.nav-home{background:transparent;color:#AAA;border:1px solid #30363D;border-radius:10px;padding:6px 14px;font-size:12px;font-weight:600;text-decoration:none;}
 .badge{border-radius:8px;padding:4px 12px;font-size:12px;font-weight:700;}
 .badge-teal{background:rgba(78,205,196,0.15);color:#4ECDC4;border:1px solid rgba(78,205,196,0.3);}
 .badge-gold{background:rgba(255,209,102,0.15);color:#FFD166;border:1px solid rgba(255,209,102,0.3);}
 .main{max-width:980px;margin:0 auto;padding:32px 24px;}
 .h1{font-family:'Playfair Display',serif;font-size:30px;font-weight:900;margin-bottom:6px;}
-.sub{font-size:14px;color:#8B949E;margin-bottom:28px;line-height:1.6;}
-.card{background:#161B22;border-radius:16px;padding:22px;border:1px solid #30363D;margin-bottom:14px;}
+.sub{font-size:14px;color:#AAA;margin-bottom:28px;line-height:1.6;}
+.card{background:#1A1A2E;border-radius:16px;padding:22px;border:1px solid #30363D;margin-bottom:14px;}
 .btn{border:none;border-radius:10px;padding:12px 22px;font-size:14px;font-weight:700;}
 .btn-teal{background:#4ECDC4;color:#0D1117;}
 .btn-gold{background:#FFD166;color:#0D1117;}
-.btn-ghost{background:transparent;color:#8B949E;border:1px solid #30363D;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:600;}
-.btn-dark{background:#30363D;color:#E8E6F0;}
-.lbl{font-size:11px;font-weight:800;color:#8B949E;display:block;margin-bottom:8px;letter-spacing:.06em;}
+.btn-ghost{background:transparent;color:#AAA;border:1px solid #30363D;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:600;}
+.btn-dark{background:#30363D;color:#fff;}
+.lbl{font-size:11px;font-weight:800;color:#AAA;display:block;margin-bottom:8px;letter-spacing:.06em;}
 .tag{border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;display:inline-block;}
 .screen{display:none;}
 .screen.active{display:block;}
-.mode-card{background:#161B22;border:2px solid #30363D;border-radius:20px;padding:28px;cursor:pointer;transition:border-color .2s;}
+.mode-card{background:#1A1A2E;border:2px solid #30363D;border-radius:20px;padding:28px;cursor:pointer;transition:border-color .2s;}
 .mode-card:hover{border-color:#4ECDC4;}
 .centre-card{background:#0D1117;border:2px solid #30363D;border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .15s;}
 .centre-card.selected-teal{background:rgba(78,205,196,0.08);border-color:#4ECDC4;}
 .centre-card.selected-gold{background:rgba(255,209,102,0.08);border-color:#FFD166;}
-.time-btn{background:#0D1117;color:#8B949E;border:2px solid #30363D;border-radius:10px;padding:12px 20px;font-size:14px;font-weight:700;}
+.time-btn{background:#0D1117;color:#AAA;border:2px solid #30363D;border-radius:10px;padding:12px 20px;font-size:14px;font-weight:700;}
 .time-btn.active-teal{background:#4ECDC4;color:#0D1117;border-color:#4ECDC4;}
 .time-btn.active-gold{background:#FFD166;color:#0D1117;border-color:#FFD166;}
 .sched-table{width:100%;border-collapse:separate;border-spacing:4px;}
 .sched-cell{background:#0D1117;border:2px solid #30363D;border-radius:10px;padding:10px 12px;cursor:pointer;min-width:130px;transition:all .15s;vertical-align:top;}
 .sched-cell:hover{border-color:#4ECDC4;}
 .sched-cell.open{border-color:#4ECDC4;background:rgba(78,205,196,0.08);}
-.activity-detail{display:none;margin-top:10px;border-top:1px solid #30363D;padding-top:10px;font-size:12px;color:#8B949E;line-height:1.6;}
+.activity-detail{display:none;margin-top:10px;border-top:1px solid #30363D;padding-top:10px;font-size:12px;color:#AAA;line-height:1.6;}
 .activity-detail.open{display:block;}
 .group-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:4px;}
 /* PROJECTOR */
@@ -82,21 +82,21 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;}
 <div class="mode-card" onclick="selectMode('whole')">
 <div style="font-size:40px;margin-bottom:14px">🏫</div>
 <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:8px">Whole Class</div>
-<div style="font-size:13px;color:#8B949E;line-height:1.7;margin-bottom:16px">All students rotate through the same centres with generic activities. Simple, fast, and easy to manage.</div>
+<div style="font-size:15px;color:#CCC;line-height:1.7;margin-bottom:16px">All students rotate through the same centres with generic activities. Simple, fast, and easy to manage.</div>
 <div id="whole-features"></div>
 <button class="btn btn-teal" style="margin-top:20px;width:100%;font-size:13px">Set Up Whole Class →</button>
 </div>
 <div class="mode-card" onclick="selectMode('skill')">
 <div style="font-size:40px;margin-bottom:14px">🎯</div>
 <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:8px">Skill-Based</div>
-<div style="font-size:13px;color:#8B949E;line-height:1.7;margin-bottom:16px">Each group gets targeted activities matched to their specific skill needs from ReadLead.</div>
+<div style="font-size:15px;color:#CCC;line-height:1.7;margin-bottom:16px">Each group gets targeted activities matched to their specific skill needs from ReadLead.</div>
 <div id="skill-features"></div>
 <button class="btn btn-gold" style="margin-top:20px;width:100%;font-size:13px">Set Up Skill-Based →</button>
 </div>
 </div>
-<div class="card" style="background:#0D1117;text-align:center">
-<div style="font-size:13px;color:#8B949E;line-height:1.7">
-💡 <strong style="color:#E8E6F0">Not sure which to use?</strong> Start with <strong style="color:#4ECDC4">Whole Class</strong> to get your students comfortable with the rotation routine, then switch to <strong style="color:#FFD166">Skill-Based</strong>.
+<div class="card" style="background:#1A1A2E;text-align:center">
+<div style="font-size:15px;color:#CCC;line-height:1.7">
+💡 <strong style="color:#fff">Not sure which to use?</strong> Start with <strong style="color:#4ECDC4">Whole Class</strong> to get your students comfortable with the rotation routine, then switch to <strong style="color:#FFD166">Skill-Based</strong>.
 </div>
 </div>
 </div>
@@ -119,14 +119,14 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;}
 <div class="card">
 <div class="lbl" id="groups-lbl">📊 GROUPS FROM READLEAD</div>
 <div class="grid2" id="groups-preview"></div>
-<div id="groups-note" style="display:none;margin-top:10px;font-size:12px;color:#8B949E"></div>
+<div id="groups-note" style="display:none;margin-top:10px;font-size:12px;color:#AAA"></div>
 </div>
 
 <!-- Centre picker -->
 <div class="card">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
 <div class="lbl" style="margin-bottom:0" id="centres-lbl">🏫 SELECT YOUR CENTRES</div>
-<div style="font-size:12px;color:#8B949E">2–6 centres</div>
+<div style="font-size:12px;color:#AAA">2–6 centres</div>
 </div>
 <div class="grid3" id="centre-picker"></div>
 </div>
@@ -135,20 +135,20 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;}
 <div class="card">
 <div class="lbl">⏱ ROTATION TIME</div>
 <div style="display:flex;gap:8px;margin-bottom:10px" id="time-btns"></div>
-<div style="font-size:12px;color:#8B949E" id="time-total"></div>
+<div style="font-size:12px;color:#AAA" id="time-total"></div>
 </div>
 
 <!-- Whole class note -->
 <div class="card" id="whole-note" style="display:none;border-left:4px solid #4ECDC4">
-<div style="font-size:13px;font-weight:700;color:#4ECDC4;margin-bottom:6px">📋 How whole class centres work</div>
-<div style="font-size:13px;color:#8B949E;line-height:1.7">Each centre will have a <strong style="color:#E8E6F0">generic activity</strong> posted on a card. Students manage themselves while you pull groups to the teacher table.</div>
+<div style="font-size:16px;font-weight:700;color:#4ECDC4;margin-bottom:6px">📋 How whole class centres work</div>
+<div style="font-size:15px;color:#CCC;line-height:1.7">Each centre will have a <strong style="color:#fff">generic activity</strong> posted on a card. Students manage themselves while you pull groups to the teacher table.</div>
 </div>
 
 <div class="card" id="gen-card" style="background:linear-gradient(135deg,#161B22,#1C2333)">
 <div style="display:flex;justify-content:space-between;align-items:center">
 <div>
 <div style="font-size:17px;font-weight:800;margin-bottom:4px">Ready to generate?</div>
-<div style="font-size:13px;color:#8B949E" id="gen-summary"></div>
+<div style="font-size:15px;color:#CCC" id="gen-summary"></div>
 </div>
 <button class="btn" id="gen-btn" onclick="generateSchedule()" style="flex-shrink:0;margin-left:20px;font-size:15px;padding:14px 28px">Generate Schedule →</button>
 </div>
@@ -182,7 +182,7 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;}
 <div class="proj" id="projector">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
 <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:900">
-<span style="color:#4ECDC4">Guided</span> <span id="proj-mode-label" style="font-size:15px;font-weight:400;color:#8B949E"></span>
+<span style="color:#4ECDC4">Guided</span> <span id="proj-mode-label" style="font-size:15px;font-weight:400;color:#AAA"></span>
 </div>
 <button class="btn-ghost" onclick="closeProjector()">← Exit Projector</button>
 </div>
@@ -216,22 +216,22 @@ style="transition:stroke-dashoffset 1s linear,stroke .5s"/>
 </svg>
 <div class="timer-display">
 <div class="timer-num" id="timer-display">00:00</div>
-<div style="font-size:11px;color:#8B949E;font-weight:700;margin-top:4px">remaining</div>
+<div style="font-size:11px;color:#AAA;font-weight:700;margin-top:4px">remaining</div>
 </div>
 </div>
 <div style="font-size:14px;font-weight:800;margin-bottom:2px" id="timer-rotation-label">Rotation 1 of 4</div>
-<div style="font-size:12px;color:#8B949E;margin-bottom:16px" id="timer-per-rotation">15 min per rotation</div>
+<div style="font-size:12px;color:#AAA;margin-bottom:16px" id="timer-per-rotation">15 min per rotation</div>
 <div id="timer-warning" style="display:none;background:rgba(255,107,107,.15);border:1px solid #FF6B6B;border-radius:8px;padding:8px 12px;font-size:12px;color:#FF6B6B;font-weight:700;margin-bottom:14px;animation:pulse .8s infinite">⚠️ Almost time — get ready to rotate!</div>
 <div style="display:flex;flex-direction:column;gap:8px">
 <button class="btn" id="timer-play-btn" onclick="toggleTimer()" style="width:100%;font-size:16px;background:#4ECDC4;color:#0D1117">▶ Start Timer</button>
 <button class="btn btn-dark" id="timer-next-btn" onclick="nextRotation()" style="width:100%;font-size:13px;display:none">Skip to Next →</button>
-<button style="background:transparent;color:#8B949E;border:1px solid #30363D;border-radius:10px;padding:8px;width:100%;font-size:12px;font-weight:600" onclick="resetTimer()">↺ Reset All</button>
+<button style="background:transparent;color:#AAA;border:1px solid #30363D;border-radius:10px;padding:8px;width:100%;font-size:12px;font-weight:600" onclick="resetTimer()">↺ Reset All</button>
 </div>
 </div>
 <div class="card" id="session-time-card" style="margin-top:10px;text-align:center;padding:14px">
 <div class="lbl" style="margin-bottom:4px">TOTAL SESSION LEFT</div>
 <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:900" id="session-total">--:--</div>
-<div style="font-size:11px;color:#8B949E;margin-top:2px">across all remaining rotations</div>
+<div style="font-size:11px;color:#AAA;margin-top:2px">across all remaining rotations</div>
 </div>
 </div>
 ```
@@ -363,7 +363,7 @@ document.getElementById('groups-preview').innerHTML = READLEAD_GROUPS.map(g=>`
 <span style="font-size:20px">${g.emoji}</span>
 <div>
 <div style="font-weight:700;color:${g.color};font-size:13px">${g.name}</div>
-<div style="font-size:11px;color:#8B949E">${g.students.join(', ')}${currentMode==='skill'?` · <strong style="color:${g.color}">${g.weakSkill}</strong>`:''}</div>
+<div style="font-size:11px;color:#AAA">${g.students.join(', ')}${currentMode==='skill'?` · <strong style="color:${g.color}">${g.weakSkill}</strong>`:''}</div>
 </div>
 </div>`).join('');
 setTimeout(addActivityButtons,500);
@@ -417,7 +417,7 @@ document.getElementById('centre-picker').innerHTML = ALL_CENTRES.map(c=>{
 const sel = selectedCentres.includes(c.id);
 return `<div class="centre-card${sel?' '+selClass:''}" onclick="toggleCentre('${c.id}')">
 <div style="font-size:22px;margin-bottom:6px">${c.emoji}</div>
-<div style="font-size:13px;font-weight:700;margin-bottom:2px">${c.name}</div>
+<div style="font-size:16px;font-weight:700;margin-bottom:2px">${c.name}</div>
 ${sel?`<div style="font-size:11px;font-weight:700;color:${accent};margin-top:4px">✓ Selected</div>`:''}
 </div>`;
 }).join('');
@@ -437,7 +437,7 @@ function renderTimeBtns() {
 const accent = currentMode==='whole' ? 'teal' : 'gold';
 document.getElementById('time-btns').innerHTML = ROTATION_TIMES.map(t=>`
 <button class="time-btn${rotationTime===t?' active-'+accent:''}" onclick="setTime(${t})">${t} min</button>`).join('');
-document.getElementById('time-total').innerHTML = `Total: <strong style="color:#E8E6F0">${selectedCentres.length * rotationTime} minutes</strong> · ${selectedCentres.length} rotations`;
+document.getElementById('time-total').innerHTML = `Total: <strong style="color:#fff">${selectedCentres.length * rotationTime} minutes</strong> · ${selectedCentres.length} rotations`;
 }
 
 function setTime(t) {
@@ -485,13 +485,13 @@ let html = '';
 // Whole class activity cards
 if (isWhole) {
 html += `<div class="card" style="border-left:4px solid #4ECDC4;margin-bottom:20px">
-<div style="font-size:13px;font-weight:700;color:#4ECDC4;margin-bottom:10px">📋 Post These at Each Centre</div>
+<div style="font-size:16px;font-weight:700;color:#4ECDC4;margin-bottom:10px">📋 Post These at Each Centre</div>
 <div class="grid2">
 ${centreList.map(c=>`
 <div style="background:#0D1117;border-radius:10px;padding:12px 14px;border:1px solid #30363D">
 <div style="font-size:18px;margin-bottom:4px">${c.emoji}</div>
 <div style="font-size:14px;font-weight:800;margin-bottom:6px">${c.name}</div>
-<div style="font-size:12px;color:#8B949E;line-height:1.6">${WHOLE_ACTIVITIES[c.id]}</div>
+<div style="font-size:12px;color:#AAA;line-height:1.6">${WHOLE_ACTIVITIES[c.id]}</div>
 </div>`).join('')}
 </div>
 </div>`;
@@ -503,15 +503,15 @@ html += `<div class="card">
 <div style="overflow-x:auto">
 <table class="sched-table">
 <thead><tr>
-<th style="text-align:left;padding:10px 14px;font-size:12px;color:#8B949E;font-weight:700">GROUP</th>
-${schedule[0].map((_,i)=>`<th style="text-align:left;padding:10px 14px;font-size:12px;color:#8B949E;font-weight:700">Rotation ${i+1}<div style="font-size:11px;color:#555;font-weight:400">${i*rotationTime}–${(i+1)*rotationTime} min</div></th>`).join('')}
+<th style="text-align:left;padding:10px 14px;font-size:12px;color:#AAA;font-weight:700">GROUP</th>
+${schedule[0].map((_,i)=>`<th style="text-align:left;padding:10px 14px;font-size:12px;color:#AAA;font-weight:700">Rotation ${i+1}<div style="font-size:11px;color:#555;font-weight:400">${i*rotationTime}–${(i+1)*rotationTime} min</div></th>`).join('')}
 </tr></thead>
 <tbody>
 ${groups.map((group,gi)=>`
 <tr>
 <td style="padding:10px 14px;vertical-align:middle">
 <div style="font-weight:800;color:${group.color};font-size:14px">${group.emoji} ${group.name}</div>
-<div style="font-size:11px;color:#8B949E">${group.students.join(', ')}</div>
+<div style="font-size:11px;color:#AAA">${group.students.join(', ')}</div>
 ${!isWhole?`<span class="tag" style="background:${group.color}22;color:${group.color};font-size:10px;margin-top:4px;display:inline-block">${group.weakSkill}</span>`:''}
 </td>
 ${schedule.map((rot,ri)=>{
@@ -519,7 +519,7 @@ const cell=rot[gi]; const key=`${gi}-${ri}`;
 return `<td style="padding:4px;vertical-align:top">
 <div class="sched-cell" id="cell-${key}" onclick="${!isWhole?`toggleCell('${key}','${group.color}')`:''}" style="${isWhole?'cursor:default':''}">
 <div style="font-size:16px;margin-bottom:3px">${cell.centre.emoji}</div>
-<div style="font-size:13px;font-weight:700">${cell.centre.name}</div>
+<div style="font-size:16px;font-weight:700">${cell.centre.name}</div>
 <div class="activity-detail" id="detail-${key}">${cell.activity}</div>
 </div>
 </td>`;
@@ -539,14 +539,14 @@ html += groups.map(group=>`
 <span style="font-size:22px">${group.emoji}</span>
 <div>
 <div style="font-size:15px;font-weight:800;color:${group.color}">${group.name}</div>
-<div style="font-size:12px;color:#8B949E">${group.students.join(', ')} · Focus: ${group.weakSkill}</div>
+<div style="font-size:12px;color:#AAA">${group.students.join(', ')} · Focus: ${group.weakSkill}</div>
 </div>
 </div>
 <div class="grid2">
 ${centreList.map(c=>`
 <div style="background:#0D1117;border-radius:10px;padding:10px 14px;border:1px solid #30363D">
-<div style="font-size:13px;font-weight:700;margin-bottom:4px">${c.emoji} ${c.name}</div>
-<div style="font-size:12px;color:#8B949E;line-height:1.6">${SKILL_ACTIVITIES[group.weakSkill]?.[c.id]||'Level-appropriate literacy activity.'}</div>
+<div style="font-size:16px;font-weight:700;margin-bottom:4px">${c.emoji} ${c.name}</div>
+<div style="font-size:12px;color:#AAA;line-height:1.6">${SKILL_ACTIVITIES[group.weakSkill]?.[c.id]||'Level-appropriate literacy activity.'}</div>
 </div>`).join('')}
 </div>
 </div>`).join('');
@@ -595,7 +595,7 @@ renderDots();
 document.getElementById('proj-cards').style.gridTemplateColumns = `repeat(${Math.min(centreList.length,3)},1fr)`;
 
 // Mini table header
-const tableHead = `<thead><tr><th style="text-align:left;padding:5px 8px;color:#8B949E;font-weight:700">Group</th>${schedule[0].map((_,i)=>`<th id="proj-th-${i}" style="text-align:left;padding:5px 8px;color:${i===0?'#4ECDC4':'#8B949E'};font-weight:700">R${i+1} ${i===0?'◀':''}</th>`).join('')}</tr></thead>`;
+const tableHead = `<thead><tr><th style="text-align:left;padding:5px 8px;color:#AAA;font-weight:700">Group</th>${schedule[0].map((_,i)=>`<th id="proj-th-${i}" style="text-align:left;padding:5px 8px;color:${i===0?'#4ECDC4':'#8B949E'};font-weight:700">R${i+1} ${i===0?'◀':''}</th>`).join('')}</tr></thead>`;
 const tableBody = `<tbody>${groups.map((group,gi)=>`<tr><td style="padding:5px 8px;font-weight:700;color:${group.color}">${group.emoji} ${group.name}</td>${schedule.map((rot,ri)=>`<td id="proj-cell-${gi}-${ri}" style="padding:5px 8px;color:${ri===0?'#E8E6F0':'#555'};font-weight:${ri===0?700:400}">${rot[gi]?.centre.emoji} ${rot[gi]?.centre.name}</td>`).join('')}</tr>`).join('')}</tbody>`;
 document.getElementById('proj-table').innerHTML = tableHead + tableBody;
 
@@ -625,7 +625,7 @@ const rot = schedule[currentRotation]||schedule[0];
 
 document.getElementById('proj-rotation-label').textContent = `ROTATION ${currentRotation+1} OF ${schedule.length} — WHERE TO GO NOW`;
 document.getElementById('proj-cards').innerHTML = rot.map(cell=>`
-<div style="background:#161B22;border:2px solid ${cell.group.color};border-radius:14px;padding:16px">
+<div style="background:#1A1A2E;border:2px solid ${cell.group.color};border-radius:14px;padding:16px">
 <div style="font-size:28px;margin-bottom:6px">${cell.centre.emoji}</div>
 <div style="font-size:15px;font-weight:800;margin-bottom:8px">${cell.centre.name}</div>
 <div style="background:${cell.group.color}22;border-radius:10px;padding:8px 12px">
@@ -750,16 +750,16 @@ style="transition:stroke-dashoffset 1s linear,stroke .5s"/>
 </svg>
 <div class="timer-display">
 <div class="timer-num" id="timer-display">${fmt(totalSeconds)}</div>
-<div style="font-size:11px;color:#8B949E;font-weight:700;margin-top:4px">remaining</div>
+<div style="font-size:11px;color:#AAA;font-weight:700;margin-top:4px">remaining</div>
 </div>
 </div>
 <div style="font-size:14px;font-weight:800;margin-bottom:2px" id="timer-rotation-label">Rotation 1 of ${schedule.length}</div>
-<div style="font-size:12px;color:#8B949E;margin-bottom:16px" id="timer-per-rotation">${rotationTime} min per rotation</div>
+<div style="font-size:12px;color:#AAA;margin-bottom:16px" id="timer-per-rotation">${rotationTime} min per rotation</div>
 <div id="timer-warning" style="display:none;background:rgba(255,107,107,.15);border:1px solid #FF6B6B;border-radius:8px;padding:8px 12px;font-size:12px;color:#FF6B6B;font-weight:700;margin-bottom:14px;animation:pulse .8s infinite">⚠️ Almost time — get ready to rotate!</div>
 <div style="display:flex;flex-direction:column;gap:8px">
 <button class="btn" id="timer-play-btn" onclick="toggleTimer()" style="width:100%;font-size:16px;background:#4ECDC4;color:#0D1117">▶ Start Timer</button>
 <button class="btn btn-dark" id="timer-next-btn" onclick="nextRotation()" style="width:100%;font-size:13px;display:none">Skip to Next →</button>
-<button style="background:transparent;color:#8B949E;border:1px solid #30363D;border-radius:10px;padding:8px;width:100%;font-size:12px;font-weight:600" onclick="resetTimer()">↺ Reset All</button>
+<button style="background:transparent;color:#AAA;border:1px solid #30363D;border-radius:10px;padding:8px;width:100%;font-size:12px;font-weight:600" onclick="resetTimer()">↺ Reset All</button>
 </div>`;
 updateTimerDisplay();
 updateNextBtn();
@@ -774,7 +774,7 @@ function showDoneState() {
 document.getElementById('timer-card').innerHTML = `
 <div style="font-size:52px;margin-bottom:12px">🎉</div>
 <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:#4ECDC4;margin-bottom:6px">All Done!</div>
-<div style="font-size:13px;color:#8B949E;margin-bottom:20px">All ${schedule.length} rotations complete</div>
+<div style="font-size:15px;color:#CCC;margin-bottom:20px">All ${schedule.length} rotations complete</div>
 <button class="btn btn-teal" style="width:100%" onclick="resetTimer()">↺ Restart</button>`;
 document.getElementById('session-time-card').style.display = 'none';
 }
