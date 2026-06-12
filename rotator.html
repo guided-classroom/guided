@@ -96,7 +96,7 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;}
 </div>
 <div class="card" style="background:#1A1A2E;text-align:center">
 <div style="font-size:15px;color:#CCC;line-height:1.7">
-💡 <strong style="color:#fff">Not sure which to use?</strong> Start with <strong style="color:#4ECDC4">Whole Class</strong> to get your students comfortable with the rotation routine, then switch to <strong style="color:#FFD166">Skill-Based</strong>.
+💡 <strong style="color:#4ECDC4">Not sure which to use?</strong> Start with <strong style="color:#4ECDC4">Whole Class</strong> to get your students comfortable with the rotation routine, then switch to <strong style="color:#FFD166">Skill-Based</strong>.
 </div>
 </div>
 </div>
@@ -141,7 +141,7 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;}
 <!-- Whole class note -->
 <div class="card" id="whole-note" style="display:none;border-left:4px solid #4ECDC4">
 <div style="font-size:16px;font-weight:700;color:#4ECDC4;margin-bottom:6px">📋 How whole class centres work</div>
-<div style="font-size:15px;color:#CCC;line-height:1.7">Each centre will have a <strong style="color:#fff">generic activity</strong> posted on a card. Students manage themselves while you pull groups to the teacher table.</div>
+<div style="font-size:15px;color:#CCC;line-height:1.7">Each centre will have a <strong style="color:#4ECDC4">generic activity</strong> posted on a card. Students manage themselves while you pull groups to the teacher table.</div>
 </div>
 
 <div class="card" id="gen-card" style="background:linear-gradient(135deg,#1E2A3A,#1C2333)">
@@ -437,7 +437,7 @@ function renderTimeBtns() {
 const accent = currentMode==='whole' ? 'teal' : 'gold';
 document.getElementById('time-btns').innerHTML = ROTATION_TIMES.map(t=>`
 <button class="time-btn${rotationTime===t?' active-'+accent:''}" onclick="setTime(${t})">${t} min</button>`).join('');
-document.getElementById('time-total').innerHTML = `Total: <strong style="color:#fff">${selectedCentres.length * rotationTime} minutes</strong> · ${selectedCentres.length} rotations`;
+document.getElementById('time-total').innerHTML = `Total: <strong style="color:#1A1A2E">${selectedCentres.length * rotationTime} minutes</strong> · ${selectedCentres.length} rotations`;
 }
 
 function setTime(t) {
