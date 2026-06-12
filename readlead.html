@@ -282,10 +282,12 @@ html+="<div class='row'>";
 html+="<button class='btn' id='btn-"+s.id+"'>Start</button>";
 html+="<button class='btn-ghost btn-sm' id='ebtn-"+s.id+"'>Edit Level</button>";
 html+="<button class='btn-ghost btn-sm' id='pbtn-"+s.id+"'"+(s.sessions&&s.sessions.length>0?"":" style='opacity:0.4' disabled")+">Progress</button>";
+html+="<button class='btn-ghost btn-sm' id='dbtn-"+s.id+"' style='color:#FF6B6B;border-color:#FF6B6B'>Delete</button>";
 html+="</div></div>";
 });
 document.getElementById("student-list").innerHTML=html;
-setTimeout(function(){students.forEach(function(s){var btn=document.getElementById("btn-"+s.id);if(btn){btn.addEventListener("click",function(){startSess(s.id);});}var ebtn=document.getElementById("ebtn-"+s.id);if(ebtn){ebtn.addEventListener("click",function(){editLevel(s.id);});}var pbtn=document.getElementById("pbtn-"+s.id);if(pbtn&&s.sessions&&s.sessions.length>0){pbtn.addEventListener("click",function(){showProg(s.id);});}});},100);
+setTimeout(function(){students.forEach(function(s){var btn=document.getElementById("btn-"+s.id);if(btn){btn.addEventListener("click",function(){startSess(s.id);});}var ebtn=document.getElementById("ebtn-"+s.id);if(ebtn){ebtn.addEventListener("click",function(){editLevel(s.id);});}var pbtn=document.getElementById("pbtn-"+s.id);if(pbtn&&s.sessions&&s.sessions.length>0){pbtn.addEventListener("click",function(){showProg(s.id);});}
+var dbtn=document.getElementById("dbtn-"+s.id);if(dbtn){dbtn.addEventListener("click",function(){deleteStu(s.id);});}});},100);
 }
 function rdErrs(){
 var el=document.getElementById("err-list");
@@ -614,6 +616,33 @@ students[idx].sessions=[rec].concat(students[idx].sessions).slice(0,10);
 cur=students[idx];
 saveStudents();
 document.getElementById("gen-box").innerHTML="<div style='font-size:14px;font-weight:800;color:#4ECDC4;margin-bottom:8px'>Session Saved!</div><div style='font-size:12px;color:#9999BB;margin-bottom:12px'>Data saved to student profile.</div><button class='btn btn-teal' style='width:100%;font-size:14px;margin-bottom:8px' onclick='doGen()'>Generate Lesson</button><button class='btn-ghost' style='width:100%;font-size:13px' onclick='saveSessionOnly()'>Save Again</button>";
+}
+function deleteStu(id){
+var stu=students.find(function(s){return s.id==id;});
+if(!stu)return;
+var overlay=document.createElement("div");
+overlay.style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:999;display:flex;align-items:center;justify-content:center;";
+var box=document.createElement("div");
+box.style="background:#fff;border-radius:16px;padding:28px;width:320px;text-align:center;";
+box.innerHTML="<div style='font-size:18px;font-weight:700;margin-bottom:8px'>Delete "+stu.name+"?</div><div style='font-size:13px;color:#888;margin-bottom:20px'>This will permanently delete all session data for this student.</div>";
+var delBtn=document.createElement("button");
+delBtn.textContent="Yes, Delete";
+delBtn.style="background:#FF6B6B;color:#fff;border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-bottom:8px;";
+delBtn.addEventListener("click",function(){
+students=students.filter(function(s){return s.id!=id;});
+saveStudents();
+document.body.removeChild(overlay);
+rdDash();
+loadDashCurr();
+});
+var cancelBtn=document.createElement("button");
+cancelBtn.textContent="Cancel";
+cancelBtn.style="width:100%;padding:10px;border:none;border-radius:10px;background:#F5F3EE;font-weight:700;cursor:pointer;";
+cancelBtn.addEventListener("click",function(){document.body.removeChild(overlay);});
+box.appendChild(delBtn);
+box.appendChild(cancelBtn);
+overlay.appendChild(box);
+document.body.appendChild(overlay);
 }
 function addStu(){
 var n=document.getElementById("new-name").value.trim();if(!n)return;
@@ -755,10 +784,12 @@ html+="<div class='row'>";
 html+="<button class='btn' id='btn-"+s.id+"'>Start</button>";
 html+="<button class='btn-ghost btn-sm' id='ebtn-"+s.id+"'>Edit Level</button>";
 html+="<button class='btn-ghost btn-sm' id='pbtn-"+s.id+"'"+(s.sessions&&s.sessions.length>0?"":" style='opacity:0.4' disabled")+">Progress</button>";
+html+="<button class='btn-ghost btn-sm' id='dbtn-"+s.id+"' style='color:#FF6B6B;border-color:#FF6B6B'>Delete</button>";
 html+="</div></div>";
 });
 document.getElementById("student-list").innerHTML=html;
-setTimeout(function(){students.forEach(function(s){var btn=document.getElementById("btn-"+s.id);if(btn){btn.addEventListener("click",function(){startSess(s.id);});}var ebtn=document.getElementById("ebtn-"+s.id);if(ebtn){ebtn.addEventListener("click",function(){editLevel(s.id);});}var pbtn=document.getElementById("pbtn-"+s.id);if(pbtn&&s.sessions&&s.sessions.length>0){pbtn.addEventListener("click",function(){showProg(s.id);});}});},100);
+setTimeout(function(){students.forEach(function(s){var btn=document.getElementById("btn-"+s.id);if(btn){btn.addEventListener("click",function(){startSess(s.id);});}var ebtn=document.getElementById("ebtn-"+s.id);if(ebtn){ebtn.addEventListener("click",function(){editLevel(s.id);});}var pbtn=document.getElementById("pbtn-"+s.id);if(pbtn&&s.sessions&&s.sessions.length>0){pbtn.addEventListener("click",function(){showProg(s.id);});}
+var dbtn=document.getElementById("dbtn-"+s.id);if(dbtn){dbtn.addEventListener("click",function(){deleteStu(s.id);});}});},100);
 }
 function rdErrs(){
 var el=document.getElementById("err-list");
@@ -1087,6 +1118,33 @@ students[idx].sessions=[rec].concat(students[idx].sessions).slice(0,10);
 cur=students[idx];
 saveStudents();
 document.getElementById("gen-box").innerHTML="<div style='font-size:14px;font-weight:800;color:#4ECDC4;margin-bottom:8px'>Session Saved!</div><div style='font-size:12px;color:#9999BB;margin-bottom:12px'>Data saved to student profile.</div><button class='btn btn-teal' style='width:100%;font-size:14px;margin-bottom:8px' onclick='doGen()'>Generate Lesson</button><button class='btn-ghost' style='width:100%;font-size:13px' onclick='saveSessionOnly()'>Save Again</button>";
+}
+function deleteStu(id){
+var stu=students.find(function(s){return s.id==id;});
+if(!stu)return;
+var overlay=document.createElement("div");
+overlay.style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:999;display:flex;align-items:center;justify-content:center;";
+var box=document.createElement("div");
+box.style="background:#fff;border-radius:16px;padding:28px;width:320px;text-align:center;";
+box.innerHTML="<div style='font-size:18px;font-weight:700;margin-bottom:8px'>Delete "+stu.name+"?</div><div style='font-size:13px;color:#888;margin-bottom:20px'>This will permanently delete all session data for this student.</div>";
+var delBtn=document.createElement("button");
+delBtn.textContent="Yes, Delete";
+delBtn.style="background:#FF6B6B;color:#fff;border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-bottom:8px;";
+delBtn.addEventListener("click",function(){
+students=students.filter(function(s){return s.id!=id;});
+saveStudents();
+document.body.removeChild(overlay);
+rdDash();
+loadDashCurr();
+});
+var cancelBtn=document.createElement("button");
+cancelBtn.textContent="Cancel";
+cancelBtn.style="width:100%;padding:10px;border:none;border-radius:10px;background:#F5F3EE;font-weight:700;cursor:pointer;";
+cancelBtn.addEventListener("click",function(){document.body.removeChild(overlay);});
+box.appendChild(delBtn);
+box.appendChild(cancelBtn);
+overlay.appendChild(box);
+document.body.appendChild(overlay);
 }
 function addStu(){
 var n=document.getElementById("new-name").value.trim();if(!n)return;
