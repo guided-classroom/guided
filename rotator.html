@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'DM Sans',sans-serif;background:#0D1117;color:#fff;min-height:100vh;}
+body{font-family:'DM Sans',sans-serif;background:#1E2A3A;color:#fff;min-height:100vh;}
 button{font-family:'DM Sans',sans-serif;cursor:pointer;}
 .nav{background:#1A1A2E;border-bottom:1px solid #30363D;padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
 .logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:#fff;}
@@ -22,8 +22,8 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;}
 .sub{font-size:14px;color:#AAA;margin-bottom:28px;line-height:1.6;}
 .card{background:#1A1A2E;border-radius:16px;padding:22px;border:1px solid #30363D;margin-bottom:14px;}
 .btn{border:none;border-radius:10px;padding:12px 22px;font-size:14px;font-weight:700;}
-.btn-teal{background:#4ECDC4;color:#0D1117;}
-.btn-gold{background:#FFD166;color:#0D1117;}
+.btn-teal{background:#4ECDC4;color:#1E2A3A;}
+.btn-gold{background:#FFD166;color:#1E2A3A;}
 .btn-ghost{background:transparent;color:#AAA;border:1px solid #30363D;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:600;}
 .btn-dark{background:#30363D;color:#fff;}
 .lbl{font-size:14px;font-weight:800;color:#AAA;display:block;margin-bottom:8px;letter-spacing:.06em;}
@@ -35,18 +35,18 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;}
 .centre-card{background:#1A1A2E;border:2px solid #4ECDC433;border-radius:12px;padding:16px;cursor:pointer;transition:all .15s;}
 .centre-card.selected-teal{background:rgba(78,205,196,0.08);border-color:#4ECDC4;}
 .centre-card.selected-gold{background:rgba(255,209,102,0.08);border-color:#FFD166;}
-.time-btn{background:#0D1117;color:#AAA;border:2px solid #30363D;border-radius:10px;padding:12px 20px;font-size:14px;font-weight:700;}
-.time-btn.active-teal{background:#4ECDC4;color:#0D1117;border-color:#4ECDC4;}
-.time-btn.active-gold{background:#FFD166;color:#0D1117;border-color:#FFD166;}
+.time-btn{background:#1E2A3A;color:#AAA;border:2px solid #30363D;border-radius:10px;padding:12px 20px;font-size:14px;font-weight:700;}
+.time-btn.active-teal{background:#4ECDC4;color:#1E2A3A;border-color:#4ECDC4;}
+.time-btn.active-gold{background:#FFD166;color:#1E2A3A;border-color:#FFD166;}
 .sched-table{width:100%;border-collapse:separate;border-spacing:4px;}
-.sched-cell{background:#0D1117;border:2px solid #30363D;border-radius:10px;padding:10px 12px;cursor:pointer;min-width:130px;transition:all .15s;vertical-align:top;}
+.sched-cell{background:#1E2A3A;border:2px solid #30363D;border-radius:10px;padding:10px 12px;cursor:pointer;min-width:130px;transition:all .15s;vertical-align:top;}
 .sched-cell:hover{border-color:#4ECDC4;}
 .sched-cell.open{border-color:#4ECDC4;background:rgba(78,205,196,0.08);}
 .activity-detail{display:none;margin-top:10px;border-top:1px solid #30363D;padding-top:10px;font-size:12px;color:#AAA;line-height:1.6;}
 .activity-detail.open{display:block;}
 .group-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:4px;}
 /* PROJECTOR */
-.proj{display:none;position:fixed;inset:0;background:#0D1117;z-index:200;padding:24px;overflow-y:auto;}
+.proj{display:none;position:fixed;inset:0;background:#1E2A3A;z-index:200;padding:24px;overflow-y:auto;}
 .proj.active{display:block;}
 .timer-ring{position:relative;width:160px;height:160px;margin:0 auto 16px;}
 .timer-ring svg{transform:rotate(-90deg);}
@@ -144,7 +144,7 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;}
 <div style="font-size:15px;color:#CCC;line-height:1.7">Each centre will have a <strong style="color:#fff">generic activity</strong> posted on a card. Students manage themselves while you pull groups to the teacher table.</div>
 </div>
 
-<div class="card" id="gen-card" style="background:linear-gradient(135deg,#161B22,#1C2333)">
+<div class="card" id="gen-card" style="background:linear-gradient(135deg,#1E2A3A,#1C2333)">
 <div style="display:flex;justify-content:space-between;align-items:center">
 <div>
 <div style="font-size:17px;font-weight:800;margin-bottom:4px">Ready to generate?</div>
@@ -223,7 +223,7 @@ style="transition:stroke-dashoffset 1s linear,stroke .5s"/>
 <div style="font-size:12px;color:#AAA;margin-bottom:16px" id="timer-per-rotation">15 min per rotation</div>
 <div id="timer-warning" style="display:none;background:rgba(255,107,107,.15);border:1px solid #FF6B6B;border-radius:8px;padding:8px 12px;font-size:12px;color:#FF6B6B;font-weight:700;margin-bottom:14px;animation:pulse .8s infinite">⚠️ Almost time — get ready to rotate!</div>
 <div style="display:flex;flex-direction:column;gap:8px">
-<button class="btn" id="timer-play-btn" onclick="toggleTimer()" style="width:100%;font-size:16px;background:#4ECDC4;color:#0D1117">▶ Start Timer</button>
+<button class="btn" id="timer-play-btn" onclick="toggleTimer()" style="width:100%;font-size:16px;background:#4ECDC4;color:#1E2A3A">▶ Start Timer</button>
 <button class="btn btn-dark" id="timer-next-btn" onclick="nextRotation()" style="width:100%;font-size:13px;display:none">Skip to Next →</button>
 <button style="background:transparent;color:#AAA;border:1px solid #30363D;border-radius:10px;padding:8px;width:100%;font-size:12px;font-weight:600" onclick="resetTimer()">↺ Reset All</button>
 </div>
@@ -359,7 +359,7 @@ showScreen('setup');
 
 function renderGroupsPreview() {
 document.getElementById('groups-preview').innerHTML = READLEAD_GROUPS.map(g=>`
-<div style="background:#0D1117;border-radius:10px;padding:10px 14px;border:1px solid ${g.color}33;display:flex;gap:10px;align-items:center">
+<div style="background:#1E2A3A;border-radius:10px;padding:10px 14px;border:1px solid ${g.color}33;display:flex;gap:10px;align-items:center">
 <span style="font-size:20px">${g.emoji}</span>
 <div>
 <div style="font-weight:700;color:${g.color};font-size:16px">${g.name}</div>
@@ -488,7 +488,7 @@ html += `<div class="card" style="border-left:4px solid #4ECDC4;margin-bottom:20
 <div style="font-size:16px;font-weight:700;color:#4ECDC4;margin-bottom:10px">📋 Post These at Each Centre</div>
 <div class="grid2">
 ${centreList.map(c=>`
-<div style="background:#0D1117;border-radius:10px;padding:12px 14px;border:1px solid #30363D">
+<div style="background:#1E2A3A;border-radius:10px;padding:12px 14px;border:1px solid #30363D">
 <div style="font-size:18px;margin-bottom:4px">${c.emoji}</div>
 <div style="font-size:14px;font-weight:800;margin-bottom:6px">${c.name}</div>
 <div style="font-size:12px;color:#AAA;line-height:1.6">${WHOLE_ACTIVITIES[c.id]}</div>
@@ -544,7 +544,7 @@ html += groups.map(group=>`
 </div>
 <div class="grid2">
 ${centreList.map(c=>`
-<div style="background:#0D1117;border-radius:10px;padding:10px 14px;border:1px solid #30363D">
+<div style="background:#1E2A3A;border-radius:10px;padding:10px 14px;border:1px solid #30363D">
 <div style="font-size:16px;font-weight:700;margin-bottom:4px">${c.emoji} ${c.name}</div>
 <div style="font-size:12px;color:#AAA;line-height:1.6">${SKILL_ACTIVITIES[group.weakSkill]?.[c.id]||'Level-appropriate literacy activity.'}</div>
 </div>`).join('')}
@@ -757,7 +757,7 @@ style="transition:stroke-dashoffset 1s linear,stroke .5s"/>
 <div style="font-size:12px;color:#AAA;margin-bottom:16px" id="timer-per-rotation">${rotationTime} min per rotation</div>
 <div id="timer-warning" style="display:none;background:rgba(255,107,107,.15);border:1px solid #FF6B6B;border-radius:8px;padding:8px 12px;font-size:12px;color:#FF6B6B;font-weight:700;margin-bottom:14px;animation:pulse .8s infinite">⚠️ Almost time — get ready to rotate!</div>
 <div style="display:flex;flex-direction:column;gap:8px">
-<button class="btn" id="timer-play-btn" onclick="toggleTimer()" style="width:100%;font-size:16px;background:#4ECDC4;color:#0D1117">▶ Start Timer</button>
+<button class="btn" id="timer-play-btn" onclick="toggleTimer()" style="width:100%;font-size:16px;background:#4ECDC4;color:#1E2A3A">▶ Start Timer</button>
 <button class="btn btn-dark" id="timer-next-btn" onclick="nextRotation()" style="width:100%;font-size:13px;display:none">Skip to Next →</button>
 <button style="background:transparent;color:#AAA;border:1px solid #30363D;border-radius:10px;padding:8px;width:100%;font-size:12px;font-weight:600" onclick="resetTimer()">↺ Reset All</button>
 </div>`;

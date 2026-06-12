@@ -1,9 +1,8 @@
 f=open('rotator.html','r')
 h=f.read()
 f.close()
-old='<div style="font-weight:700;color:${g.color};font-size:13px">${g.name}</div>\n<div style="font-size:11px;color:#AAA">'
-new='<div style="font-weight:700;color:${g.color};font-size:16px">${g.name}</div>\n<div style="font-size:14px;color:#AAA">'
-print('found:',old in h)
-h=h.replace(old,new)
+h=h.replace('#0D1117','#1E2A3A')
+h=h.replace('#161B22','#1E2A3A')
 open('rotator.html','w').write(h)
 print('done')
+print('remaining 0D1117:',h.count('#0D1117')
