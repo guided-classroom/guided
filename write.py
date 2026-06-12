@@ -1,12 +1,10 @@
+
 f=open('rotator.html','r')
 h=f.read()
 f.close()
-h=h.replace('background:#0D1117;text-align:center','background:#1A1A2E;text-align:center')
-h=h.replace('font-size:13px;color:#8B949E','font-size:15px;color:#CCC')
-h=h.replace('color:#E8E6F0','color:#fff')
-h=h.replace('background:#161B22','background:#1A1A2E')
-h=h.replace('color:#8B949E','color:#AAA')
-h=h.replace('font-size:13px;font-weight:700','font-size:16px;font-weight:700')
-h=h.replace('font-size:13px;color:#4ECDC4','font-size:16px;color:#4ECDC4')
+old='.centre-card{background:#0D1117;border:2px solid #30363D;border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .15s;}'
+new='.centre-card{background:#1A1A2E;border:2px solid #4ECDC433;border-radius:12px;padding:16px;cursor:pointer;transition:all .15s;}'
+print('found:',old in h)
+h=h.replace(old,new)
 open('rotator.html','w').write(h)
 print('done')
