@@ -362,8 +362,8 @@ document.getElementById('groups-preview').innerHTML = READLEAD_GROUPS.map(g=>`
 <div style="background:#0D1117;border-radius:10px;padding:10px 14px;border:1px solid ${g.color}33;display:flex;gap:10px;align-items:center">
 <span style="font-size:20px">${g.emoji}</span>
 <div>
-<div style="font-weight:700;color:${g.color};font-size:13px">${g.name}</div>
-<div style="font-size:11px;color:#AAA">${g.students.join(', ')}${currentMode==='skill'?` · <strong style="color:${g.color}">${g.weakSkill}</strong>`:''}</div>
+<div style="font-weight:700;color:${g.color};font-size:16px">${g.name}</div>
+<div style="font-size:14px;color:#AAA">${g.students.join(', ')}${currentMode==='skill'?` · <strong style="color:${g.color}">${g.weakSkill}</strong>`:''}</div>
 </div>
 </div>`).join('');
 setTimeout(addActivityButtons,500);
