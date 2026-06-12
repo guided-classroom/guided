@@ -1,8 +1,9 @@
 f=open('rotator.html','r')
 h=f.read()
 f.close()
-h=h.replace('#0D1117','#1E2A3A')
-h=h.replace('#161B22','#1E2A3A')
+old='body{font-family:\'DM Sans\',sans-serif;background:#1E2A3A;color:#fff;min-height:100vh;}'
+new='body{font-family:\'DM Sans\',sans-serif;background:#F5F7FF;color:#1A1A2E;min-height:100vh;}'
+print('found:',old in h)
+h=h.replace(old,new)
 open('rotator.html','w').write(h)
 print('done')
-print('remaining 0D1117:',h.count('#0D1117')
