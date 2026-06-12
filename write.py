@@ -1,50 +1,9 @@
-f=open('readlead.html','r')
+f=open('rotator.html','r')
 h=f.read()
 f.close()
-fn='function exportPDF(){\n'
-fn+='if(!cur)return;\n'
-fn+='var QRL=[{id:"accuracy",l:"Accuracy"},{id:"fluency",l:"Fluency"},{id:"decoding",l:"Decoding"},{id:"selfmon",l:"Self-Monitoring"},{id:"comprehension",l:"Comprehension"}];\n'
-fn+='var sess=cur.sessions||[];\n'
-fn+='var latest=sess.length?sess[0].ratings||{}:{};\n'
-fn+='var html="<html><head><style>";\n'
-fn+='html+="body{font-family:Arial,sans-serif;max-width:700px;margin:40px auto;padding:20px;color:#1A1A2E;}";\n'
-fn+='html+="h1{font-size:28px;margin-bottom:4px;}";\n'
-fn+='html+="h2{font-size:16px;font-weight:700;margin:20px 0 10px;border-bottom:2px solid #4ECDC4;padding-bottom:4px;}";\n'
-fn+='html+=".badge{display:inline-block;background:#4ECDC422;color:#2BBDB5;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700;margin-left:8px;}";\n'
-fn+='html+=".skill{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}";\n'
-fn+='html+=".bar{height:10px;border-radius:99px;background:#F0F0F0;flex:1;margin:0 12px;}";\n'
-fn+='html+=".fill{height:10px;border-radius:99px;}";\n'
-fn+='html+=".session{border:1px solid #E8E8E8;border-radius:10px;padding:12px;margin-bottom:10px;}";\n'
-fn+='html+=".error{font-size:12px;color:#666;padding:3px 0;}";\n'
-fn+='html+="</style></head><body>";\n'
-fn+='html+="<h1>"+cur.name+"<span class=\'badge\'>"+cur.level+"</span></h1>";\n'
-fn+='html+="<div style=\'font-size:14px;color:#888;margin-bottom:20px\'>"+cur.grade+" &bull; "+sess.length+" sessions &bull; Exported "+new Date().toLocaleDateString()+"</div>";\n'
-fn+='html+="<h2>Latest Skill Ratings</h2>";\n'
-fn+='QRL.forEach(function(r){\n'
-fn+='var v=latest[r.id]||0;\n'
-fn+='var c=v>=90?"#6BCB77":v>=75?"#FFD166":"#FF6B6B";\n'
-fn+='html+="<div class=\'skill\'><span style=\'font-size:13px;font-weight:600;width:140px\'>"+r.l+"</span><div class=\'bar\'><div class=\'fill\' style=\'width:"+v+"%;background:"+c+"\'></div></div><span style=\'font-weight:700;color:"+c+";width:40px;text-align:right\'>"+v+"%</span></div>";\n'
-fn+='});\n'
-fn+='html+="<h2>Session History</h2>";\n'
-fn+='sess.forEach(function(s,si){\n'
-fn+='var rats=s.ratings||{};\n'
-fn+='var avg=Object.values(rats).length?Math.round(Object.values(rats).reduce(function(a,b){return a+b;},0)/Object.values(rats).length):0;\n'
-fn+='html+="<div class=\'session\'><div style=\'display:flex;justify-content:space-between;margin-bottom:8px\'><strong>"+s.date+"</strong><span style=\'font-weight:700;color:"+(avg>=90?"#6BCB77":avg>=75?"#FFD166":"#FF6B6B")+"\'>Avg: "+avg+"%</span></div>";\n'
-fn+='html+="<div style=\'display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px\'>";\n'
-fn+='QRL.forEach(function(r){var v=rats[r.id]||0;var c=v>=90?"#6BCB77":v>=75?"#FFD166":"#FF6B6B";html+="<span style=\'font-size:11px;background:"+c+"22;color:"+c+";border-radius:6px;padding:2px 8px;font-weight:700\'>"+r.l+" "+v+"%</span>";});\n'
-fn+='html+="</div>";\n'
-fn+='if(s.errors&&s.errors.length){\n'
-fn+='html+="<div style=\'font-size:12px;font-weight:700;color:#999;margin-bottom:4px\'>Errors Logged</div>";\n'
-fn+='s.errors.forEach(function(e){html+="<div class=\'error\'><b>"+e.word+"</b>"+(e.said?" said "+e.said:"")+" ("+e.type+")</div>";});\n'
-fn+='}\n'
-fn+='html+="</div>";\n'
-fn+='});\n'
-fn+='html+="</body></html>";\n'
-fn+='var w=window.open("","_blank");\n'
-fn+='w.document.write(html);\n'
-fn+='w.document.close();\n'
-fn+='setTimeout(function(){w.print();},500);\n'
-fn+='}\n'
-h=h.replace('function deleteStu(',fn+'function deleteStu(')
-open('readlead.html','w').write(h)
-print('done exportPDF:','function exportPDF' in h)
+old='.logo{font-family:\'Playfair Display\',serif;font-size:20px;font-weight:900;}'
+new='.logo{font-family:\'Playfair Display\',serif;font-size:22px;font-weight:900;color:#fff;}'
+print('found:',old in h)
+h=h.replace(old,new)
+open('rotator.html','w').write(h)
+print('done')
