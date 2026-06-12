@@ -1,9 +1,50 @@
 f=open('rotator.html','r')
 h=f.read()
 f.close()
-old=").join('');\n}"
-new=").join('');\nsetTimeout(addActivityButtons,500);\n}"
-print('found:',old in h)
-h=h.replace(old,new,1)
+i=h.find('<style>')
+j=h.find('</style>')
+new_style='<style>\n'
+new_style+='*{box-sizing:border-box;margin:0;padding:0;}\n'
+new_style+='body{font-family:"DM Sans",sans-serif;background:#F0F4FF;color:#1A1A2E;min-height:100vh;font-size:16px;}\n'
+new_style+='button{font-family:"DM Sans",sans-serif;cursor:pointer;}\n'
+new_style+='.nav{background:#1A1A2E;border-bottom:3px solid #4ECDC4;padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}\n'
+new_style+='.logo{font-family:"Playfair Display",serif;font-size:22px;font-weight:900;color:#fff;}\n'
+new_style+='.logo span{color:#4ECDC4;}\n'
+new_style+='.nav-home{background:transparent;color:#9999BB;border:2px solid #444;border-radius:10px;padding:6px 14px;font-size:13px;font-weight:600;text-decoration:none;}\n'
+new_style+='.screen{display:none;}\n'
+new_style+='.screen.active{display:block;}\n'
+new_style+='.main{max-width:960px;margin:0 auto;padding:32px 24px;}\n'
+new_style+='.hero{text-align:center;padding:40px 20px 32px;}\n'
+new_style+='.hero h1{font-family:"Playfair Display",serif;font-size:36px;font-weight:700;color:#1A1A2E;margin-bottom:8px;}\n'
+new_style+='.hero p{font-size:17px;color:#555;max-width:500px;margin:0 auto;}\n'
+new_style+='.card{background:#fff;border-radius:16px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,.08);margin-bottom:16px;}\n'
+new_style+='.btn{border:none;border-radius:12px;padding:13px 24px;font-size:15px;font-weight:700;cursor:pointer;transition:transform .1s;}\n'
+new_style+='.btn:active{transform:scale(.97);}\n'
+new_style+='.btn-teal{background:#4ECDC4;color:#1A1A2E;}\n'
+new_style+='.btn-navy{background:#1A1A2E;color:#fff;}\n'
+new_style+='.btn-gold{background:#FFD166;color:#1A1A2E;}\n'
+new_style+='.btn-purple{background:#A78BFA;color:#1A1A2E;}\n'
+new_style+='.btn-outline{background:transparent;border:2px solid #DDD;color:#555;border-radius:12px;padding:11px 22px;font-size:14px;font-weight:600;}\n'
+new_style+='.mode-card{background:#fff;border-radius:16px;padding:28px 20px;text-align:center;cursor:pointer;border:3px solid transparent;transition:all .2s;box-shadow:0 2px 12px rgba(0,0,0,.06);}\n'
+new_style+='.mode-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.1);}\n'
+new_style+='.selected-teal{border-color:#4ECDC4;background:#F0FFFE;}\n'
+new_style+='.selected-gold{border-color:#FFD166;background:#FFFBF0;}\n'
+new_style+='.centre-card{background:#fff;border-radius:14px;padding:18px 14px;text-align:center;cursor:pointer;border:3px solid transparent;transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.06);}\n'
+new_style+='.centre-card:hover{transform:translateY(-2px);}\n'
+new_style+='.group-chip{display:inline-flex;align-items:center;gap:6px;background:#F0F4FF;border-radius:20px;padding:6px 14px;font-size:14px;font-weight:600;margin:4px;}\n'
+new_style+='.timer-display{font-family:"Playfair Display",serif;font-size:72px;font-weight:700;text-align:center;letter-spacing:-2px;}\n'
+new_style+='.timer-bar{height:12px;border-radius:99px;background:#E8E8E8;overflow:hidden;margin:16px 0;}\n'
+new_style+='.timer-fill{height:100%;border-radius:99px;transition:width .5s linear;}\n'
+new_style+='.rotation-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;}\n'
+new_style+='.rotation-card{border-radius:14px;padding:20px;text-align:center;}\n'
+new_style+='.lbl{font-size:12px;font-weight:800;color:#888;letter-spacing:.06em;display:block;margin-bottom:8px;}\n'
+new_style+='.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}\n'
+new_style+='.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}\n'
+new_style+='@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}\n'
+new_style+='@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}\n'
+new_style+='.fade-in{animation:fadeIn .4s ease;}\n'
+new_style+='@media(max-width:640px){.grid2{grid-template-columns:1fr;}.grid3{grid-template-columns:1fr 1fr;}}\n'
+new_style+='</style>'
+h=h[:i]+new_style+h[j+8:]
 open('rotator.html','w').write(h)
 print('done')
