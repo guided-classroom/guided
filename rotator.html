@@ -262,14 +262,14 @@ key=weak;focus=skillNames[weak]||weak;
 if(!groups[key])groups[key]={name:focus+" Group",focus:focus,students:[],color:colors[Object.keys(groups).length%6]};
 groups[key].students.push(s.name+" ("+s.level+")");
 });
-var result=Object.values(groups).map(function(g,gi){return{id:gi+1,name:g.name,emoji:"📚",color:g.color,students:g.students,focus:g.focus,level:"Mixed",weakSkill:g.focus};});
+var result=Object.values(groups).map(function(g,gi){return{id:gi+1,name:g.name,emoji:"◆",color:g.color,students:g.students,focus:g.focus,level:"Mixed",weakSkill:g.focus};});
 if(result.length===1&&result[0].focus==="No Session Data")return getDefaultGroups();
 return result;
 }catch(e){return getDefaultGroups();}
 }
 function getDefaultGroups(){
 return[
-{id:1,name:"Group 1",emoji:"📚",color:"#FF6B6B",students:["Add students in ReadLead"],focus:"Reading Skills",level:"Mixed",weakSkill:"Fluency"}
+{id:1,name:"Group 1",emoji:"◆",color:"#FF6B6B",students:["Add students in ReadLead"],focus:"Reading Skills",level:"Mixed",weakSkill:"Fluency"}
 ];
 }
 const READLEAD_GROUPS=loadGroupsFromStorage();
