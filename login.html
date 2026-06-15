@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Guided — Sign In</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:"DM Sans",sans-serif;background:#F5F3EE;color:#1A1A2E;min-height:100vh;display:flex;align-items:center;justify-content:center;}
+.box{background:#fff;border-radius:20px;padding:40px;width:100%;max-width:420px;box-shadow:0 4px 24px rgba(0,0,0,.08);}
+.logo{font-family:"Playfair Display",serif;font-size:28px;font-weight:700;text-align:center;margin-bottom:8px;}
+.logo span{color:#4ECDC4;}
+.tagline{text-align:center;color:#888;font-size:14px;margin-bottom:32px;}
+.tabs{display:flex;background:#F5F3EE;border-radius:12px;padding:4px;margin-bottom:24px;}
+.tab{flex:1;padding:10px;text-align:center;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:none;background:transparent;color:#888;}
+.tab.active{background:#fff;color:#1A1A2E;box-shadow:0 2px 8px rgba(0,0,0,.08);}
+.inp{width:100%;padding:12px 16px;border:2px solid #E8E8E8;border-radius:12px;font-size:15px;font-family:"DM Sans",sans-serif;margin-bottom:14px;}
+.inp:focus{outline:none;border-color:#4ECDC4;}
+.btn{width:100%;padding:14px;background:#1A1A2E;color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;}
+.btn:hover{background:#2A2A4E;}
+.btn-teal{background:#4ECDC4;color:#1A1A2E;}
+.msg{text-align:center;font-size:13px;margin-top:12px;min-height:20px;}
+.msg.error{color:#FF6B6B;}
+.msg.success{color:#6BCB77;}
+.founding{background:#4ECDC415;border:1px solid #4ECDC433;border-radius:12px;padding:12px 16px;margin-bottom:20px;text-align:center;}
+.founding strong{color:#4ECDC4;display:block;font-size:15px;margin-bottom:4px;}
+.founding span{font-size:12px;color:#666;}
+</style>
+</head>
+<body>
+<div class="box">
+<div class="logo">Guided<span>.</span></div>
+<div class="tagline">Your AI-powered literacy suite</div>
+<div class="founding">
+<strong>Founding Member Offer</strong>
+<span>Sign up now for FREE lifetime access — limited time only</span>
+</div>
+<div class="tabs">
+<button class="tab active" id="tab-signup" onclick="showTab('signup')">Create Account</button>
+<button class="tab" id="tab-login" onclick="showTab('login')">Sign In</button>
+</div>
+<div id="form-signup">
+<input class="inp" id="signup-name" placeholder="Your name" type="text"/>
+<input class="inp" id="signup-email" placeholder="Email address" type="email"/>
+<input class="inp" id="signup-password" placeholder="Create password (min 6 chars)" type="password"/>
+<button class="btn btn-teal" onclick="doSignup()">Create Free Account</button>
+</div>
+<div id="form-login" style="display:none">
+<input class="inp" id="login-email" placeholder="Email address" type="email"/>
+<input class="inp" id="login-password" placeholder="Password" type="password"/>
+<button class="btn" onclick="doLogin()">Sign In</button>
+<div style="text-align:center;margin-top:12px">
+<a href="#" onclick="doReset()" style="font-size:13px;color:#888">Forgot password?</a>
+</div>
+</div>
+<div class="msg" id="msg"></div>
+</div>
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+const supabase = createClient("https://ynvgikozznybuuusxbhz.supabase.co","sb_publishable_tt1xUdoOfZ0Pf8rXuMxyqw_hRfCzxeZ");
+const { data: { session } } = await supabase.auth.getSession();
+if(session) window.location.href="index.html";
+window.showTab=function(t){
+document.getElementById("form-signup").style.display=t==="signup"?"block":"none";
+document.getElementById("form-login").style.display=t==="login"?"block":"none";
+document.getElementById("tab-signup").classList.toggle("active",t==="signup");
+document.getElementById("tab-login").classList.toggle("active",t==="login");
+}
+window.doSignup=async function(){
+var name=document.getElementById("signup-name").value.trim();
+var email=document.getElementById("signup-email").value.trim();
+var password=document.getElementById("signup-password").value;
+var msg=document.getElementById("msg");
+if(!name||!email||!password){msg.className="msg error";msg.textContent="Please fill in all fields.";return;}
+if(password.length<6){msg.className="msg error";msg.textContent="Password must be at least 6 characters.";return;}
+msg.className="msg";msg.textContent="Creating your account...";
+const {error}=await supabase.auth.signUp({email,password,options:{data:{full_name:name,founding_member:true}}});
+if(error){msg.className="msg error";msg.textContent=error.message;}
+else{msg.className="msg success";msg.textContent="Account created! Check your email to confirm then sign in.";}
+}
+window.doLogin=async function(){
+var email=document.getElementById("login-email").value.trim();
+var password=document.getElementById("login-password").value;
+var msg=document.getElementById("msg");
+msg.className="msg";msg.textContent="Signing in...";
+const {error}=await supabase.auth.signInWithPassword({email,password});
+if(error){msg.className="msg error";msg.textContent=error.message;}
+else{window.location.href="index.html";}
+}
+window.doReset=async function(){
+var email=document.getElementById("login-email").value.trim();
+if(!email){document.getElementById("msg").className="msg error";document.getElementById("msg").textContent="Enter your email first.";return;}
+await supabase.auth.resetPasswordForEmail(email);
+document.getElementById("msg").className="msg success";
+document.getElementById("msg").textContent="Password reset email sent!";
+}
+</script>
+</body>
+</html>
