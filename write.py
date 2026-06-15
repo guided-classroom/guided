@@ -4,13 +4,7 @@ f.close()
 i=h.find('const ALL_CENTRES')
 j=h.find('];',i)
 old=h[i:j+2]
-new=old.replace('xmlns="http://www.w3.org/2000/svg"',"xmlns='http://www.w3.org/2000/svg'")
-new=new.replace('viewBox="0 0 24 24"',"viewBox='0 0 24 24'")
-new=new.replace('fill="none"',"fill='none'")
-new=new.replace('stroke="currentColor"',"stroke='currentColor'")
-new=new.replace('stroke-width="2"',"stroke-width='2'")
-new=new.replace('stroke-linecap="round"',"stroke-linecap='round'")
-new=new.replace('stroke-linejoin="round"',"stroke-linejoin='round'")
+new='const ALL_CENTRES = [\n{id:"teacher",name:"Teacher Table",emoji:"T"},\n{id:"tech",name:"Tech Station",emoji:"⌨"},\n{id:"word",name:"Word Work",emoji:"W"},\n{id:"read",name:"Read to Self",emoji:"R"},\n{id:"listen",name:"Listen to Reading",emoji:"♪"},\n{id:"writing",name:"Writing Station",emoji:"✍"}\n];'
 h=h[:i]+new+h[j+2:]
 open('rotator.html','w').write(h)
 print('done')
