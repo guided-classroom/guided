@@ -239,6 +239,13 @@ style="transition:stroke-dashoffset 1s linear,stroke .5s"/>
 </div>
 </div>
 
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+const supabase = createClient("https://ynvgikozznybuuusxbhz.supabase.co","sb_publishable_tt1xUdoOfZ0Pf8rXuMxyqw_hRfCzxeZ");
+const { data: { session } } = await supabase.auth.getSession();
+if(!session) window.location.href="login.html";
+const user = session.user;
+</script>
 <script>
 // ── DATA ──────────────────────────────────────────────────────────
 function loadGroupsFromStorage(){

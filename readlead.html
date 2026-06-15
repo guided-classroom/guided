@@ -193,6 +193,13 @@ button,input,select,textarea{font-family:inherit;cursor:pointer;}
 <div class="sub">Auto-grouped by shared skill needs</div>
 <div id="grp-out"></div>
 </div></div>
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+const supabase = createClient("https://ynvgikozznybuuusxbhz.supabase.co","sb_publishable_tt1xUdoOfZ0Pf8rXuMxyqw_hRfCzxeZ");
+const { data: { session } } = await supabase.auth.getSession();
+if(!session) window.location.href="login.html";
+const user = session.user;
+</script>
 <script>
 var PASSAGES={};
 PASSAGES["Level 1"]=[{title:"My Cat",text:"I have a cat.\nMy cat is big.\nShe is soft and warm.\nShe can sit on my lap.\nShe can nap in the sun.\nI pet her every day.\nShe purrs when I pet her.\nI love my cat.",qs:["What can the cat do?","How does the cat feel when you pet her?","Do you have a pet? What is it like?"]},{title:"The Sun",text:"I see the sun.\nThe sun is up high.\nThe sun is hot.\nThe sun is big and round.\nIt gives us light.\nIt gives us heat.\nPlants need the sun.\nWe need the sun too.\nI like the sun.",qs:["What does the sun give us?","Why do plants need the sun?","What is your favorite thing to do on a sunny day?"]},{title:"My Ball",text:"I have a ball.\nIt is big and red.\nI kick the ball.\nIt goes far.\nI throw the ball up.\nIt comes back down.\nI roll it to my dog.\nMy dog runs after it.\nWe play all day.\nFun, fun, fun!",qs:["What color is the ball?","What are three things the child does with the ball?","What is your favorite game to play outside?"]}];

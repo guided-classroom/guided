@@ -1,7 +1,10 @@
-f=open('login.html','r')
+
+f=open('rotator.html','r')
 h=f.read()
 f.close()
-h=h.replace('Your AI-powered literacy suite','K\u20136 Literacy Tools for Teachers')
-h=h.replace('Founding Member Offer','Introductory Member Offer')
-open('login.html','w').write(h)
+old='<script>\n'
+new='<script type="module">\nimport { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";\nconst supabase = createClient("https://ynvgikozznybuuusxbhz.supabase.co","sb_publishable_tt1xUdoOfZ0Pf8rXuMxyqw_hRfCzxeZ");\nconst { data: { session } } = await supabase.auth.getSession();\nif(!session) window.location.href="login.html";\nconst user = session.user;\n</script>\n<script>\n'
+print('found:',old in h)
+h=h.replace(old,new,1)
+open('rotator.html','w').write(h)
 print('done')
