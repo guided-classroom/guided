@@ -1,9 +1,8 @@
-f=open('rotator.html','r')
+f=open('progress.html','r')
 h=f.read()
 f.close()
-old='<div style="font-size:17px;font-weight:800;margin-bottom:4px">Ready to generate?</div>'
-new='<div style="font-size:17px;font-weight:800;margin-bottom:4px;color:#fff">Ready to generate?</div>'
+old='prompt+="Reading Level: "+cur.level+"\\n";\n'
 print('found:',old in h)
-h=h.replace(old,new)
-open('rotator.html','w').write(h)
+h=h.replace(old,'')
+open('progress.html','w').write(h)
 print('done')
