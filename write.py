@@ -1,10 +1,9 @@
-
-f=open('rotator.html','r')
+f=open('readlead.html','r')
 h=f.read()
 f.close()
-old='<script>\n'
-new='<script type="module">\nimport { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";\nconst supabase = createClient("https://ynvgikozznybuuusxbhz.supabase.co","sb_publishable_tt1xUdoOfZ0Pf8rXuMxyqw_hRfCzxeZ");\nconst { data: { session } } = await supabase.auth.getSession();\nif(!session) window.location.href="login.html";\nconst user = session.user;\n</script>\n<script>\n'
+old='populateLvl();\nrdDash();'
+new='populateLvl();\nrdDash();\nwindow.doSignOut=async function(){\nvar sb=window._supabase;\nif(sb)await sb.auth.signOut();\nlocalStorage.clear();\nwindow.location.href="login.html";\n}'
 print('found:',old in h)
-h=h.replace(old,new,1)
-open('rotator.html','w').write(h)
+h=h.replace(old,new)
+open('readlead.html','w').write(h)
 print('done')

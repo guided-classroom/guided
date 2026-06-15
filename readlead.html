@@ -59,6 +59,7 @@ button,input,select,textarea{font-family:inherit;cursor:pointer;}
 <nav class="nav">
 <div class="row" style="gap:10px">
 <a href="/" class="nav-home">Home</a>
+<button onclick="doSignOut()" style="background:transparent;color:#9999BB;border:1px solid #444;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;">Sign Out</button>
 <div class="nav-logo">Read<span>Lead</span></div>
 </div>
 <div class="row">
@@ -755,6 +756,12 @@ go("observe");
 }
 populateLvl();
 rdDash();
+window.doSignOut=async function(){
+var sb=window._supabase;
+if(sb)await sb.auth.signOut();
+localStorage.clear();
+window.location.href="login.html";
+}
 
 
 PASSAGES["Level 16"]=[{title:"How the Human Brain Works",text:"The human brain contains approximately eighty-six billion neurons — nerve cells that communicate with each other through electrical and chemical signals. Each neuron can form thousands of connections with other neurons, creating a network of staggering complexity. The total number of possible connections in a single human brain exceeds the number of atoms in the observable universe. Despite this complexity, neuroscientists have identified broad regions of the brain that specialize in particular functions. The frontal lobe, located behind the forehead, is associated with planning, decision-making, impulse control, and personality. It is also the last region of the brain to fully mature, which is why adolescent brains handle risk and long-term consequences differently than adult brains — a biological reality rather than a character flaw. The hippocampus, a small curved structure deep in the brain, plays a central role in forming new memories and spatial navigation. Patients with hippocampal damage can lose the ability to form new long-term memories while retaining memories from before the injury. The amygdala processes emotional responses, particularly fear and threat detection, and can trigger the fight-or-flight response faster than conscious thought can intervene. What makes the brain most remarkable is its plasticity — its ability to rewire itself in response to experience. Skills practiced repeatedly cause the relevant neural pathways to strengthen, while unused connections weaken over time. The brain you have today is physically different from the brain you had five years ago.",qs:["Why do adolescent brains handle risk differently than adult brains?","What does hippocampal damage reveal about how memory works?","What is neuroplasticity and why is it significant?","What does the final sentence suggest about the relationship between habits and brain structure?"]},{title:"The Deep Ocean",text:"More than eighty percent of the world's oceans remain unexplored and unmapped in detail. The deep ocean — defined as water below two hundred metres, where sunlight no longer penetrates — covers more than half the surface of the planet and represents the largest living space on Earth. The conditions there are extreme by any human measure. Pressure increases by one atmosphere for every ten metres of depth, meaning creatures living at four thousand metres experience pressure four hundred times greater than at the surface. Temperatures hover near freezing. There is no light. For much of scientific history these conditions were assumed to be incompatible with life. The discovery of hydrothermal vents in 1977 overturned that assumption completely. These vents, found along volcanic ridges on the ocean floor, release superheated water rich in minerals and support entire ecosystems that derive energy not from sunlight but from chemical reactions — a process called chemosynthesis. Organisms living around vents include giant tube worms up to two metres long, ghostly white crabs, and bacteria that thrive at temperatures that would kill virtually any other known life form. The implications extend beyond biology. If life can exist in such extreme conditions on Earth, the possibility of life in similarly extreme environments elsewhere in the solar system — beneath the ice-covered oceans of Jupiter's moon Europa, for example — becomes considerably more plausible.",qs:["Why was the discovery of hydrothermal vents scientifically significant?","What is chemosynthesis and how does it differ from photosynthesis?","What does deep ocean life suggest about the possibility of extraterrestrial life?","What does the statistic about unexplored oceans suggest about the limits of human knowledge?"]},{title:"How Music Affects the Brain",text:"Music is processed by the brain differently from almost any other stimulus. Unlike language, which is handled primarily in specific regions of the left hemisphere, music activates areas distributed across both hemispheres simultaneously, engaging regions associated with movement, emotion, memory, and reward. The release of dopamine — the brain's primary pleasure chemical — in response to music has been measured directly, and studies show that the anticipation of a musical climax triggers dopamine release even before the moment arrives. This explains why music can produce physical chills and why a favourite song can feel genuinely rewarding rather than merely pleasant. Music and memory are linked through the hippocampus, which is why certain songs can transport people instantly back to specific moments in their past with unusual vividness. This connection is so robust that music therapy has shown remarkable results with patients suffering from Alzheimer's disease, who often retain the ability to recognize and respond to familiar music long after other memories have faded. Learning to play a musical instrument produces particularly striking changes in brain structure. Musicians show larger and better-connected corpus callosums — the structure that connects the two hemispheres — and greater grey matter density in regions associated with fine motor control, auditory processing, and spatial reasoning. Starting musical training in childhood produces the most pronounced effects, though benefits have been documented in people who begin learning as adults.",qs:["Why does the brain process music differently from language?","What explains the physical chills people sometimes experience while listening to music?","Why does music remain accessible to many Alzheimer's patients?","What does the evidence about musicians' brains suggest about the effects of sustained practice on cognition?"]}];
@@ -1300,6 +1307,12 @@ go("observe");
 }
 populateLvl();
 rdDash();
+window.doSignOut=async function(){
+var sb=window._supabase;
+if(sb)await sb.auth.signOut();
+localStorage.clear();
+window.location.href="login.html";
+}
 </script>
 </body>
 </html>
