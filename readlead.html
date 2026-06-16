@@ -196,10 +196,13 @@ button,input,select,textarea{font-family:inherit;cursor:pointer;}
 </div></div>
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
-const supabase = createClient("https://ynvgikozznybuuusxbhz.supabase.co","sb_publishable_tt1xUdoOfZ0Pf8rXuMxyqw_hRfCzxeZ");
-const { data: { session } } = await supabase.auth.getSession();
-if(!session) window.location.href="login.html";
-const user = session.user;
+window._sbClient=createClient("https://ynvgikozznybuuusxbhz.supabase.co","sb_publishable_tt1xUdoOfZ0Pf8rXuMxyqw_hRfCzxeZ");
+const { data: { session } } = await window._sbClient.auth.getSession();
+if(!session){window.location.href="login.html";}
+else{
+window._user=session.user;
+window.dispatchEvent(new Event("sb-ready"));
+}
 </script>
 <script>
 var PASSAGES={};
@@ -261,17 +264,15 @@ var LEVELS=Object.keys(LM);
 var cur=null,rats={},errs=[],ownText=false,lesson=null,pidx=0;
 var students=[];
 var _supabase=null;
-async function initSupabase(){
-var mod=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm");
-_supabase=mod.createClient("https://ynvgikozznybuuusxbhz.supabase.co","sb_publishable_tt1xUdoOfZ0Pf8rXuMxyqw_hRfCzxeZ");
+function initSupabase(){
+window.addEventListener("sb-ready",async function(){
+_supabase=window._sbClient;
 window._supabase=_supabase;
-var {data:sess}=await _supabase.auth.getSession();
-if(!sess.session){window.location.href="login.html";return;}
-window._user=sess.session.user;
 await loadStudents();
 await loadDashCurrFromDB();
 rdDash();
 loadDashCurr();
+});
 }
 async function loadStudents(){
 try{
@@ -867,17 +868,15 @@ var LEVELS=Object.keys(LM);
 var cur=null,rats={},errs=[],ownText=false,lesson=null,pidx=0;
 var students=[];
 var _supabase=null;
-async function initSupabase(){
-var mod=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm");
-_supabase=mod.createClient("https://ynvgikozznybuuusxbhz.supabase.co","sb_publishable_tt1xUdoOfZ0Pf8rXuMxyqw_hRfCzxeZ");
+function initSupabase(){
+window.addEventListener("sb-ready",async function(){
+_supabase=window._sbClient;
 window._supabase=_supabase;
-var {data:sess}=await _supabase.auth.getSession();
-if(!sess.session){window.location.href="login.html";return;}
-window._user=sess.session.user;
 await loadStudents();
 await loadDashCurrFromDB();
 rdDash();
 loadDashCurr();
+});
 }
 async function loadStudents(){
 try{

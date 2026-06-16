@@ -1,8 +1,8 @@
 f=open('readlead.html','r')
 h=f.read()
 f.close()
-old='students[idx].level=l;\nstudents[idx].grade=LM[l][0];\nsaveStudents();\ndocument.body.removeChild(overlay);\nif(cur&&cur.id==id){cur=students[idx];pidx=0;}\nrdDash();\nloadDashCurr();'
-new='students[idx].level=l;\nstudents[idx].grade=LM[l][0];\ntry{\nawait _supabase.from("students").update({level:l,grade:LM[l][0]}).eq("id",id);\n}catch(e){console.error("level update error",e);}\ndocument.body.removeChild(overlay);\nif(cur&&cur.id==id){cur=students[idx];pidx=0;}\nrdDash();\nloadDashCurr();'
+old='var students=[];\nvar _supabase=null;\nasync function initSupabase(){\nvar mod=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm");\n_supabase=mod.createClient("https://ynvgikozznybuuusxbhz.supabase.co","sb_publishable_tt1xUdoOfZ0Pf8rXuMxyqw_hRfCzxeZ");\nwindow._supabase=_supabase;\nvar {data:sess}=await _supabase.auth.getSession();\nif(!sess.session){window.location.href="login.html";return;}\nwindow._user=sess.session.user;\nawait loadStudents();\nawait loadDashCurrFromDB();\nrdDash();\nloadDashCurr();\n}'
+new='var students=[];\nvar _supabase=null;\nfunction initSupabase(){\nwindow.addEventListener("sb-ready",async function(){\n_supabase=window._sbClient;\nwindow._supabase=_supabase;\nawait loadStudents();\nawait loadDashCurrFromDB();\nrdDash();\nloadDashCurr();\n});\n}'
 print('found:',old in h)
 h=h.replace(old,new)
 open('readlead.html','w').write(h)
