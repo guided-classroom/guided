@@ -492,6 +492,9 @@ var idx=students.findIndex(function(s){return s.id===cur.id;});
 students[idx].sessions=[rec].concat(students[idx].sessions).slice(0,10);
 cur=students[idx];
 saveStudents();
+try{
+await _supabase.from("students").update({sessions:students[idx].sessions}).eq("id",cur.id);
+}catch(e){console.error("session save error",e);}
 document.getElementById("gen-box").innerHTML="<div style='font-size:14px;font-weight:800;color:#4ECDC4;margin-bottom:4px'>Lesson Ready!</div><div style='font-size:12px;color:#9999BB;margin-bottom:12px'>"+les.focusSummary+"</div><button class='btn btn-teal' style='width:100%;font-size:14px' onclick='viewLes()'>View Lesson Plan</button>";
 }catch(e){
 document.getElementById("gen-box").innerHTML="<div style='font-size:15px;font-weight:800;margin-bottom:4px'>Generate Lesson Plan</div><div style='font-size:12px;color:#9999BB;margin-bottom:14px'>Something went wrong. Please try again.</div><button class='btn btn-teal' style='width:100%;font-size:14px' onclick='doGen()'>Retry</button><div style='margin-top:10px;padding:10px;background:#FF6B6B22;border-radius:8px;font-size:12px;color:#FF6B6B'>"+e.message+"</div>";
@@ -658,6 +661,9 @@ var idx=students.findIndex(function(s){return s.id===cur.id;});
 students[idx].sessions=[rec].concat(students[idx].sessions).slice(0,10);
 cur=students[idx];
 saveStudents();
+try{
+await _supabase.from("students").update({sessions:students[idx].sessions}).eq("id",cur.id);
+}catch(e){console.error("session save error",e);}
 document.getElementById("gen-box").innerHTML="<div style='font-size:14px;font-weight:800;color:#4ECDC4;margin-bottom:8px'>Session Saved!</div><div style='font-size:12px;color:#9999BB;margin-bottom:12px'>Data saved to student profile.</div><button class='btn btn-teal' style='width:100%;font-size:14px;margin-bottom:8px' onclick='doGen()'>Generate Lesson</button><button class='btn-ghost' style='width:100%;font-size:13px' onclick='saveSessionOnly()'>Save Again</button>";
 }
 function exportPDF(){
@@ -1085,6 +1091,9 @@ var idx=students.findIndex(function(s){return s.id===cur.id;});
 students[idx].sessions=[rec].concat(students[idx].sessions).slice(0,10);
 cur=students[idx];
 saveStudents();
+try{
+await _supabase.from("students").update({sessions:students[idx].sessions}).eq("id",cur.id);
+}catch(e){console.error("session save error",e);}
 document.getElementById("gen-box").innerHTML="<div style='font-size:14px;font-weight:800;color:#4ECDC4;margin-bottom:4px'>Lesson Ready!</div><div style='font-size:12px;color:#9999BB;margin-bottom:12px'>"+les.focusSummary+"</div><button class='btn btn-teal' style='width:100%;font-size:14px' onclick='viewLes()'>View Lesson Plan</button>";
 }catch(e){
 document.getElementById("gen-box").innerHTML="<div style='font-size:15px;font-weight:800;margin-bottom:4px'>Generate Lesson Plan</div><div style='font-size:12px;color:#9999BB;margin-bottom:14px'>Something went wrong. Please try again.</div><button class='btn btn-teal' style='width:100%;font-size:14px' onclick='doGen()'>Retry</button><div style='margin-top:10px;padding:10px;background:#FF6B6B22;border-radius:8px;font-size:12px;color:#FF6B6B'>"+e.message+"</div>";
@@ -1251,6 +1260,9 @@ var idx=students.findIndex(function(s){return s.id===cur.id;});
 students[idx].sessions=[rec].concat(students[idx].sessions).slice(0,10);
 cur=students[idx];
 saveStudents();
+try{
+await _supabase.from("students").update({sessions:students[idx].sessions}).eq("id",cur.id);
+}catch(e){console.error("session save error",e);}
 document.getElementById("gen-box").innerHTML="<div style='font-size:14px;font-weight:800;color:#4ECDC4;margin-bottom:8px'>Session Saved!</div><div style='font-size:12px;color:#9999BB;margin-bottom:12px'>Data saved to student profile.</div><button class='btn btn-teal' style='width:100%;font-size:14px;margin-bottom:8px' onclick='doGen()'>Generate Lesson</button><button class='btn-ghost' style='width:100%;font-size:13px' onclick='saveSessionOnly()'>Save Again</button>";
 }
 function exportPDF(){
