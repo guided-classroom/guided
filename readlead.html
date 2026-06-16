@@ -265,14 +265,17 @@ var cur=null,rats={},errs=[],ownText=false,lesson=null,pidx=0;
 var students=[];
 var _supabase=null;
 function initSupabase(){
-window.addEventListener("sb-ready",async function(){
+if(window._sbClient){
 _supabase=window._sbClient;
 window._supabase=_supabase;
-await loadStudents();
-await loadDashCurrFromDB();
-rdDash();
-loadDashCurr();
+loadStudents().then(function(){loadDashCurrFromDB().then(function(){rdDash();loadDashCurr();});});
+}else{
+window.addEventListener("sb-ready",function(){
+_supabase=window._sbClient;
+window._supabase=_supabase;
+loadStudents().then(function(){loadDashCurrFromDB().then(function(){rdDash();loadDashCurr();});});
 });
+}
 }
 async function loadStudents(){
 try{
@@ -869,14 +872,17 @@ var cur=null,rats={},errs=[],ownText=false,lesson=null,pidx=0;
 var students=[];
 var _supabase=null;
 function initSupabase(){
-window.addEventListener("sb-ready",async function(){
+if(window._sbClient){
 _supabase=window._sbClient;
 window._supabase=_supabase;
-await loadStudents();
-await loadDashCurrFromDB();
-rdDash();
-loadDashCurr();
+loadStudents().then(function(){loadDashCurrFromDB().then(function(){rdDash();loadDashCurr();});});
+}else{
+window.addEventListener("sb-ready",function(){
+_supabase=window._sbClient;
+window._supabase=_supabase;
+loadStudents().then(function(){loadDashCurrFromDB().then(function(){rdDash();loadDashCurr();});});
 });
+}
 }
 async function loadStudents(){
 try{
