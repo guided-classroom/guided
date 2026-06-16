@@ -596,7 +596,9 @@ btn.addEventListener("click",function(){
 var idx=students.findIndex(function(s){return s.id==id;});
 students[idx].level=l;
 students[idx].grade=LM[l][0];
-saveStudents();
+try{
+await _supabase.from("students").update({level:l,grade:LM[l][0]}).eq("id",id);
+}catch(e){console.error("level update error",e);}
 document.body.removeChild(overlay);
 if(cur&&cur.id==id){cur=students[idx];pidx=0;}
 rdDash();
@@ -1200,7 +1202,9 @@ btn.addEventListener("click",function(){
 var idx=students.findIndex(function(s){return s.id==id;});
 students[idx].level=l;
 students[idx].grade=LM[l][0];
-saveStudents();
+try{
+await _supabase.from("students").update({level:l,grade:LM[l][0]}).eq("id",id);
+}catch(e){console.error("level update error",e);}
 document.body.removeChild(overlay);
 if(cur&&cur.id==id){cur=students[idx];pidx=0;}
 rdDash();
