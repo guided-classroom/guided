@@ -259,9 +259,44 @@ var QR=[
 var AVC=["#FF6B6B","#4ECDC4","#FFD166","#6BCB77","#A78BFA","#FF9F43"];
 var LEVELS=Object.keys(LM);
 var cur=null,rats={},errs=[],ownText=false,lesson=null,pidx=0;
-function loadStudents(){try{var d=localStorage.getItem("guided_students");return d?JSON.parse(d):[]}catch(e){return[]}}
-function saveStudents(){try{localStorage.setItem("guided_students",JSON.stringify(students));}catch(e){}}
-var students=loadStudents();
+var students=[];
+var _supabase=null;
+async function initSupabase(){
+var mod=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm");
+_supabase=mod.createClient("https://ynvgikozznybuuusxbhz.supabase.co","sb_publishable_tt1xUdoOfZ0Pf8rXuMxyqw_hRfCzxeZ");
+window._supabase=_supabase;
+var {data:sess}=await _supabase.auth.getSession();
+if(!sess.session){window.location.href="login.html";return;}
+window._user=sess.session.user;
+await loadStudents();
+await loadDashCurrFromDB();
+rdDash();
+loadDashCurr();
+}
+async function loadStudents(){
+try{
+var {data,error}=await _supabase.from("students").select("*").order("created_at",{ascending:true});
+if(error)throw error;
+students=data.map(function(r){return{id:r.id,name:r.name,grade:r.grade,level:r.level,sessions:r.sessions||[]};});
+}catch(e){console.error("load students error",e);students=[];}
+}
+async function saveStudents(){
+try{
+for(var s of students){
+var {error}=await _supabase.from("students").upsert({id:typeof s.id==="string"&&s.id.includes("-")?s.id:undefined,user_id:window._user.id,name:s.name,grade:s.grade,level:s.level,sessions:s.sessions},{onConflict:"id"});
+if(error)console.error("save error",error);
+}
+}catch(e){console.error("saveStudents error",e);}
+}
+async function loadDashCurrFromDB(){
+try{
+var {data}=await _supabase.from("curriculum").select("content").eq("user_id",window._user.id).single();
+if(data&&data.content){
+dashCurrItems=data.content.split("\n").filter(function(l){return l.trim().length>0;});
+renderDashCurr();
+}
+}catch(e){}
+}
 function lc(lv){return(LM[lv]||["","","#888"])[2];}
 function lb(lv){return(LM[lv]||["","lv",""])[1];}
 function tag(t,c){return'<span class="tag" style="background:'+c+'22;color:'+c+'">'+t+'</span>';}
@@ -680,9 +715,11 @@ box.innerHTML="<div style='font-size:18px;font-weight:700;margin-bottom:8px'>Del
 var delBtn=document.createElement("button");
 delBtn.textContent="Yes, Delete";
 delBtn.style="background:#FF6B6B;color:#fff;border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-bottom:8px;";
-delBtn.addEventListener("click",function(){
+delBtn.addEventListener("click",async function(){
+try{
+await _supabase.from("students").delete().eq("id",id);
 students=students.filter(function(s){return s.id!=id;});
-saveStudents();
+}catch(e){console.error("delete error",e);}
 document.body.removeChild(overlay);
 rdDash();
 loadDashCurr();
@@ -696,10 +733,15 @@ box.appendChild(cancelBtn);
 overlay.appendChild(box);
 document.body.appendChild(overlay);
 }
-function addStu(){
+async function addStu(){
 var n=document.getElementById("new-name").value.trim();if(!n)return;
-students.push({id:Date.now(),name:n,grade:document.getElementById("new-grade").value,level:document.getElementById("new-level").value,sessions:[]});
-saveStudents();
+var newStu={name:n,grade:document.getElementById("new-grade").value,level:document.getElementById("new-level").value,sessions:[]};
+try{
+var {data,error}=await _supabase.from("students").insert([{user_id:window._user.id,name:newStu.name,grade:newStu.grade,level:newStu.level,sessions:[]}]).select().single();
+if(error)throw error;
+newStu.id=data.id;
+students.push(newStu);
+}catch(e){console.error("addStu error",e);}
 document.getElementById("new-name").value="";
 go("dash");
 }
@@ -755,10 +797,9 @@ document.getElementById("gen-box").innerHTML="<div style='font-size:15px;font-we
 go("observe");
 }
 populateLvl();
-rdDash();
+initSupabase();
 window.doSignOut=async function(){
-var sb=window._supabase;
-if(sb)await sb.auth.signOut();
+if(window._supabase)await window._supabase.auth.signOut();
 localStorage.clear();
 window.location.href="login.html";
 }
@@ -811,9 +852,44 @@ var QR=[
 var AVC=["#FF6B6B","#4ECDC4","#FFD166","#6BCB77","#A78BFA","#FF9F43"];
 var LEVELS=Object.keys(LM);
 var cur=null,rats={},errs=[],ownText=false,lesson=null,pidx=0;
-function loadStudents(){try{var d=localStorage.getItem("guided_students");return d?JSON.parse(d):[]}catch(e){return[]}}
-function saveStudents(){try{localStorage.setItem("guided_students",JSON.stringify(students));}catch(e){}}
-var students=loadStudents();
+var students=[];
+var _supabase=null;
+async function initSupabase(){
+var mod=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm");
+_supabase=mod.createClient("https://ynvgikozznybuuusxbhz.supabase.co","sb_publishable_tt1xUdoOfZ0Pf8rXuMxyqw_hRfCzxeZ");
+window._supabase=_supabase;
+var {data:sess}=await _supabase.auth.getSession();
+if(!sess.session){window.location.href="login.html";return;}
+window._user=sess.session.user;
+await loadStudents();
+await loadDashCurrFromDB();
+rdDash();
+loadDashCurr();
+}
+async function loadStudents(){
+try{
+var {data,error}=await _supabase.from("students").select("*").order("created_at",{ascending:true});
+if(error)throw error;
+students=data.map(function(r){return{id:r.id,name:r.name,grade:r.grade,level:r.level,sessions:r.sessions||[]};});
+}catch(e){console.error("load students error",e);students=[];}
+}
+async function saveStudents(){
+try{
+for(var s of students){
+var {error}=await _supabase.from("students").upsert({id:typeof s.id==="string"&&s.id.includes("-")?s.id:undefined,user_id:window._user.id,name:s.name,grade:s.grade,level:s.level,sessions:s.sessions},{onConflict:"id"});
+if(error)console.error("save error",error);
+}
+}catch(e){console.error("saveStudents error",e);}
+}
+async function loadDashCurrFromDB(){
+try{
+var {data}=await _supabase.from("curriculum").select("content").eq("user_id",window._user.id).single();
+if(data&&data.content){
+dashCurrItems=data.content.split("\n").filter(function(l){return l.trim().length>0;});
+renderDashCurr();
+}
+}catch(e){}
+}
 function lc(lv){return(LM[lv]||["","","#888"])[2];}
 function lb(lv){return(LM[lv]||["","lv",""])[1];}
 function tag(t,c){return'<span class="tag" style="background:'+c+'22;color:'+c+'">'+t+'</span>';}
@@ -1232,9 +1308,11 @@ box.innerHTML="<div style='font-size:18px;font-weight:700;margin-bottom:8px'>Del
 var delBtn=document.createElement("button");
 delBtn.textContent="Yes, Delete";
 delBtn.style="background:#FF6B6B;color:#fff;border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-bottom:8px;";
-delBtn.addEventListener("click",function(){
+delBtn.addEventListener("click",async function(){
+try{
+await _supabase.from("students").delete().eq("id",id);
 students=students.filter(function(s){return s.id!=id;});
-saveStudents();
+}catch(e){console.error("delete error",e);}
 document.body.removeChild(overlay);
 rdDash();
 loadDashCurr();
@@ -1248,10 +1326,15 @@ box.appendChild(cancelBtn);
 overlay.appendChild(box);
 document.body.appendChild(overlay);
 }
-function addStu(){
+async function addStu(){
 var n=document.getElementById("new-name").value.trim();if(!n)return;
-students.push({id:Date.now(),name:n,grade:document.getElementById("new-grade").value,level:document.getElementById("new-level").value,sessions:[]});
-saveStudents();
+var newStu={name:n,grade:document.getElementById("new-grade").value,level:document.getElementById("new-level").value,sessions:[]};
+try{
+var {data,error}=await _supabase.from("students").insert([{user_id:window._user.id,name:newStu.name,grade:newStu.grade,level:newStu.level,sessions:[]}]).select().single();
+if(error)throw error;
+newStu.id=data.id;
+students.push(newStu);
+}catch(e){console.error("addStu error",e);}
 document.getElementById("new-name").value="";
 go("dash");
 }
@@ -1306,10 +1389,9 @@ document.getElementById("gen-box").innerHTML="<div style='font-size:15px;font-we
 go("observe");
 }
 populateLvl();
-rdDash();
+initSupabase();
 window.doSignOut=async function(){
-var sb=window._supabase;
-if(sb)await sb.auth.signOut();
+if(window._supabase)await window._supabase.auth.signOut();
 localStorage.clear();
 window.location.href="login.html";
 }
