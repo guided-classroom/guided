@@ -582,7 +582,7 @@ html+="</div>";
 });
 document.getElementById("grp-out").innerHTML=html;
 }
-function editLevel(id){
+async function editLevel(id){
 var stu=students.find(function(s){return s.id==id;});
 if(!stu)return;
 var overlay=document.createElement("div");
@@ -665,7 +665,7 @@ var open=det.style.display!=="none";
 det.style.display=open?"none":"block";
 arr.textContent=open?"v":"^";
 }
-function saveSessionOnly(){
+async function saveSessionOnly(){
 if(!cur)return;
 var rec={date:new Date().toLocaleDateString(),ratings:Object.assign({},rats),errors:errs.slice()};
 var idx=students.findIndex(function(s){return s.id===cur.id;});
@@ -721,7 +721,7 @@ w.document.write(html);
 w.document.close();
 setTimeout(function(){w.print();},500);
 }
-function deleteStu(id){
+async function deleteStu(id){
 var stu=students.find(function(s){return s.id==id;});
 if(!stu)return;
 var overlay=document.createElement("div");
@@ -1189,7 +1189,7 @@ html+="</div>";
 });
 document.getElementById("grp-out").innerHTML=html;
 }
-function editLevel(id){
+async function editLevel(id){
 var stu=students.find(function(s){return s.id==id;});
 if(!stu)return;
 var overlay=document.createElement("div");
@@ -1272,7 +1272,7 @@ var open=det.style.display!=="none";
 det.style.display=open?"none":"block";
 arr.textContent=open?"v":"^";
 }
-function saveSessionOnly(){
+async function saveSessionOnly(){
 if(!cur)return;
 var rec={date:new Date().toLocaleDateString(),ratings:Object.assign({},rats),errors:errs.slice()};
 var idx=students.findIndex(function(s){return s.id===cur.id;});
@@ -1328,7 +1328,7 @@ w.document.write(html);
 w.document.close();
 setTimeout(function(){w.print();},500);
 }
-function deleteStu(id){
+async function deleteStu(id){
 var stu=students.find(function(s){return s.id==id;});
 if(!stu)return;
 var overlay=document.createElement("div");
