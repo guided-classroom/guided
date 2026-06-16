@@ -388,9 +388,14 @@ function updateDashCurr(i,val){
 dashCurrItems[i]=val;
 saveDashCurr();
 }
-function saveDashCurr(){
+async function saveDashCurr(){
 var joined=dashCurrItems.filter(function(v){return v.trim().length>0;}).join("\n");
 try{localStorage.setItem("guided_curriculum",joined);}catch(e){}
+try{
+if(window._user){
+await _supabase.from("curriculum").upsert({user_id:window._user.id,content:joined,updated_at:new Date().toISOString()},{onConflict:"user_id"});
+}
+}catch(e){console.error("curriculum save error",e);}
 var has=joined.length>0;
 if(document.getElementById("curr-dash-badge"))document.getElementById("curr-dash-badge").style.display=has?"inline-block":"none";
 }
@@ -987,9 +992,14 @@ function updateDashCurr(i,val){
 dashCurrItems[i]=val;
 saveDashCurr();
 }
-function saveDashCurr(){
+async function saveDashCurr(){
 var joined=dashCurrItems.filter(function(v){return v.trim().length>0;}).join("\n");
 try{localStorage.setItem("guided_curriculum",joined);}catch(e){}
+try{
+if(window._user){
+await _supabase.from("curriculum").upsert({user_id:window._user.id,content:joined,updated_at:new Date().toISOString()},{onConflict:"user_id"});
+}
+}catch(e){console.error("curriculum save error",e);}
 var has=joined.length>0;
 if(document.getElementById("curr-dash-badge"))document.getElementById("curr-dash-badge").style.display=has?"inline-block":"none";
 }
