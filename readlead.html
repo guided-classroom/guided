@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>ReadLead</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:"DM Sans",sans-serif;background:#F5F3EE;color:#1A1A2E;min-height:100vh;}
@@ -19,7 +20,7 @@ button,input,select,textarea{font-family:inherit;cursor:pointer;}
 .h1{font-family:"Playfair Display",serif;font-size:28px;font-weight:700;margin-bottom:4px;}
 .sub{font-size:14px;color:#666;margin-bottom:20px;}
 .card{background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.06);margin-bottom:12px;}
-.btn{background:#1A1A2E;color:#fff;border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:700;}
+.btn{background:#1A1A2E;color:#fff;border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:700;cursor:pointer;}
 .btn-teal{background:#4ECDC4;color:#1A1A2E;}
 .btn-sm{padding:6px 12px;font-size:11px;}
 .btn-ghost{background:transparent;color:#555;border:2px solid #DDD;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:600;}
@@ -51,8 +52,8 @@ button,input,select,textarea{font-family:inherit;cursor:pointer;}
 .pbar-wrap{border-radius:10px;overflow:hidden;height:14px;display:flex;margin-bottom:6px;}
 .pbar-seg{height:14px;}
 .tlabels{display:flex;justify-content:space-between;font-size:11px;color:#CCC;margin-bottom:18px;}
-.spin{display:inline-block;width:28px;height:28px;border:3px solid #444;border-top-color:#4ECDC4;border-radius:50%;animation:spin .8s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg)}}
+.comment-box{background:#F5F3EE;border-radius:12px;padding:16px;margin-bottom:10px;position:relative;}
+.copy-btn{background:#4ECDC4;color:#1A1A2E;border:none;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;margin-top:8px;}
 </style>
 </head>
 <body>
@@ -69,7 +70,7 @@ button,input,select,textarea{font-family:inherit;cursor:pointer;}
 </div>
 </nav>
 <div class="screen active" id="s-dash"><div class="main">
-<div class="h1">Good morning!</div>
+<div class="h1" id="dash-greeting">Good morning!</div>
 <div class="sub" id="dash-sub"></div>
 <div class="grid3" id="dash-stats" style="margin-bottom:16px"></div>
 <div class="card">
@@ -153,11 +154,13 @@ button,input,select,textarea{font-family:inherit;cursor:pointer;}
 </div>
 <div class="card" style="border-left:4px solid #4ECDC4">
 <div class="row" style="justify-content:space-between;margin-bottom:6px">
-<div class="lbl" style="margin-bottom:0">CURRICULUM STANDARDS (OPTIONAL)</div>
+<div class="lbl" style="margin-bottom:0">CURRICULUM EXPECTATIONS (OPTIONAL)</div>
 <span id="curr-badge" style="display:none;background:#4ECDC422;color:#4ECDC4;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700">Loaded</span>
 </div>
-<div id="curr-items"></div><button onclick="addCurrItem()" style="background:transparent;border:2px dashed #4ECDC4;color:#4ECDC4;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;width:100%;margin-top:6px;cursor:pointer">+ Add Expectation</button><input type="hidden" id="curr-in"/>
-<div id="curr-msg" style="display:none;font-size:11px;color:#4ECDC4;font-weight:600;margin-top:6px">Standards loaded</div>
+<div id="curr-items"></div>
+<button onclick="addCurrItem()" style="background:transparent;border:2px dashed #4ECDC4;color:#4ECDC4;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;width:100%;margin-top:6px;cursor:pointer">+ Add Expectation</button>
+<input type="hidden" id="curr-in"/>
+<div id="curr-msg" style="display:none;font-size:11px;color:#4ECDC4;font-weight:600;margin-top:6px">Expectations saved</div>
 </div>
 </div>
 <div>
@@ -194,9 +197,21 @@ button,input,select,textarea{font-family:inherit;cursor:pointer;}
 <div class="sub">Auto-grouped by shared skill needs</div>
 <div id="grp-out"></div>
 </div></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-var PASSAGES={};
+var _sb=null;
+var _user=null;
+var students=[];
+var cur=null;
+var rats={};
+var errs=[];
+var ownText=false;
+var lesson=null;
+var pidx=0;
+var dashCurrItems=[];
+var currItems=[];
+var AVC=["#FF6B6B","#4ECDC4","#FFD166","#6BCB77","#A78BFA","#FF9F43"];
+var QR=[{id:"accuracy",l:"Accuracy"},{id:"fluency",l:"Fluency"},{id:"decoding",l:"Decoding"},{id:"selfmon",l:"Self-Monitoring"},{id:"comprehension",l:"Comprehension"}];
+var PILLS={phonemic:{l:"Phonemic Awareness",c:"#FF6B6B"},phonics:{l:"Phonics",c:"#FF9F43"},fluency:{l:"Fluency",c:"#FFD166"},vocabulary:{l:"Vocabulary",c:"#6BCB77"},comprehension:{l:"Comprehension",c:"#4ECDC4"},writing:{l:"Writing",c:"#A78BFA"}};
 PASSAGES["Level 1"]=[{title:"My Cat",text:"I have a cat.\nMy cat is big.\nShe is soft and warm.\nShe can sit on my lap.\nShe can nap in the sun.\nI pet her every day.\nShe purrs when I pet her.\nI love my cat.",qs:["What can the cat do?","How does the cat feel when you pet her?","Do you have a pet? What is it like?"]},{title:"The Sun",text:"I see the sun.\nThe sun is up high.\nThe sun is hot.\nThe sun is big and round.\nIt gives us light.\nIt gives us heat.\nPlants need the sun.\nWe need the sun too.\nI like the sun.",qs:["What does the sun give us?","Why do plants need the sun?","What is your favorite thing to do on a sunny day?"]},{title:"My Ball",text:"I have a ball.\nIt is big and red.\nI kick the ball.\nIt goes far.\nI throw the ball up.\nIt comes back down.\nI roll it to my dog.\nMy dog runs after it.\nWe play all day.\nFun, fun, fun!",qs:["What color is the ball?","What are three things the child does with the ball?","What is your favorite game to play outside?"]}];
 PASSAGES["Level 2"]=[{title:"My Dog",text:"I have a dog.\nHis name is Rex.\nRex has soft brown fur.\nHe can run very fast.\nHe can jump over logs.\nI throw a ball for him.\nHe runs to get it.\nHe brings it back to me.\nWe play for a long time.\nI love my dog Rex.",qs:["What is the dog's name?","What can Rex do?","How do you think the child feels about Rex? Why?"]},{title:"The Rain",text:"It is raining outside.\nI look out the window.\nThe rain falls fast.\nI put on my yellow coat.\nI put on my red boots.\nI run outside to play.\nI jump in the puddles.\nSplash! Splash! Splash!\nThe rain feels cool on my face.\nRainy days are so fun!",qs:["What does the child wear in the rain?","What does the child do outside?","Do you like rainy days? Why or why not?"]},{title:"At School",text:"I go to school every day.\nI walk with my friend Sam.\nWe sit down in our class.\nOur teacher reads us a book.\nThen we write in our journals.\nAt lunch we run and play.\nWe eat our food outside.\nIn the afternoon we do math.\nWhen the bell rings we go home.\nI can not wait to go back!",qs:["What do the children do in the morning at school?","What happens at lunch?","What is your favorite part of the school day?"]}];
 PASSAGES["Level 3"]=[{title:"The Big Dog",text:"The big dog ran down the street.\nHe ran fast on his four legs.\nHe saw a man sitting on a bench.\nThe dog ran right up to the man.\nThe man reached out his hand.\nHe gave the dog a pat on the head.\nThe dog wagged his tail back and forth.\nHe licked the man on the hand.\nThe man smiled a big smile.\nThe dog was so happy to have a new friend.",qs:["Where did the dog run?","How did the dog show he was happy?","Have you ever made friends with a dog? What happened?"]},{title:"My Pet Fish",text:"I have a pet fish at home.\nHis name is Fin.\nFin lives in a big glass tank.\nHe is bright blue and red.\nHe swims around all day long.\nHe blows little bubbles in the water.\nEvery morning I feed him his food.\nI tap the tank and he swims up fast.\nHe opens his mouth for the flakes.\nFin is my favorite pet.",qs:["What does Fin look like?","What does Fin do when it is time to eat?","What makes a fish a good pet?"]},{title:"Time to Play",text:"The school bell rings at last.\nIt is time to go home!\nI grab my bag and run out the door.\nI wave to my friends on the way.\nFirst I ride my bike down the hill.\nThen I kick my ball in the yard.\nMy dog runs after the ball with me.\nWe chase each other all around.\nMom calls me in for dinner.\nWhat a great day it was!",qs:["What does the child do after school?","Why do you think the child says it was a great day?","What do you like to do after school?"]}];
@@ -250,493 +265,6 @@ var QR=[
 {id:"selfmon",l:"Self-Monitoring",opts:[{v:95,l:"Corrects Often"},{v:75,l:"Sometimes"},{v:55,l:"Rarely"},{v:35,l:"Never"}]},
 {id:"comprehension",l:"Comprehension",opts:[{v:95,l:"Strong Retell"},{v:80,l:"Basic Retell"},{v:60,l:"Minimal Recall"},{v:40,l:"Cannot Retell"}]}
 ];
-var AVC=["#FF6B6B","#4ECDC4","#FFD166","#6BCB77","#A78BFA","#FF9F43"];
-var LEVELS=Object.keys(LM);
-var cur=null,rats={},errs=[],ownText=false,lesson=null,pidx=0;
-var students=[];
-var _supabase=null;
-function initSupabase(){
-if(window._sbClient){
-_supabase=window._sbClient;
-window._supabase=_supabase;
-loadStudents().then(function(){loadDashCurrFromDB().then(function(){rdDash();loadDashCurr();});});
-}else{
-window.addEventListener("sb-ready",function(){
-_supabase=window._sbClient;
-window._supabase=_supabase;
-loadStudents().then(function(){loadDashCurrFromDB().then(function(){rdDash();loadDashCurr();});});
-});
-}
-}
-async function loadStudents(){
-try{
-var {data,error}=await _supabase.from("students").select("*").order("created_at",{ascending:true});
-if(error)throw error;
-students=data.map(function(r){return{id:r.id,name:r.name,grade:r.grade,level:r.level,sessions:r.sessions||[]};});
-}catch(e){console.error("load students error",e);students=[];}
-}
-async function saveStudents(){
-try{
-for(var s of students){
-var {error}=await _supabase.from("students").upsert({id:typeof s.id==="string"&&s.id.includes("-")?s.id:undefined,user_id:window._user.id,name:s.name,grade:s.grade,level:s.level,sessions:s.sessions},{onConflict:"id"});
-if(error)console.error("save error",error);
-}
-}catch(e){console.error("saveStudents error",e);}
-}
-async function loadDashCurrFromDB(){
-try{
-var {data}=await _supabase.from("curriculum").select("content").eq("user_id",window._user.id).single();
-if(data&&data.content){
-dashCurrItems=data.content.split("\n").filter(function(l){return l.trim().length>0;});
-renderDashCurr();
-}
-}catch(e){}
-}
-function lc(lv){return(LM[lv]||["","","#888"])[2];}
-function lb(lv){return(LM[lv]||["","lv",""])[1];}
-function tag(t,c){return'<span class="tag" style="background:'+c+'22;color:'+c+'">'+t+'</span>';}
-function avg(r){var v=Object.values(r||{});return v.length?Math.round(v.reduce(function(a,b){return a+b;},0)/v.length):75;}
-function go(scr){
-document.querySelectorAll(".screen").forEach(function(s){s.classList.remove("active");});
-document.getElementById("s-"+scr).classList.add("active");
-document.querySelectorAll(".nav-btn").forEach(function(b){b.classList.remove("active");});
-var nm={dash:"nb-dash",add:"nb-add",groups:"nb-groups"};
-if(nm[scr])document.getElementById(nm[scr]).classList.add("active");
-if(scr==="dash"){rdDash();loadDashCurr();}
-if(scr==="groups")rdGroups();
-}
-function rdDash(){
-document.getElementById("dash-sub").textContent=students.length+" students";
-var grps=bldGroups();
-var html="";
-students.forEach(function(s,i){
-html+="<div class='srow'>";
-html+="<div class='row'>";
-html+="<div class='av' style='width:40px;height:40px;background:"+AVC[i%6]+";font-size:15px'>"+s.name[0]+"</div>";
-html+="<div><div style='font-weight:700;font-size:14px'>"+s.name+"</div>";
-html+="<div style='font-size:12px;color:#999'>"+s.grade+" - "+lb(s.level)+" - "+s.sessions.length+" sessions</div>";
-html+="</div></div>";
-html+="<div class='row'>";
-html+="<button class='btn' id='btn-"+s.id+"'>Start</button>";
-html+="<button class='btn-ghost btn-sm' id='ebtn-"+s.id+"'>Edit Level</button>";
-html+="<button class='btn-ghost btn-sm' id='pbtn-"+s.id+"'"+(s.sessions&&s.sessions.length>0?"":" style='opacity:0.4' disabled")+">Progress</button>";
-html+="<button class='btn-ghost btn-sm' id='dbtn-"+s.id+"' style='color:#FF6B6B;border-color:#FF6B6B'>Delete</button>";
-html+="</div></div>";
-});
-document.getElementById("student-list").innerHTML=html;
-setTimeout(function(){students.forEach(function(s){var btn=document.getElementById("btn-"+s.id);if(btn){btn.addEventListener("click",function(){startSess(s.id);});}var ebtn=document.getElementById("ebtn-"+s.id);if(ebtn){ebtn.addEventListener("click",function(){editLevel(s.id);});}var pbtn=document.getElementById("pbtn-"+s.id);if(pbtn&&s.sessions&&s.sessions.length>0){pbtn.addEventListener("click",function(){showProg(s.id);});}
-var dbtn=document.getElementById("dbtn-"+s.id);if(dbtn){dbtn.addEventListener("click",function(){deleteStu(s.id);});}});},100);
-}
-function rdErrs(){
-var el=document.getElementById("err-list");
-if(!errs.length){el.innerHTML="<div style='font-size:12px;color:#CCC'>No errors logged yet</div>";return;}
-el.innerHTML=errs.map(function(e,i){return"<div class='erow'><div class='row'>"+tag(e.type,"#FF9F43")+"<span style='font-size:12px;font-weight:700'>"+e.word+"</span>"+(e.said?"<span style='font-size:12px;color:#888'>said "+e.said+"</span>":"")+"</div><button style='background:none;border:none;color:#CCC;cursor:pointer;font-size:18px' onclick='rmErr("+i+")'>x</button></div>";}).join("");
-}
-function rmErr(i){errs.splice(i,1);rdErrs();}
-function rdRats(){
-var el=document.getElementById("r-list");
-var html="";
-QR.forEach(function(r){
-html+="<div style='margin-bottom:14px'><div style='font-size:13px;font-weight:700;margin-bottom:6px'>"+r.l+"</div><div class='rg'>";
-r.opts.forEach(function(o){
-var sel=rats[r.id]===o.v;
-var c=o.v>=90?"#6BCB77":o.v>=75?"#FFD166":o.v>=60?"#FF9F43":"#FF6B6B";
-var bg=sel?"background:"+c+";color:#fff;border-color:transparent;font-weight:700;":"";
-html+="<button class='rbtn' style='"+bg+"cursor:pointer' onclick='selR(\""+r.id+"\","+o.v+")'>"+o.l+"</button>";
-});
-html+="</div></div>";
-});
-el.innerHTML=html;
-document.getElementById("r-count").textContent=Object.keys(rats).length+"/"+QR.length+" rated";
-}
-function selR(id,v){rats[id]=v;rdRats();}
-var dashCurrItems=[];
-function loadDashCurr(){
-try{
-var saved=localStorage.getItem("guided_curriculum");
-if(saved&&saved.trim()){
-dashCurrItems=saved.split("\n").filter(function(l){return l.trim().length>0;});
-}else{dashCurrItems=[];}
-}catch(e){dashCurrItems=[];}
-renderDashCurr();
-}
-function renderDashCurr(){
-var el=document.getElementById("curr-dash-items");
-if(!el)return;
-if(!dashCurrItems.length){el.innerHTML="";document.getElementById("curr-dash-badge").style.display="none";return;}
-document.getElementById("curr-dash-badge").style.display="inline-block";
-el.innerHTML=dashCurrItems.map(function(v,i){
-return"<div style='display:flex;gap:6px;margin-bottom:6px'><input class='inp' value='"+v.replace(/'/g,"&#39;")+"' placeholder='e.g. Reading 1.2: Uses phonics strategies...' oninput='updateDashCurr("+i+",this.value)' style='flex:1'/><button onclick='removeDashCurrItem("+i+")' style='background:#FF6B6B;color:#fff;border:none;border-radius:8px;padding:0 10px;font-weight:700;cursor:pointer'>x</button></div>";
-}).join("");
-}
-function addDashCurrItem(){
-dashCurrItems.push("");
-renderDashCurr();
-setTimeout(function(){var inputs=document.querySelectorAll("#curr-dash-items .inp");if(inputs.length)inputs[inputs.length-1].focus();},50);
-}
-function removeDashCurrItem(i){
-dashCurrItems.splice(i,1);
-saveDashCurr();
-renderDashCurr();
-}
-function updateDashCurr(i,val){
-dashCurrItems[i]=val;
-saveDashCurr();
-}
-async function saveDashCurr(){
-var joined=dashCurrItems.filter(function(v){return v.trim().length>0;}).join("\n");
-try{localStorage.setItem("guided_curriculum",joined);}catch(e){}
-try{
-if(window._user){
-await _supabase.from("curriculum").upsert({user_id:window._user.id,content:joined,updated_at:new Date().toISOString()},{onConflict:"user_id"});
-}
-}catch(e){console.error("curriculum save error",e);}
-var has=joined.length>0;
-if(document.getElementById("curr-dash-badge"))document.getElementById("curr-dash-badge").style.display=has?"inline-block":"none";
-}
-var currItems=[];
-function addCurrItem(val){
-currItems.push(val||"");
-renderCurrItems();
-if(!val)setTimeout(function(){var inputs=document.querySelectorAll(".curr-item-input");inputs[inputs.length-1].focus();},50);
-}
-function removeCurrItem(i){
-currItems.splice(i,1);
-renderCurrItems();
-saveCurr();
-}
-function renderCurrItems(){
-var el=document.getElementById("curr-items");
-if(!currItems.length){el.innerHTML="";return;}
-el.innerHTML=currItems.map(function(v,i){
-return"<div style='display:flex;gap:6px;margin-bottom:6px'><input class='inp curr-item-input' value='"+v.replace(/'/g,"&#39;")+"' placeholder='e.g. Reading 1.2: Uses phonics strategies...' oninput='updateCurr("+i+",this.value)' style='flex:1'/><button onclick='removeCurrItem("+i+")' style='background:#FF6B6B;color:#fff;border:none;border-radius:8px;padding:0 10px;font-weight:700;cursor:pointer'>x</button></div>";
-}).join("");
-}
-function updateCurr(i,val){
-currItems[i]=val;
-saveCurr();
-}
-function saveCurr(){
-var joined=currItems.filter(function(v){return v.trim().length>0;}).join("\n");
-document.getElementById("curr-in").value=joined;
-var has=joined.length>0;
-document.getElementById("curr-badge").style.display=has?"inline-block":"none";
-document.getElementById("curr-msg").style.display=has?"block":"none";
-try{localStorage.setItem("guided_curriculum",joined);}catch(e){}
-}
-function chkCurr(){saveCurr();}
-function loadSavedCurriculum(){
-try{
-var saved=localStorage.getItem("guided_curriculum");
-if(saved&&saved.trim()){
-currItems=saved.split("\n").filter(function(l){return l.trim().length>0;});
-renderCurrItems();
-saveCurr();
-}
-}catch(e){}
-}
-function rdPass(){
-var ps=PASSAGES[cur.level]||PASSAGES["Level 5"]||[];
-if(!ps.length)return;
-var p=ps[pidx%ps.length];
-var lv=lc(cur.level);
-document.getElementById("p-tabs").innerHTML=ps.map(function(x,i){return"<button onclick='selP("+i+")' style='background:"+(pidx===i?lv:"#F5F3EE")+";color:"+(pidx===i?"#fff":"#777")+";border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer'>"+x.title+"</button>";}).join("");
-document.getElementById("p-text").textContent=p.text;
-document.getElementById("p-qs").innerHTML=p.qs.map(function(q,i){return"<div style='font-size:12px;color:#666;margin-bottom:4px;display:flex;gap:6px'><span style='font-weight:700;color:"+lv+";flex-shrink:0'>"+(i+1)+".</span><span>"+q+"</span></div>";}).join("");
-}
-function printP(){var ps=PASSAGES[cur.level]||PASSAGES['Level 5']||[];var p=ps[pidx%ps.length];var w=window.open();w.document.write('<html><body style="font-family:Georgia,serif;max-width:600px;margin:40px auto"><h1>'+p.title+'</h1><div style="white-space:pre-line;font-size:16px;line-height:2.2">'+p.text+'</div>');w.document.close();w.print();}
-function selP(i){pidx=i;rdPass();}
-function flipToggle(){
-ownText=!ownText;
-var tog=document.getElementById("tog");tog.classList.toggle("on",ownText);
-document.getElementById("tog-lbl").textContent=ownText?"Using classroom book or decodable":"Using a ReadLead passage";
-document.getElementById("tog-l").style.fontWeight=ownText?"400":"700";
-document.getElementById("tog-l").style.color=ownText?"#AAA":"#1A1A2E";
-document.getElementById("tog-r").style.fontWeight=ownText?"700":"400";
-document.getElementById("tog-r").style.color=ownText?"#1A1A2E":"#AAA";
-document.getElementById("own-msg").style.display=ownText?"block":"none";
-document.getElementById("passage-card").style.display=ownText?"none":"block";
-}
-function addErr(){
-var w=document.getElementById("w-in").value.trim();if(!w)return;
-errs.push({word:w,said:document.getElementById("s-in").value.trim(),type:document.getElementById("t-in").value});
-document.getElementById("w-in").value="";
-document.getElementById("s-in").value="";
-rdErrs();
-}
-function rmErr(i){errs.splice(i,1);rdErrs();}
-async function doGen(){
-var curr=document.getElementById("curr-in").value.trim();
-var hasc=curr.length>0;
-var meta=LM[cur.level]||[];
-var rStr=QR.map(function(r){return r.l+":"+(rats[r.id]||75)+((rats[r.id]||75)<75?"(WEAK)":"");}).join(", ");
-var eStr=errs.length?errs.map(function(e){return e.word+(e.said?" said "+e.said:"")+" = "+e.type;}).join("; "):"none";
-var weak=QR.filter(function(r){return(rats[r.id]||75)<75;}).map(function(r){return r.l;}).join(", ")||"none";
-var prompt="Expert reading interventionist: create a 15-min guided reading lesson.\n";
-prompt+="Student:"+cur.name+" Grade:"+cur.grade+" Level:"+cur.level+" ("+meta[1]+")\n";
-if(ownText)prompt+="Using own classroom text\n";
-prompt+="Ratings:"+rStr+" Errors:"+eStr+" Weak:"+weak+"\n";
-if(hasc){prompt+="Curriculum: "+curr+"\nCRITICAL: cite exact standard codes in each segment standard field.";}
-else{prompt+="No curriculum. Leave standard as empty string.";}
-prompt+="\nReply ONLY raw JSON:\n";
-prompt+='{"lessonTitle":"...","focusSummary":"...","hasCurriculumAlignment":'+(hasc?"true":"false")+',"segments":[{"pillar":"phonemic","title":"...","timeRange":"0-2 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"phonics","title":"...","timeRange":"2-5 min","minutes":3,"emphasis":true,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"fluency","title":"...","timeRange":"5-8 min","minutes":3,"emphasis":true,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"vocabulary","title":"...","timeRange":"8-11 min","minutes":3,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"comprehension","title":"...","timeRange":"11-13 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"writing","title":"...","timeRange":"13-15 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""}],"afterLesson":"..."}\nReal content for '+cur.name+'. emphasis true on 2 weakest.';
-document.getElementById("gen-box").innerHTML="<div style='text-align:center;padding:8px 0'><div style='font-size:14px;font-weight:700;margin-bottom:4px'>Building lesson plan...</div><div style='font-size:12px;color:#9999BB'>"+(hasc?"Aligning to your curriculum...":"Personalizing for "+cur.name)+"</div></div>";
-try{
-var res=await fetch("/api/lesson",{method:"POST",headers:{"content-type":"application/json","anthropic-dangerous-direct-browser-access":"true","x-api-key":"REMOVED"},body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:3000,messages:[{role:"user",content:prompt}]})});
-var data=await res.json();
-var text=(data.content||[]).filter(function(b){return b.type==="text";}).map(function(b){return b.text;}).join("").trim();console.log("API response:",JSON.stringify(data).substring(0,200));var les;
-try{les=JSON.parse(text);}catch(e){try{var clean=text.replace(/```json/gi,"").replace(/```/g,"").trim();les=JSON.parse(clean);}catch(e2){try{var a=text.indexOf("{"),b=text.lastIndexOf("}");les=JSON.parse(text.slice(a,b+1));}catch(e3){les={lessonTitle:"Lesson Plan",focusSummary:"Generated lesson",hasCurriculumAlignment:false,segments:[{pillar:"phonics",title:"Phonics Practice",timeRange:"0-5 min",minutes:5,emphasis:true,teacherDoes:"Work on phonics skills",studentDoes:"Practice with teacher",materials:"Whiteboard",tip:"Focus on target sounds",standard:""},{pillar:"fluency",title:"Fluency Building",timeRange:"5-10 min",minutes:5,emphasis:true,teacherDoes:"Model fluent reading",studentDoes:"Echo read",materials:"Levelled text",tip:"Focus on expression",standard:""},{pillar:"comprehension",title:"Comprehension Check",timeRange:"10-15 min",minutes:5,emphasis:false,teacherDoes:"Ask questions",studentDoes:"Retell the story",materials:"Reading passage",tip:"Use questioning strategies",standard:""}],afterLesson:"Continue practising these skills daily."};}}}
-lesson=les;
-var rec={date:new Date().toLocaleDateString(),ratings:Object.assign({},rats),errors:errs.slice()};
-var idx=students.findIndex(function(s){return s.id===cur.id;});
-students[idx].sessions=[rec].concat(students[idx].sessions).slice(0,10);
-cur=students[idx];
-saveStudents();
-try{
-await _supabase.from("students").update({sessions:students[idx].sessions}).eq("id",cur.id);
-}catch(e){console.error("session save error",e);}
-document.getElementById("gen-box").innerHTML="<div style='font-size:14px;font-weight:800;color:#4ECDC4;margin-bottom:4px'>Lesson Ready!</div><div style='font-size:12px;color:#9999BB;margin-bottom:12px'>"+les.focusSummary+"</div><button class='btn btn-teal' style='width:100%;font-size:14px' onclick='viewLes()'>View Lesson Plan</button>";
-}catch(e){
-document.getElementById("gen-box").innerHTML="<div style='font-size:15px;font-weight:800;margin-bottom:4px'>Generate Lesson Plan</div><div style='font-size:12px;color:#9999BB;margin-bottom:14px'>Something went wrong. Please try again.</div><button class='btn btn-teal' style='width:100%;font-size:14px' onclick='doGen()'>Retry</button><div style='margin-top:10px;padding:10px;background:#FF6B6B22;border-radius:8px;font-size:12px;color:#FF6B6B'>"+e.message+"</div>";
-}
-}
-function viewLes(){
-if(!lesson)return;
-var les=lesson;
-var label=cur.name+" - "+cur.level+" ("+lb(cur.level)+")";
-var pillHtml=Object.entries(PILLS).map(function(x){return tag(x[1].l,x[1].c);}).join(" ");
-var barHtml=(les.segments||[]).map(function(sg){var p=PILLS[sg.pillar]||{c:"#ccc"};return"<div class='pbar-seg' style='width:"+((sg.minutes/15)*100)+"%;background:"+p.c+";opacity:"+(sg.emphasis?1:.5)+"'></div>";}).join("");
-var segHtml=(les.segments||[]).map(function(sg,i){
-var p=PILLS[sg.pillar]||{l:sg.pillar,c:"#888"};
-var s="<div class='seg' style='border-left-color:"+p.c+";background:"+(sg.emphasis?p.c+"0A":"#fff")+"'>";
-s+="<div style='display:flex;justify-content:space-between;cursor:pointer' onclick='togSeg("+i+")'>"
-s+="<div style='flex:1'>";
-s+="<div class='row' style='flex-wrap:wrap;gap:6px;margin-bottom:5px'>"+tag(p.l,p.c);
-if(sg.emphasis)s+="<span style='background:#FF6B6B;color:#fff;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:800'>PRIORITY</span>";
-s+="<span style='font-size:11px;color:#CCC'>"+sg.timeRange+"</span>";
-if(sg.standard)s+="<span style='background:#1A1A2E;color:#4ECDC4;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700'>"+sg.standard+"</span>";
-s+="</div>";
-s+="<div style='font-size:15px;font-weight:800'>"+sg.title+"</div>";
-s+="<div style='font-size:12px;color:#777;margin-top:4px;line-height:1.5'>"+sg.tip+"</div>";
-s+="</div>";
-s+="<div style='font-size:14px;color:#DDD;margin-left:10px;padding-top:4px' id='sa-"+i+"'>v</div>";
-s+="</div>";
-s+="<div class='seg-body' id='sb-"+i+"'>";
-if(sg.standard)s+="<div style='background:#1A1A2E;border-radius:10px;padding:10px 14px;margin-bottom:12px'><div style='font-size:10px;font-weight:800;color:#4ECDC4;margin-bottom:2px'>CURRICULUM STANDARD</div><div style='font-size:13px;color:#F5F3EE'>"+sg.standard+"</div></div>";
-s+="<div class='grid2' style='gap:10px;margin-bottom:10px'>";
-s+="<div style='background:#F5F3EE;border-radius:10px;padding:12px'><div class='lbl'>TEACHER DOES</div><div style='font-size:13px;line-height:1.7'>"+sg.teacherDoes+"</div></div>";
-s+="<div style='background:#F5F3EE;border-radius:10px;padding:12px'><div class='lbl'>STUDENT DOES</div><div style='font-size:13px;line-height:1.7'>"+sg.studentDoes+"</div></div>";
-s+="</div>";
-s+="<div style='background:#FFF8E1;border-radius:8px;padding:9px 12px;font-size:12px'><strong>Materials: </strong>"+sg.materials+"</div>";
-s+="</div></div>";
-return s;
-}).join("");
-document.getElementById("lesson-out").innerHTML=
-"<div style='font-family:Playfair Display,serif;font-size:28px;font-weight:700;margin-bottom:4px'>"+les.lessonTitle+"</div>"
-+"<div style='font-size:14px;color:#555;margin-bottom:4px'><strong>"+label+"</strong> - "+new Date().toLocaleDateString()+"</div>"
-+"<div style='font-size:14px;color:#666;margin-bottom:20px'>"+les.focusSummary+"</div>"
-+(les.hasCurriculumAlignment?"<div class='card' style='background:#1A1A2E;color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:12px'><div><div style='font-size:13px;font-weight:800;color:#4ECDC4;margin-bottom:2px'>Curriculum Aligned</div><div style='font-size:12px;color:#9999BB'>Each activity mapped to your curriculum standards.</div></div></div>":"")
-+"<div class='card' style='margin-bottom:14px'><div style='font-size:12px;font-weight:700;margin-bottom:8px'>6 PILLARS OF READING</div><div style='display:flex;flex-wrap:wrap;gap:6px'>"+pillHtml+"</div></div>"
-+"<div class='pbar-wrap'>"+barHtml+"</div>"
-+"<div class='tlabels'><span>0 min</span><span>5 min</span><span>10 min</span><span>15 min</span></div>"
-+segHtml
-+(les.afterLesson?"<div class='card' style='background:#1A1A2E;color:#fff'><div style='font-size:13px;font-weight:700;margin-bottom:5px'>After the Lesson</div><div style='font-size:13px;color:#9999BB;line-height:1.6'>"+les.afterLesson+"</div></div>":"");
-go("lesson");
-}
-function togSeg(i){
-var body=document.getElementById("sb-"+i);
-var arrow=document.getElementById("sa-"+i);
-var isOpen=body.classList.contains("open");
-document.querySelectorAll(".seg-body").forEach(function(b){b.classList.remove("open");});
-document.querySelectorAll("[id^='sa-']").forEach(function(a){a.textContent="v";});
-if(!isOpen){body.classList.add("open");arrow.textContent="^";}
-}
-function rdGroups(){
-var grps=bldGroups();
-if(!grps.length){
-document.getElementById("grp-out").innerHTML="<div class='card' style='text-align:center;padding:40px'><div style='font-weight:700;margin-bottom:6px'>No Groups Yet</div><button class='btn' onclick='go(\"dash\")'>Back to Dashboard</button></div>";
-return;
-}
-window._grps=grps;
-var html="";
-grps.forEach(function(g,gi){
-var mhtml="";
-g.members.forEach(function(m,j){
-mhtml+="<div class='row'><div class='av' style='width:32px;height:32px;background:"+AVC[j%6]+";font-size:12px'>"+m.name[0]+"</div><div><div style='font-size:13px;font-weight:700'>"+m.name+"</div><div style='font-size:11px;color:#AAA'>"+m.level+"</div></div></div>";
-});
-html+="<div class='card' style='border-left:5px solid "+g.color+"'>";
-html+="<div style='font-size:17px;font-weight:800;margin-bottom:6px'>"+g.name+"</div>";
-html+="<div style='font-size:12px;color:#888;margin-bottom:10px'>"+g.members.length+" students - Avg: "+g.avgScore+"</div>";
-html+="<div style='display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap'>"+mhtml+"</div>";
-html+="<button class='btn' style='background:"+g.color+";font-size:13px;padding:9px 18px' onclick='doGrpLes("+gi+")'>Generate Group Lesson</button>";
-html+="</div>";
-});
-document.getElementById("grp-out").innerHTML=html;
-}
-
-async function saveSessionOnly(){
-if(!cur)return;
-var rec={date:new Date().toLocaleDateString(),ratings:Object.assign({},rats),errors:errs.slice()};
-var idx=students.findIndex(function(s){return s.id===cur.id;});
-students[idx].sessions=[rec].concat(students[idx].sessions).slice(0,10);
-cur=students[idx];
-saveStudents();
-try{
-await _supabase.from("students").update({sessions:students[idx].sessions}).eq("id",cur.id);
-}catch(e){console.error("session save error",e);}
-document.getElementById("gen-box").innerHTML="<div style='font-size:14px;font-weight:800;color:#4ECDC4;margin-bottom:8px'>Session Saved!</div><div style='font-size:12px;color:#9999BB;margin-bottom:12px'>Data saved to student profile.</div><button class='btn btn-teal' style='width:100%;font-size:14px;margin-bottom:8px' onclick='doGen()'>Generate Lesson</button><button class='btn-ghost' style='width:100%;font-size:13px' onclick='saveSessionOnly()'>Save Again</button>";
-}
-function exportPDF(){
-if(!cur)return;
-var QRL=[{id:"accuracy",l:"Accuracy"},{id:"fluency",l:"Fluency"},{id:"decoding",l:"Decoding"},{id:"selfmon",l:"Self-Monitoring"},{id:"comprehension",l:"Comprehension"}];
-var sess=cur.sessions||[];
-var latest=sess.length?sess[0].ratings||{}:{};
-var html="<html><head><style>";
-html+="body{font-family:Arial,sans-serif;max-width:700px;margin:40px auto;padding:20px;color:#1A1A2E;}";
-html+="h1{font-size:28px;margin-bottom:4px;}";
-html+="h2{font-size:16px;font-weight:700;margin:20px 0 10px;border-bottom:2px solid #4ECDC4;padding-bottom:4px;}";
-html+=".badge{display:inline-block;background:#4ECDC422;color:#2BBDB5;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700;margin-left:8px;}";
-html+=".skill{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}";
-html+=".bar{height:10px;border-radius:99px;background:#F0F0F0;flex:1;margin:0 12px;}";
-html+=".fill{height:10px;border-radius:99px;}";
-html+=".session{border:1px solid #E8E8E8;border-radius:10px;padding:12px;margin-bottom:10px;}";
-html+=".error{font-size:12px;color:#666;padding:3px 0;}";
-html+="</style></head><body>";
-html+="<h1>"+cur.name+"<span class='badge'>"+cur.level+"</span></h1>";
-html+="<div style='font-size:14px;color:#888;margin-bottom:20px'>"+cur.grade+" &bull; "+sess.length+" sessions &bull; Exported "+new Date().toLocaleDateString()+"</div>";
-html+="<h2>Latest Skill Ratings</h2>";
-QRL.forEach(function(r){
-var v=latest[r.id]||0;
-var c=v>=90?"#6BCB77":v>=75?"#FFD166":"#FF6B6B";
-html+="<div class='skill'><span style='font-size:13px;font-weight:600;width:140px'>"+r.l+"</span><div class='bar'><div class='fill' style='width:"+v+"%;background:"+c+"'></div></div><span style='font-weight:700;color:"+c+";width:40px;text-align:right'>"+v+"%</span></div>";
-});
-html+="<h2>Session History</h2>";
-sess.forEach(function(s,si){
-var rats=s.ratings||{};
-var avg=Object.values(rats).length?Math.round(Object.values(rats).reduce(function(a,b){return a+b;},0)/Object.values(rats).length):0;
-html+="<div class='session'><div style='display:flex;justify-content:space-between;margin-bottom:8px'><strong>"+s.date+"</strong><span style='font-weight:700;color:"+(avg>=90?"#6BCB77":avg>=75?"#FFD166":"#FF6B6B")+"'>Avg: "+avg+"%</span></div>";
-html+="<div style='display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px'>";
-QRL.forEach(function(r){var v=rats[r.id]||0;var c=v>=90?"#6BCB77":v>=75?"#FFD166":"#FF6B6B";html+="<span style='font-size:11px;background:"+c+"22;color:"+c+";border-radius:6px;padding:2px 8px;font-weight:700'>"+r.l+" "+v+"%</span>";});
-html+="</div>";
-if(s.errors&&s.errors.length){
-html+="<div style='font-size:12px;font-weight:700;color:#999;margin-bottom:4px'>Errors Logged</div>";
-s.errors.forEach(function(e){html+="<div class='error'><b>"+e.word+"</b>"+(e.said?" said "+e.said:"")+" ("+e.type+")</div>";});
-}
-html+="</div>";
-});
-html+="</body></html>";
-var w=window.open("","_blank");
-w.document.write(html);
-w.document.close();
-setTimeout(function(){w.print();},500);
-}
-async function deleteStu(id){
-var stu=students.find(function(s){return s.id==id;});
-if(!stu)return;
-var overlay=document.createElement("div");
-overlay.style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:999;display:flex;align-items:center;justify-content:center;";
-var box=document.createElement("div");
-box.style="background:#fff;border-radius:16px;padding:28px;width:320px;text-align:center;";
-box.innerHTML="<div style='font-size:18px;font-weight:700;margin-bottom:8px'>Delete "+stu.name+"?</div><div style='font-size:13px;color:#888;margin-bottom:20px'>This will permanently delete all session data for this student.</div>";
-var delBtn=document.createElement("button");
-delBtn.textContent="Yes, Delete";
-delBtn.style="background:#FF6B6B;color:#fff;border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-bottom:8px;";
-delBtn.addEventListener("click",async function(){
-try{
-await _supabase.from("students").delete().eq("id",id);
-students=students.filter(function(s){return s.id!=id;});
-}catch(e){console.error("delete error",e);}
-document.body.removeChild(overlay);
-rdDash();
-loadDashCurr();
-});
-var cancelBtn=document.createElement("button");
-cancelBtn.textContent="Cancel";
-cancelBtn.style="width:100%;padding:10px;border:none;border-radius:10px;background:#F5F3EE;font-weight:700;cursor:pointer;";
-cancelBtn.addEventListener("click",function(){document.body.removeChild(overlay);});
-box.appendChild(delBtn);
-box.appendChild(cancelBtn);
-overlay.appendChild(box);
-document.body.appendChild(overlay);
-}
-async function addStu(){
-var n=document.getElementById("new-name").value.trim();if(!n)return;
-var newStu={name:n,grade:document.getElementById("new-grade").value,level:document.getElementById("new-level").value,sessions:[]};
-try{
-var {data,error}=await _supabase.from("students").insert([{user_id:window._user.id,name:newStu.name,grade:newStu.grade,level:newStu.level,sessions:[]}]).select().single();
-if(error)throw error;
-newStu.id=data.id;
-students.push(newStu);
-}catch(e){console.error("addStu error",e);}
-document.getElementById("new-name").value="";
-go("dash");
-}
-
-
-function bldGroups(){
-var ws=students.filter(function(s){return s.sessions.length>0;});
-if(ws.length<2)return[];
-var tagged=ws.map(function(s){var r=s.sessions[0].ratings||{};var w=QR.reduce(function(min,q){return(r[q.id]||75)<(r[min.id]||75)?q:min;},QR[0]);return Object.assign({},s,{wid:w.id,wl:w.l,wa:avg(r)});});
-var bkts={};
-tagged.forEach(function(s){if(!bkts[s.wid])bkts[s.wid]=[];bkts[s.wid].push(s);});
-var pc={accuracy:"#FF6B6B",fluency:"#FFD166",decoding:"#FF9F43",selfmon:"#4ECDC4",comprehension:"#A78BFA"};
-return Object.entries(bkts).map(function(x){var q=QR.find(function(r){return r.id===x[0];});return{id:x[0],name:q.l+" Group",focus:q.l,members:x[1],color:pc[x[0]]||"#4ECDC4",avgScore:Math.round(x[1].reduce(function(a,s){return a+s.wa;},0)/x[1].length)};});
-}
-async function doGrpLes(gi){
-var g=window._grps[gi];
-var level=g.members[0]&&g.members[0].level||"Level 5";
-var prompt="Reading teacher: 15-min small group lesson. Group:"+g.name+" Level:"+level+" Students:"+g.members.map(function(m){return m.name;}).join(",")+" WeakArea:"+g.focus+"\n";
-prompt+='Reply ONLY raw JSON: {"lessonTitle":"...","focusSummary":"...","hasCurriculumAlignment":false,"segments":[{"pillar":"phonemic","title":"...","timeRange":"0-2 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"phonics","title":"...","timeRange":"2-5 min","minutes":3,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"fluency","title":"...","timeRange":"5-8 min","minutes":3,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"vocabulary","title":"...","timeRange":"8-11 min","minutes":3,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"comprehension","title":"...","timeRange":"11-13 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"writing","title":"...","timeRange":"13-15 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""}],"afterLesson":"..."}\nReal content. emphasis true on 2 segments targeting '+g.focus+".";
-document.getElementById("grp-out").innerHTML="<div style='text-align:center;padding:60px'><div style='font-weight:700;margin-bottom:6px'>Building group lesson...</div></div>";
-try{
-var res=await fetch("/api/lesson",{method:"POST",headers:{"content-type":"application/json","anthropic-dangerous-direct-browser-access":"true","x-api-key":"REMOVED"},body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:3000,messages:[{role:"user",content:prompt}]})});
-var data=await res.json();
-var text=(data.content||[]).filter(function(b){return b.type==="text";}).map(function(b){return b.text;}).join("").trim();console.log("API response:",JSON.stringify(data).substring(0,200));var les;
-try{les=JSON.parse(text);}catch(e){try{var clean=text.replace(/```json/gi,"").replace(/```/g,"").trim();les=JSON.parse(clean);}catch(e2){try{var a=text.indexOf("{"),b=text.lastIndexOf("}");les=JSON.parse(text.slice(a,b+1));}catch(e3){les={lessonTitle:"Lesson Plan",focusSummary:"Generated lesson",hasCurriculumAlignment:false,segments:[{pillar:"phonics",title:"Phonics Practice",timeRange:"0-5 min",minutes:5,emphasis:true,teacherDoes:"Work on phonics skills",studentDoes:"Practice with teacher",materials:"Whiteboard",tip:"Focus on target sounds",standard:""},{pillar:"fluency",title:"Fluency Building",timeRange:"5-10 min",minutes:5,emphasis:true,teacherDoes:"Model fluent reading",studentDoes:"Echo read",materials:"Levelled text",tip:"Focus on expression",standard:""},{pillar:"comprehension",title:"Comprehension Check",timeRange:"10-15 min",minutes:5,emphasis:false,teacherDoes:"Ask questions",studentDoes:"Retell the story",materials:"Reading passage",tip:"Use questioning strategies",standard:""}],afterLesson:"Continue practising these skills daily."};}}}
-lesson=les;
-cur={name:g.name,level:g.members[0]&&g.members[0].level||"Level 5"};
-viewLes();
-}catch(e){rdGroups();alert("Error: "+e.message);}
-}
-function populateLvl(){
-var sel=document.getElementById("new-level");
-sel.innerHTML=LEVELS.map(function(l){return"<option value='"+l+"'>"+l+" - "+LM[l][1]+" ("+LM[l][0]+")</option>";}).join("");
-}
-function startSess(id){
-cur=students.find(function(s){return s.id==id;});
-rats=Object.assign({},(cur.sessions[0]&&cur.sessions[0].ratings)||{});
-errs=[];ownText=false;lesson=null;pidx=0;
-document.getElementById("obs-title").textContent="Session: "+cur.name;
-document.getElementById("obs-sub").innerHTML=tag(cur.level,lc(cur.level))+" "+lb(cur.level)+" - "+cur.grade;
-document.getElementById("tog").classList.remove("on");
-document.getElementById("tog-lbl").textContent="Using a ReadLead passage";
-document.getElementById("tog-l").style.fontWeight="700";
-document.getElementById("tog-r").style.fontWeight="400";
-document.getElementById("own-msg").style.display="none";
-document.getElementById("passage-card").style.display="block";
-document.getElementById("w-in").value="";
-document.getElementById("s-in").value="";
-document.getElementById("curr-in").value="";
-document.getElementById("curr-badge").style.display="none";
-rdErrs();rdRats();rdPass();loadSavedCurriculum();
-document.getElementById("gen-box").innerHTML="<div style='font-size:15px;font-weight:800;margin-bottom:4px'>Generate Lesson Plan</div><button class='btn btn-teal' style='width:100%;font-size:14px;margin-bottom:8px' onclick='doGen()'>Generate "+cur.name+" Lesson</button><button class='btn-ghost' style='width:100%;font-size:13px;margin-top:4px' onclick='saveSessionOnly()'>Save Session Without Lesson</button>";
-go("observe");
-}
-populateLvl();
-initSupabase();
-window.doSignOut=async function(){
-if(window._supabase)await window._supabase.auth.signOut();
-localStorage.clear();
-window.location.href="login.html";
-}
-
-
-PASSAGES["Level 16"]=[{title:"How the Human Brain Works",text:"The human brain contains approximately eighty-six billion neurons — nerve cells that communicate with each other through electrical and chemical signals. Each neuron can form thousands of connections with other neurons, creating a network of staggering complexity. The total number of possible connections in a single human brain exceeds the number of atoms in the observable universe. Despite this complexity, neuroscientists have identified broad regions of the brain that specialize in particular functions. The frontal lobe, located behind the forehead, is associated with planning, decision-making, impulse control, and personality. It is also the last region of the brain to fully mature, which is why adolescent brains handle risk and long-term consequences differently than adult brains — a biological reality rather than a character flaw. The hippocampus, a small curved structure deep in the brain, plays a central role in forming new memories and spatial navigation. Patients with hippocampal damage can lose the ability to form new long-term memories while retaining memories from before the injury. The amygdala processes emotional responses, particularly fear and threat detection, and can trigger the fight-or-flight response faster than conscious thought can intervene. What makes the brain most remarkable is its plasticity — its ability to rewire itself in response to experience. Skills practiced repeatedly cause the relevant neural pathways to strengthen, while unused connections weaken over time. The brain you have today is physically different from the brain you had five years ago.",qs:["Why do adolescent brains handle risk differently than adult brains?","What does hippocampal damage reveal about how memory works?","What is neuroplasticity and why is it significant?","What does the final sentence suggest about the relationship between habits and brain structure?"]},{title:"The Deep Ocean",text:"More than eighty percent of the world's oceans remain unexplored and unmapped in detail. The deep ocean — defined as water below two hundred metres, where sunlight no longer penetrates — covers more than half the surface of the planet and represents the largest living space on Earth. The conditions there are extreme by any human measure. Pressure increases by one atmosphere for every ten metres of depth, meaning creatures living at four thousand metres experience pressure four hundred times greater than at the surface. Temperatures hover near freezing. There is no light. For much of scientific history these conditions were assumed to be incompatible with life. The discovery of hydrothermal vents in 1977 overturned that assumption completely. These vents, found along volcanic ridges on the ocean floor, release superheated water rich in minerals and support entire ecosystems that derive energy not from sunlight but from chemical reactions — a process called chemosynthesis. Organisms living around vents include giant tube worms up to two metres long, ghostly white crabs, and bacteria that thrive at temperatures that would kill virtually any other known life form. The implications extend beyond biology. If life can exist in such extreme conditions on Earth, the possibility of life in similarly extreme environments elsewhere in the solar system — beneath the ice-covered oceans of Jupiter's moon Europa, for example — becomes considerably more plausible.",qs:["Why was the discovery of hydrothermal vents scientifically significant?","What is chemosynthesis and how does it differ from photosynthesis?","What does deep ocean life suggest about the possibility of extraterrestrial life?","What does the statistic about unexplored oceans suggest about the limits of human knowledge?"]},{title:"How Music Affects the Brain",text:"Music is processed by the brain differently from almost any other stimulus. Unlike language, which is handled primarily in specific regions of the left hemisphere, music activates areas distributed across both hemispheres simultaneously, engaging regions associated with movement, emotion, memory, and reward. The release of dopamine — the brain's primary pleasure chemical — in response to music has been measured directly, and studies show that the anticipation of a musical climax triggers dopamine release even before the moment arrives. This explains why music can produce physical chills and why a favourite song can feel genuinely rewarding rather than merely pleasant. Music and memory are linked through the hippocampus, which is why certain songs can transport people instantly back to specific moments in their past with unusual vividness. This connection is so robust that music therapy has shown remarkable results with patients suffering from Alzheimer's disease, who often retain the ability to recognize and respond to familiar music long after other memories have faded. Learning to play a musical instrument produces particularly striking changes in brain structure. Musicians show larger and better-connected corpus callosums — the structure that connects the two hemispheres — and greater grey matter density in regions associated with fine motor control, auditory processing, and spatial reasoning. Starting musical training in childhood produces the most pronounced effects, though benefits have been documented in people who begin learning as adults.",qs:["Why does the brain process music differently from language?","What explains the physical chills people sometimes experience while listening to music?","Why does music remain accessible to many Alzheimer's patients?","What does the evidence about musicians' brains suggest about the effects of sustained practice on cognition?"]}];
-PASSAGES["Level 17"]=[{title:"How the Internet Works",text:"When you type a web address into your browser and press enter, a remarkably complex sequence of events unfolds in a fraction of a second. Your computer first needs to translate the human-readable address, such as a website name, into a numerical IP address that computers use to identify each other. It does this by querying a Domain Name System server, which functions like a phone book for the internet, matching names to numbers. With the IP address in hand, your computer sends a request across a network of physical infrastructure — cables running under oceans, fibre optic lines buried beneath streets, wireless signals bouncing between towers — to reach a server somewhere in the world that stores the website you want. This request travels as packets: small chunks of data that may take different routes across the network and are reassembled at the destination. The protocol governing how these packets are sent, received, and reassembled is called TCP/IP, and it forms the fundamental language of the internet. The server receives your request and sends back the files that make up the webpage — the HTML structure, the CSS styling, and the JavaScript code that makes it interactive. Your browser interprets these files and renders the visual page you see. The entire process, from keystroke to loaded page, typically takes less than half a second. The physical infrastructure that makes this possible spans every continent and ocean and represents one of the largest engineering projects in human history.",qs:["What is the function of a Domain Name System server?","What are packets and why does data travel this way?","What three types of files make up a typical webpage?","What does the scale of the internet's physical infrastructure suggest about human collaboration?"]},{title:"The Science of Sport",text:"Elite athletic performance represents the intersection of biology, physics, psychology, and years of deliberate practice. The physical adaptations that occur in response to training are specific to the demands of the sport. Endurance athletes who train aerobically develop larger and more efficient hearts that pump more blood per beat, increased density of mitochondria in muscle cells, and greater capacity to deliver oxygen to working muscles. Strength athletes develop larger muscle fibres and more efficient neuromuscular connections that allow them to recruit more muscle simultaneously. Sprinters develop more fast-twitch muscle fibres capable of explosive but short-duration contractions. Beyond physiology, sports science has increasingly documented the role of psychology in performance. The concept of flow — a state of complete absorption in a task where skill and challenge are perfectly matched — was identified by psychologist Mihaly Csikszentmihalyi and has since been extensively studied in athletic contexts. Athletes in flow report performing on autopilot, with reduced conscious interference in movement that has been automated through practice. Choking under pressure, by contrast, occurs when athletes become overly conscious of their movements, disrupting the automaticity that practice has built. Mental skills training, including visualization, controlled breathing, and attention management, is now a standard component of elite sport preparation. The margins at the highest levels of competition are so small that psychological preparation can be as decisive as physical conditioning.",qs:["How do the physical adaptations of endurance athletes differ from those of strength athletes?","What is flow and what conditions produce it?","Why does choking under pressure disrupt performance?","What does the passage suggest about the relationship between physical and mental preparation?"]},{title:"How Maps Changed the World",text:"For most of human history, knowledge of geography was local, fragmentary, and often wildly inaccurate. The ancient Greek geographer Ptolemy produced a map of the known world in the second century that included Europe, Asia, and northern Africa with reasonable accuracy but placed the equator in entirely the wrong location and had no knowledge of the Americas, sub-Saharan Africa, or the Pacific. Medieval European maps, called mappae mundi, were organized around religious and symbolic principles rather than geographic accuracy, placing Jerusalem at the centre of the world and populating the edges with mythological creatures. The development of accurate maps required new tools and new ways of thinking. The invention of the magnetic compass allowed sailors to maintain direction at sea. The development of latitude and longitude as a coordinate system gave mapmakers a mathematical framework for representing a spherical world on a flat surface. The voyages of exploration in the fifteenth and sixteenth centuries rapidly expanded European geographic knowledge, though the maps produced during this period reflected European perspectives and often distorted or erased the knowledge of indigenous peoples who had navigated the same territories for centuries. Today's satellite-based mapping systems can locate any point on Earth's surface to within centimetres. Navigation that once required years of specialized training and complex instruments is now available to anyone with a smartphone. But every map still involves choices about what to include, what to leave out, and whose perspective to centre.",qs:["What were the limitations of Ptolemy's map?","How did the compass and coordinate system change mapmaking?","What perspective did early European exploration maps often fail to include?","What does the final sentence suggest about maps and objectivity?"]}];
-PASSAGES["Level 18"]=[{title:"How Languages Work",text:"There are approximately seven thousand languages spoken in the world today, and linguists estimate that one language dies every two weeks as the last fluent speakers of minority languages age and pass away without successors. Despite their enormous surface differences — in sound systems, grammar structures, and writing systems — all human languages share certain deep features that suggest language is a uniquely human biological capacity rather than simply a cultural invention. All known languages have nouns and verbs. All distinguish between questions and statements. All have ways of expressing negation, time, and causation. The linguist Noam Chomsky proposed that humans are born with a universal grammar — an innate mental framework that makes language acquisition possible. This would explain why children across all cultures acquire their native languages at roughly the same pace and make the same kinds of systematic errors regardless of which language they are learning. Languages change continuously over time through predictable processes. Vocabulary expands through borrowing from other languages, through metaphor, and through the invention of new words for new things. Grammar simplifies over centuries as irregular forms are gradually regularized. Pronunciation shifts in patterns that affect whole categories of sounds rather than individual words. English, for example, underwent a systematic change in vowel sounds between roughly 1400 and 1700 known as the Great Vowel Shift, which is why the spelling of many English words no longer reflects their pronunciation.",qs:["What evidence suggests that language is a biological capacity rather than purely cultural?","What is Chomsky's universal grammar hypothesis?","What three processes cause languages to change over time?","What does the death of languages every two weeks suggest about the relationship between language and culture?"]},{title:"The Science of Earthquakes",text:"The ground beneath our feet feels absolutely solid and permanent, but it is in fact moving constantly, carried on massive plates of rock that float on the semi-molten mantle below. Most of the time this movement is imperceptibly slow — a few centimetres per year. But when stress accumulated along fault lines — boundaries where plates meet or grind past each other — is suddenly released, the result is an earthquake. The energy released in a major earthquake is almost incomprehensible in scale. The 2011 Tohoku earthquake in Japan, which measured 9.0 on the moment magnitude scale, released energy equivalent to approximately 600 million times the atomic bomb dropped on Hiroshima. It shifted the Earth's axis slightly and moved the main island of Japan about 2.4 metres to the east. Seismographs detect earthquakes by measuring ground motion. The waves produced by an earthquake travel through the Earth in different forms: P waves, which compress and expand rock in the direction of travel, move fastest and are the first to arrive at distant seismographs. S waves, which shake rock perpendicular to the direction of travel, arrive later. By comparing the arrival times of these waves at multiple seismograph stations, scientists can calculate the precise location and depth of an earthquake's origin point, called the hypocenter. Despite decades of research, reliably predicting when and where earthquakes will occur remains beyond current scientific capability, though scientists can identify regions of elevated long-term risk.",qs:["What causes an earthquake to occur?","What were three measurable effects of the 2011 Tohoku earthquake?","How do scientists use P waves and S waves to locate an earthquake?","What does the inability to predict earthquakes suggest about the limits of science?"]},{title:"How Vaccines Work",text:"The immune system is an extraordinarily sophisticated defence network that learns from experience. When a pathogen — a bacterium or virus — enters the body for the first time, the immune system mounts a response, but it takes time to identify the threat and produce the specific antibodies needed to neutralize it. During this window the pathogen can cause significant illness. If the person survives, the immune system retains a memory of the pathogen through specialized cells called memory B cells. On subsequent exposure to the same pathogen the immune system recognizes it immediately and responds so rapidly that the person either does not become ill or experiences only mild symptoms. Vaccination exploits this learning mechanism without requiring the person to suffer the original disease. A vaccine introduces the immune system to a pathogen or a component of a pathogen — it might be a weakened or killed version of the virus, a protein from the pathogen's surface, or, in the case of mRNA vaccines, genetic instructions for producing such a protein temporarily — in a form that cannot cause serious illness. The immune system responds as if facing a real infection, producing antibodies and memory cells. When the actual pathogen is later encountered, the immune system is already prepared. The development of vaccines has eliminated or dramatically reduced diseases that once killed millions of people annually, including smallpox, polio, and measles. Smallpox is the only human disease that has been completely eradicated through vaccination.",qs:["Why does the immune system respond more effectively to a pathogen it has seen before?","How do mRNA vaccines differ from traditional vaccines?","What is the significance of memory B cells to how vaccines work?","What does the eradication of smallpox suggest about what is possible with widespread vaccination?"]}];
-PASSAGES["Level 19"]=[{title:"The History of Flight",text:"The desire to fly is as old as human observation of birds, but the actual achievement of powered flight came remarkably late in history and remarkably quickly once the right combination of knowledge, materials, and ambition came together. For most of the nineteenth century, flight was pursued primarily through balloons and gliders. The critical unsolved problem was control — how to steer a flying machine and maintain stable flight in varying conditions. Orville and Wilbur Wright, bicycle mechanics from Dayton, Ohio, approached the problem more systematically than their better-funded competitors. Rather than building a powerful engine first, they spent years studying how birds control flight by twisting their wings, developing a system of wing warping that gave their aircraft three-axis control. Their first powered flight at Kitty Hawk, North Carolina on December 17, 1903, lasted twelve seconds and covered thirty-seven metres — less than the wingspan of a modern passenger jet. Within two years they had extended flights to over half an hour. The military implications of flight were recognized almost immediately, and the First World War accelerated aircraft development dramatically. By the Second World War, aircraft were capable of speeds and ranges that would have seemed impossible forty years earlier. The first commercial jet service began in 1958. Today more than four million people are airborne at any given moment, and the global aviation industry moves approximately four billion passengers per year.",qs:["What was the critical unsolved problem in early flight and how did the Wrights address it?","What does the comparison between the first flight distance and a modern jet wingspan suggest?","How did war affect the development of aviation?","What does the rapid progression from twelve seconds to four billion passengers suggest about the pace of technological change?"]},{title:"How the Eye Sees",text:"Vision begins not in the brain but at the surface of the eye, where light enters through the cornea, a transparent curved surface that performs most of the eye's focusing work. The lens, just behind the pupil, fine-tunes the focus by changing shape — a process called accommodation — to adjust for objects at different distances. The focused light then travels to the retina, a layer of light-sensitive cells lining the back of the eye. The retina contains two types of photoreceptors: rods, which are sensitive to low light levels and provide black-and-white vision in dim conditions, and cones, which require brighter light and are responsible for colour vision and fine detail. Humans have three types of cones, sensitive to red, green, and blue wavelengths respectively. Colour perception arises from the brain comparing the relative activation of these three cone types — which is why colour blindness, which affects about eight percent of males, typically involves a deficiency in one cone type rather than a complete absence of colour vision. The optic nerve carries visual information from the retina to the brain's visual cortex at the back of the skull, where the actual work of seeing — identifying objects, interpreting motion, recognizing faces — takes place. A striking demonstration of the brain's role in vision is the blind spot: the point where the optic nerve connects to the retina has no photoreceptors, creating a gap in the visual field that the brain fills in automatically using surrounding information.",qs:["What is the difference between rods and cones?","Why does colour blindness usually affect colour perception rather than eliminating it entirely?","What does the blind spot reveal about how the brain processes vision?","What does this passage suggest about the relationship between the eye and the brain in the act of seeing?"]},{title:"The Physics of Sound",text:"Sound is a mechanical wave — a disturbance that travels through a medium by causing particles to vibrate and pass that vibration along to neighbouring particles. Unlike light, which can travel through a vacuum, sound requires a medium and cannot propagate through empty space. This is why the popular science fiction image of explosions in space producing dramatic sound is physically impossible — there are no particles to carry the vibration. The speed of sound varies significantly depending on the medium. In dry air at sea level and room temperature it travels at approximately 343 metres per second. In water it travels nearly four and a half times faster, at around 1,480 metres per second, because water molecules are more densely packed and transmit vibrations more efficiently. In solid steel, sound travels at approximately 5,960 metres per second. The frequency of a sound wave — how many complete cycles occur per second, measured in hertz — determines the pitch we perceive. The human ear can detect frequencies roughly between 20 and 20,000 hertz, though this range narrows with age, particularly at the upper end. Amplitude, the size of the vibration, determines volume. The decibel scale used to measure sound intensity is logarithmic: an increase of ten decibels represents a tenfold increase in sound intensity. This is why sounds above 85 decibels cause hearing damage with prolonged exposure, and why the difference between 85 and 100 decibels is far greater than the numbers suggest.",qs:["Why is the sound of space explosions in science fiction physically impossible?","Why does sound travel faster in water than in air?","What is the relationship between frequency and pitch?","What does the logarithmic nature of the decibel scale mean for understanding loud sounds?"]}];
-PASSAGES["Level 20"]=[{title:"How Stars Are Born and Die",text:"Stars are not permanent fixtures of the cosmos but objects with life cycles spanning millions to billions of years. They begin in clouds of gas and dust called nebulae, which exist throughout galaxies in enormous quantities. When a region of a nebula becomes dense enough — through the shockwave of a nearby supernova, a collision with another cloud, or simply gravitational accumulation over time — gravity causes it to collapse inward. As the gas compresses, it heats up. If the mass is sufficient, the core temperature eventually reaches approximately ten million degrees Celsius, at which point hydrogen nuclei begin fusing into helium. This nuclear fusion releases enormous energy, which pushes outward against the inward pull of gravity. The balance between these two forces defines a star's stable lifetime. Our Sun, a relatively average star in terms of mass, has been fusing hydrogen for about 4.6 billion years and has roughly five billion years remaining. More massive stars burn their fuel at vastly greater rates and live for only a few million years before exhausting their hydrogen. When a star runs low on hydrogen, changes in its core cause it to expand dramatically, becoming a red giant. Smaller stars like the Sun eventually shed their outer layers as a planetary nebula and leave behind a dense remnant called a white dwarf. Massive stars end more dramatically in a supernova explosion — briefly outshining entire galaxies — leaving behind either a neutron star so dense that a teaspoon of its material would weigh a billion tonnes, or, if massive enough, a black hole.",qs:["What two opposing forces define a star's stable lifetime?","Why do more massive stars have shorter lifespans than smaller ones?","How does the death of a star depend on its mass?","What does the life cycle of stars suggest about the origins of the elements that make up planets and living things?"]},{title:"The History of Writing",text:"Writing is so fundamental to modern civilization that it is difficult to imagine human society without it, yet it is a relatively recent invention in the full span of human history. Anatomically modern humans have existed for approximately 300,000 years. Writing systems appeared only about 5,000 years ago, emerging independently in at least three separate locations: Mesopotamia, Egypt, and China. The earliest writing was not literature or philosophy but accounting — records of grain stores, livestock counts, and trade transactions. The Sumerian cuneiform system, which developed in Mesopotamia around 3200 BCE, began as a set of pictographs pressed into clay tablets with a reed stylus. Over centuries these simplified into abstract wedge-shaped marks that represented syllables rather than objects, allowing the system to express any word in the language. The invention of the alphabet — a system where symbols represent individual sounds rather than syllables — dramatically reduced the number of characters needed to write a language, making literacy more accessible. The Phoenician alphabet, developed around 1050 BCE, is the ancestor of most modern alphabets used in the world today, including Greek, Latin, Arabic, and Hebrew. The invention of the printing press by Gutenberg around 1440 CE multiplied the availability of written material and is widely credited with making mass literacy possible for the first time. Each transformation in writing technology — from clay tablets to papyrus to paper to digital screens — has changed not just how information is recorded but what kinds of thinking and social organization become possible.",qs:["What does the earliest writing reveal about the priorities of early civilizations?","How did the alphabet make literacy more accessible than syllabic systems?","What is the significance of the Phoenician alphabet?","What does the pattern of writing technology changes suggest about the relationship between communication tools and social change?"]},{title:"How the Body Heals",text:"The human body's ability to repair itself is so seamlessly integrated into daily experience that most people rarely pause to consider its complexity. A paper cut that closes within days, a broken bone that knits back together over weeks, an infection that clears without medical intervention — each represents the coordinated action of multiple biological systems working in precise sequence. When tissue is damaged, the first response is vascular: blood vessels in the area constrict to limit bleeding, then dilate to bring more blood to the site. Platelets, small cell fragments circulating in the blood, arrive at the wound within seconds and begin forming a clot by binding together and activating a cascade of clotting proteins. The inflammation that follows — characterized by redness, warmth, swelling, and pain — is not a malfunction but a deliberate response that increases blood flow to deliver immune cells and creates conditions hostile to infection. Neutrophils, a type of white blood cell, arrive within hours to engulf and destroy bacteria. Macrophages follow to clean up cellular debris and coordinate the repair phase. New tissue is built by cells called fibroblasts, which lay down collagen, a structural protein that forms the scaffolding of skin and connective tissue. In minor wounds this process produces tissue that is functionally indistinguishable from the original. In larger wounds it produces a scar — structurally sound but lacking some features of the original tissue, such as hair follicles and sweat glands.",qs:["Why is inflammation described as a deliberate response rather than a malfunction?","What is the sequence of cell types that respond to a wound?","Why do larger wounds produce scars while small cuts heal without visible marks?","What does the healing process suggest about the body's relationship between structure and function?"]}];
-PASSAGES["Level 21"]=[{title:"The Mystery of Consciousness",text:"Consciousness — the subjective experience of being aware, of having an inner life, of knowing what it feels like to see red or taste coffee — is arguably the most profound unsolved problem in science. We can describe the neural correlates of consciousness: the brain activity that accompanies particular experiences. We can identify brain regions whose damage disrupts awareness. We can measure the electrical signatures of wakefulness and sleep. What we cannot do is explain why any of this physical activity is accompanied by subjective experience at all. Philosopher David Chalmers called this the hard problem of consciousness, distinguishing it from the comparatively easier problems of explaining cognitive functions and behaviours. The hard problem asks why there is something it is like to be a conscious creature rather than nothing — why the processing of visual information by the brain is accompanied by the experience of seeing rather than occurring in the dark. Several competing theories attempt to address this. Integrated Information Theory, proposed by neuroscientist Giulio Tononi, suggests that consciousness is a property of systems that integrate information in particular ways and can in principle be quantified. Global Workspace Theory proposes that consciousness arises when information is broadcast widely across the brain rather than remaining localized. Some philosophers argue that consciousness may be a fundamental feature of the universe, like mass or charge, rather than something that emerges from physical complexity. The question remains genuinely open, and some researchers argue it may be permanently beyond human understanding — a limit set not by current ignorance but by the structure of the human mind itself.",qs:["What distinguishes the hard problem of consciousness from easier problems?","How do Integrated Information Theory and Global Workspace Theory differ in their approaches?","What does it mean to say consciousness might be a fundamental feature of the universe?","What does it suggest about science if some questions may be permanently beyond human understanding?"]},{title:"How Evolution Works",text:"Evolution by natural selection is one of the most powerful and most misunderstood ideas in science. Its core logic is straightforward: individuals within a population vary in their heritable traits. Some variants are better suited to current environmental conditions and therefore survive and reproduce more successfully than others. Because traits are heritable, successful variants become more common in subsequent generations. Over many generations this process can produce dramatic change — new species, new body plans, new behaviours — from nothing more than variation, heredity, and differential reproduction. The mechanism that produces heritable variation is mutation: random errors or changes in DNA that occur during replication or in response to environmental factors. Most mutations are neutral or harmful and are eliminated or remain rare. A small fraction improve the organism's fit to its environment and are favoured by selection. Evolution has no direction, no goal, and no foresight. It does not produce perfect organisms — it produces organisms that are good enough to survive and reproduce in current conditions. Features that were adaptive in past environments can become liabilities when conditions change. The human spine, which evolved for a creature that walked on four limbs, is poorly suited to upright bipedal walking and produces the chronic back pain that afflicts a majority of adults at some point. Common misconceptions include the idea that evolution moves toward complexity — it does not, and many successful evolutionary lineages have moved toward simplicity — and the idea that individuals evolve. Evolution acts on populations over generations, not on individuals within a lifetime.",qs:["What three conditions are necessary for natural selection to occur?","Why does evolution produce organisms that are good enough rather than perfect?","What does the human spine example illustrate about evolution?","What are two common misconceptions about evolution that the passage addresses?"]},{title:"The Nature of Time",text:"Time is so woven into human experience that questioning its nature can seem almost nonsensical. And yet time has proven to be one of the most puzzling concepts in physics, and our everyday intuitions about it are wrong in ways that have been experimentally confirmed. Isaac Newton conceived of time as absolute — a universal river flowing at the same rate everywhere, providing the backdrop against which all events occur. Einstein's special theory of relativity, published in 1905, replaced this picture with something far stranger. Time, Einstein showed, is not absolute but relative: it passes at different rates depending on velocity and gravity. This is not a philosophical claim but a measurable physical fact. Atomic clocks flown on aircraft tick slightly faster than identical clocks on the ground because they experience less gravitational pull. Astronauts returning from the International Space Station have aged very slightly less than people who remained on Earth. At velocities approaching the speed of light, time dilation becomes dramatic — a traveller moving at ninety-nine percent of light speed would age only about one seventh as fast as a stationary observer. The direction of time — the fact that it flows from past to future rather than the reverse — is one of the deepest puzzles in physics. The fundamental laws of physics are time-symmetric: they work equally well run forward or backward. The apparent one-directionality of time, called the arrow of time, is thought to be connected to entropy, the tendency of systems to move from ordered to disordered states, but a complete explanation remains elusive.",qs:["How did Einstein's conception of time differ from Newton's?","What experimental evidence confirms that time passes at different rates in different conditions?","What is the arrow of time and why is it puzzling given the laws of physics?","What does the malleability of time suggest about the reliability of human intuition as a guide to understanding reality?"]}];
 var LM={
 "Level 1":["Kindergarten","Early K","#FF6B6B"],
 "Level 2":["Kindergarten","Mid K","#FF6B6B"],
@@ -760,63 +288,7 @@ var LM={
 "Level 20":["6th Grade","Mid 6","#3B82F6"],
 "Level 21":["6th Grade","Late 6","#3B82F6"]
 };
-var PILLS={
-phonemic:{l:"Phonemic Awareness",c:"#FF6B6B"},
-phonics:{l:"Phonics",c:"#FF9F43"},
-fluency:{l:"Fluency",c:"#FFD166"},
-vocabulary:{l:"Vocabulary",c:"#6BCB77"},
-comprehension:{l:"Comprehension",c:"#4ECDC4"},
-writing:{l:"Writing",c:"#A78BFA"}
-};
-var QR=[
-{id:"accuracy",l:"Accuracy",opts:[{v:96,l:"Strong 95%+"},{v:91,l:"Good 90-94%"},{v:86,l:"Some Errors"},{v:75,l:"Many Errors"}]},
-{id:"fluency",l:"Fluency",opts:[{v:95,l:"Smooth and Expressive"},{v:80,l:"Mostly Fluent"},{v:65,l:"Word-by-Word"},{v:50,l:"Very Choppy"}]},
-{id:"decoding",l:"Decoding",opts:[{v:95,l:"Sounds Out Well"},{v:75,l:"Partial Attempts"},{v:60,l:"Skips Words"},{v:45,l:"Guesses Only"}]},
-{id:"selfmon",l:"Self-Monitoring",opts:[{v:95,l:"Corrects Often"},{v:75,l:"Sometimes"},{v:55,l:"Rarely"},{v:35,l:"Never"}]},
-{id:"comprehension",l:"Comprehension",opts:[{v:95,l:"Strong Retell"},{v:80,l:"Basic Retell"},{v:60,l:"Minimal Recall"},{v:40,l:"Cannot Retell"}]}
-];
-var AVC=["#FF6B6B","#4ECDC4","#FFD166","#6BCB77","#A78BFA","#FF9F43"];
 var LEVELS=Object.keys(LM);
-var cur=null,rats={},errs=[],ownText=false,lesson=null,pidx=0;
-var students=[];
-var _supabase=null;
-function initSupabase(){
-if(window._sbClient){
-_supabase=window._sbClient;
-window._supabase=_supabase;
-loadStudents().then(function(){loadDashCurrFromDB().then(function(){rdDash();loadDashCurr();});});
-}else{
-window.addEventListener("sb-ready",function(){
-_supabase=window._sbClient;
-window._supabase=_supabase;
-loadStudents().then(function(){loadDashCurrFromDB().then(function(){rdDash();loadDashCurr();});});
-});
-}
-}
-async function loadStudents(){
-try{
-var {data,error}=await _supabase.from("students").select("*").order("created_at",{ascending:true});
-if(error)throw error;
-students=data.map(function(r){return{id:r.id,name:r.name,grade:r.grade,level:r.level,sessions:r.sessions||[]};});
-}catch(e){console.error("load students error",e);students=[];}
-}
-async function saveStudents(){
-try{
-for(var s of students){
-var {error}=await _supabase.from("students").upsert({id:typeof s.id==="string"&&s.id.includes("-")?s.id:undefined,user_id:window._user.id,name:s.name,grade:s.grade,level:s.level,sessions:s.sessions},{onConflict:"id"});
-if(error)console.error("save error",error);
-}
-}catch(e){console.error("saveStudents error",e);}
-}
-async function loadDashCurrFromDB(){
-try{
-var {data}=await _supabase.from("curriculum").select("content").eq("user_id",window._user.id).single();
-if(data&&data.content){
-dashCurrItems=data.content.split("\n").filter(function(l){return l.trim().length>0;});
-renderDashCurr();
-}
-}catch(e){}
-}
 function lc(lv){return(LM[lv]||["","","#888"])[2];}
 function lb(lv){return(LM[lv]||["","lv",""])[1];}
 function tag(t,c){return'<span class="tag" style="background:'+c+'22;color:'+c+'">'+t+'</span>';}
@@ -827,138 +299,111 @@ document.getElementById("s-"+scr).classList.add("active");
 document.querySelectorAll(".nav-btn").forEach(function(b){b.classList.remove("active");});
 var nm={dash:"nb-dash",add:"nb-add",groups:"nb-groups"};
 if(nm[scr])document.getElementById(nm[scr]).classList.add("active");
-if(scr==="dash"){rdDash();loadDashCurr();}
+if(scr==="dash")rdDash();
 if(scr==="groups")rdGroups();
 }
-function rdDash(){
-document.getElementById("dash-sub").textContent=students.length+" students";
-var grps=bldGroups();
-var html="";
-students.forEach(function(s,i){
-html+="<div class='srow'>";
-html+="<div class='row'>";
-html+="<div class='av' style='width:40px;height:40px;background:"+AVC[i%6]+";font-size:15px'>"+s.name[0]+"</div>";
-html+="<div><div style='font-weight:700;font-size:14px'>"+s.name+"</div>";
-html+="<div style='font-size:12px;color:#999'>"+s.grade+" - "+lb(s.level)+" - "+s.sessions.length+" sessions</div>";
-html+="</div></div>";
-html+="<div class='row'>";
-html+="<button class='btn' id='btn-"+s.id+"'>Start</button>";
-html+="<button class='btn-ghost btn-sm' id='ebtn-"+s.id+"'>Edit Level</button>";
-html+="<button class='btn-ghost btn-sm' id='pbtn-"+s.id+"'"+(s.sessions&&s.sessions.length>0?"":" style='opacity:0.4' disabled")+">Progress</button>";
-html+="<button class='btn-ghost btn-sm' id='dbtn-"+s.id+"' style='color:#FF6B6B;border-color:#FF6B6B'>Delete</button>";
-html+="</div></div>";
-});
-document.getElementById("student-list").innerHTML=html;
-setTimeout(function(){students.forEach(function(s){var btn=document.getElementById("btn-"+s.id);if(btn){btn.addEventListener("click",function(){startSess(s.id);});}var ebtn=document.getElementById("ebtn-"+s.id);if(ebtn){ebtn.addEventListener("click",function(){editLevel(s.id);});}var pbtn=document.getElementById("pbtn-"+s.id);if(pbtn&&s.sessions&&s.sessions.length>0){pbtn.addEventListener("click",function(){showProg(s.id);});}
-var dbtn=document.getElementById("dbtn-"+s.id);if(dbtn){dbtn.addEventListener("click",function(){deleteStu(s.id);});}});},100);
+async function doSignOut(){
+if(_sb)await _sb.auth.signOut();
+window.location.href="login.html";
 }
-function rdErrs(){
-var el=document.getElementById("err-list");
-if(!errs.length){el.innerHTML="<div style='font-size:12px;color:#CCC'>No errors logged yet</div>";return;}
-el.innerHTML=errs.map(function(e,i){return"<div class='erow'><div class='row'>"+tag(e.type,"#FF9F43")+"<span style='font-size:12px;font-weight:700'>"+e.word+"</span>"+(e.said?"<span style='font-size:12px;color:#888'>said "+e.said+"</span>":"")+"</div><button style='background:none;border:none;color:#CCC;cursor:pointer;font-size:18px' onclick='rmErr("+i+")'>x</button></div>";}).join("");
+async function initApp(){
+_sb=supabase.createClient("https://ynvgikozznybuuusxbhz.supabase.co","sb_publishable_tt1xUdoOfZ0Pf8rXuMxyqw_hRfCzxeZ");
+var result=await _sb.auth.getSession();
+var session=result.data.session;
+if(!session){window.location.href="login.html";return;}
+_user=session.user;
+await loadStudents();
+await loadDashCurrFromDB();
+populateLvl();
+rdDash();
+loadDashCurr();
 }
-function rmErr(i){errs.splice(i,1);rdErrs();}
-function rdRats(){
-var el=document.getElementById("r-list");
-var html="";
-QR.forEach(function(r){
-html+="<div style='margin-bottom:14px'><div style='font-size:13px;font-weight:700;margin-bottom:6px'>"+r.l+"</div><div class='rg'>";
-r.opts.forEach(function(o){
-var sel=rats[r.id]===o.v;
-var c=o.v>=90?"#6BCB77":o.v>=75?"#FFD166":o.v>=60?"#FF9F43":"#FF6B6B";
-var bg=sel?"background:"+c+";color:#fff;border-color:transparent;font-weight:700;":"";
-html+="<button class='rbtn' style='"+bg+"cursor:pointer' onclick='selR(\""+r.id+"\","+o.v+")'>"+o.l+"</button>";
-});
-html+="</div></div>";
-});
-el.innerHTML=html;
-document.getElementById("r-count").textContent=Object.keys(rats).length+"/"+QR.length+" rated";
-}
-function selR(id,v){rats[id]=v;rdRats();}
-var dashCurrItems=[];
-function loadDashCurr(){
+async function loadStudents(){
 try{
-var saved=localStorage.getItem("guided_curriculum");
-if(saved&&saved.trim()){
-dashCurrItems=saved.split("\n").filter(function(l){return l.trim().length>0;});
-}else{dashCurrItems=[];}
-}catch(e){dashCurrItems=[];}
-renderDashCurr();
+var result=await _sb.from("students").select("*").order("created_at",{ascending:true});
+if(result.error)throw result.error;
+students=result.data.map(function(r){return{id:r.id,name:r.name,grade:r.grade,level:r.level,sessions:r.sessions||[]};});
+}catch(e){console.error("loadStudents error:",e);students=[];}
 }
-function renderDashCurr(){
-var el=document.getElementById("curr-dash-items");
-if(!el)return;
-if(!dashCurrItems.length){el.innerHTML="";document.getElementById("curr-dash-badge").style.display="none";return;}
-document.getElementById("curr-dash-badge").style.display="inline-block";
-el.innerHTML=dashCurrItems.map(function(v,i){
-return"<div style='display:flex;gap:6px;margin-bottom:6px'><input class='inp' value='"+v.replace(/'/g,"&#39;")+"' placeholder='e.g. Reading 1.2: Uses phonics strategies...' oninput='updateDashCurr("+i+",this.value)' style='flex:1'/><button onclick='removeDashCurrItem("+i+")' style='background:#FF6B6B;color:#fff;border:none;border-radius:8px;padding:0 10px;font-weight:700;cursor:pointer'>x</button></div>";
-}).join("");
+async function saveStudent(stu){
+try{
+var result=await _sb.from("students").update({name:stu.name,grade:stu.grade,level:stu.level,sessions:stu.sessions}).eq("id",stu.id);
+if(result.error)throw result.error;
+}catch(e){console.error("saveStudent error:",e);}
 }
-function addDashCurrItem(){
-dashCurrItems.push("");
-renderDashCurr();
-setTimeout(function(){var inputs=document.querySelectorAll("#curr-dash-items .inp");if(inputs.length)inputs[inputs.length-1].focus();},50);
+async function loadDashCurrFromDB(){
+try{
+var result=await _sb.from("curriculum").select("content").eq("user_id",_user.id).maybeSingle();
+if(result.data&&result.data.content){
+dashCurrItems=result.data.content.split("\n").filter(function(l){return l.trim().length>0;});
+localStorage.setItem("guided_curriculum",result.data.content);
 }
-function removeDashCurrItem(i){
-dashCurrItems.splice(i,1);
-saveDashCurr();
-renderDashCurr();
-}
-function updateDashCurr(i,val){
-dashCurrItems[i]=val;
-saveDashCurr();
+}catch(e){console.error("loadDashCurrFromDB error:",e);}
 }
 async function saveDashCurr(){
 var joined=dashCurrItems.filter(function(v){return v.trim().length>0;}).join("\n");
-try{localStorage.setItem("guided_curriculum",joined);}catch(e){}
-try{
-if(window._user){
-await _supabase.from("curriculum").upsert({user_id:window._user.id,content:joined,updated_at:new Date().toISOString()},{onConflict:"user_id"});
-}
-}catch(e){console.error("curriculum save error",e);}
+localStorage.setItem("guided_curriculum",joined);
 var has=joined.length>0;
 if(document.getElementById("curr-dash-badge"))document.getElementById("curr-dash-badge").style.display=has?"inline-block":"none";
-}
-var currItems=[];
-function addCurrItem(val){
-currItems.push(val||"");
-renderCurrItems();
-if(!val)setTimeout(function(){var inputs=document.querySelectorAll(".curr-item-input");inputs[inputs.length-1].focus();},50);
-}
-function removeCurrItem(i){
-currItems.splice(i,1);
-renderCurrItems();
-saveCurr();
-}
-function renderCurrItems(){
-var el=document.getElementById("curr-items");
-if(!currItems.length){el.innerHTML="";return;}
-el.innerHTML=currItems.map(function(v,i){
-return"<div style='display:flex;gap:6px;margin-bottom:6px'><input class='inp curr-item-input' value='"+v.replace(/'/g,"&#39;")+"' placeholder='e.g. Reading 1.2: Uses phonics strategies...' oninput='updateCurr("+i+",this.value)' style='flex:1'/><button onclick='removeCurrItem("+i+")' style='background:#FF6B6B;color:#fff;border:none;border-radius:8px;padding:0 10px;font-weight:700;cursor:pointer'>x</button></div>";
-}).join("");
-}
-function updateCurr(i,val){
-currItems[i]=val;
-saveCurr();
-}
-function saveCurr(){
-var joined=currItems.filter(function(v){return v.trim().length>0;}).join("\n");
-document.getElementById("curr-in").value=joined;
-var has=joined.length>0;
-document.getElementById("curr-badge").style.display=has?"inline-block":"none";
-document.getElementById("curr-msg").style.display=has?"block":"none";
-try{localStorage.setItem("guided_curriculum",joined);}catch(e){}
-}
-function chkCurr(){saveCurr();}
-function loadSavedCurriculum(){
 try{
-var saved=localStorage.getItem("guided_curriculum");
-if(saved&&saved.trim()){
-currItems=saved.split("\n").filter(function(l){return l.trim().length>0;});
-renderCurrItems();
-saveCurr();
+if(_user){
+await _sb.from("curriculum").upsert({user_id:_user.id,content:joined,updated_at:new Date().toISOString()},{onConflict:"user_id"});
 }
-}catch(e){}
+}catch(e){console.error("saveDashCurr error:",e);}
+}
+function rdDash(){
+var hour=new Date().getHours();
+var greeting=hour<12?"Good morning!":hour<17?"Good afternoon!":"Good evening!";
+document.getElementById("dash-greeting").textContent=greeting;
+document.getElementById("dash-sub").textContent=students.length+" students";
+var grps=bldGroups();
+var stats=[[students.length,"Students","#4ECDC4"],[students.filter(function(s){return s.sessions.length>0;}).length,"Sessioned","#FFD166"],[grps.length||"--","Groups","#6BCB77"]];
+document.getElementById("dash-stats").innerHTML=stats.map(function(x){return'<div class="card" style="margin-bottom:0;border-top:4px solid '+x[2]+';text-align:center"><div style="font-size:28px;font-weight:800;color:'+x[2]+';font-family:Playfair Display,serif">'+x[0]+'</div><div style="font-size:11px;color:#888;font-weight:600">'+x[1]+'</div></div>';}).join("");
+var html="";
+students.forEach(function(s,i){
+var d=document.createElement("div");
+d.className="srow";
+var prog=s.sessions.length>0?"<button class='btn-ghost btn-sm' id='pbtn-"+s.id+"'>Progress</button>":"";
+d.innerHTML="<div class='row'><div class='av' style='width:40px;height:40px;background:"+AVC[i%6]+";font-size:15px'>"+s.name[0]+"</div><div><div style='font-weight:700;font-size:14px'>"+s.name+"</div><div style='font-size:12px;color:#999'>"+s.grade+" "+tag(s.level,lc(s.level))+" "+lb(s.level)+" - "+s.sessions.length+" sessions</div></div></div><div class='row'>"+prog+"<button class='btn-ghost btn-sm' id='ebtn-"+s.id+"' style='color:#555'>Edit Level</button><button class='btn-ghost btn-sm' id='dbtn-"+s.id+"' style='color:#FF6B6B;border-color:#FF6B6B'>Delete</button><button class='btn' id='sbtn-"+s.id+"'>Start</button></div>";
+html+=d.outerHTML;
+});
+document.getElementById("student-list").innerHTML=html;
+students.forEach(function(s){
+var sb=document.getElementById("sbtn-"+s.id);
+if(sb)sb.addEventListener("click",function(){startSess(s.id);});
+var pb=document.getElementById("pbtn-"+s.id);
+if(pb)pb.addEventListener("click",function(){showProg(s.id);});
+var eb=document.getElementById("ebtn-"+s.id);
+if(eb)eb.addEventListener("click",function(){editLevel(s.id);});
+var db=document.getElementById("dbtn-"+s.id);
+if(db)db.addEventListener("click",function(){deleteStu(s.id);});
+});
+}
+function startSess(id){
+cur=students.find(function(s){return s.id===id;});
+if(!cur)return;
+rats=Object.assign({},(cur.sessions[0]&&cur.sessions[0].ratings)||{});
+errs=[];ownText=false;lesson=null;pidx=0;
+document.getElementById("obs-title").textContent="Session: "+cur.name;
+document.getElementById("obs-sub").innerHTML=tag(cur.level,lc(cur.level))+" "+lb(cur.level)+" - "+cur.grade;
+var tog=document.getElementById("tog");tog.classList.remove("on");
+document.getElementById("tog-lbl").textContent="Using a ReadLead passage";
+document.getElementById("tog-l").style.fontWeight="700";
+document.getElementById("tog-l").style.color="#1A1A2E";
+document.getElementById("tog-r").style.fontWeight="400";
+document.getElementById("tog-r").style.color="#AAA";
+document.getElementById("own-msg").style.display="none";
+document.getElementById("passage-card").style.display="block";
+document.getElementById("w-in").value="";
+document.getElementById("s-in").value="";
+document.getElementById("curr-in").value="";
+document.getElementById("curr-badge").style.display="none";
+currItems=[];
+renderCurrItems();
+loadSavedCurriculum();
+rdErrs();rdRats();rdPass();
+document.getElementById("gen-box").innerHTML="<div style='font-size:15px;font-weight:800;margin-bottom:4px'>Generate Lesson Plan</div><div style='font-size:12px;color:#9999BB;margin-bottom:14px'>Builds a personalized 15-min lesson.</div><button class='btn btn-teal' style='width:100%;font-size:14px;margin-bottom:8px' onclick='doGen()'>Generate "+cur.name+" Lesson</button><button class='btn-ghost' style='width:100%;font-size:13px' onclick='saveSessionOnly()'>Save Session Without Lesson</button>";
+go("observe");
 }
 function rdPass(){
 var ps=PASSAGES[cur.level]||PASSAGES["Level 5"]||[];
@@ -969,8 +414,14 @@ document.getElementById("p-tabs").innerHTML=ps.map(function(x,i){return"<button 
 document.getElementById("p-text").textContent=p.text;
 document.getElementById("p-qs").innerHTML=p.qs.map(function(q,i){return"<div style='font-size:12px;color:#666;margin-bottom:4px;display:flex;gap:6px'><span style='font-weight:700;color:"+lv+";flex-shrink:0'>"+(i+1)+".</span><span>"+q+"</span></div>";}).join("");
 }
-function printP(){var ps=PASSAGES[cur.level]||PASSAGES['Level 5']||[];var p=ps[pidx%ps.length];var w=window.open();w.document.write('<html><body style="font-family:Georgia,serif;max-width:600px;margin:40px auto"><h1>'+p.title+'</h1><div style="white-space:pre-line;font-size:16px;line-height:2.2">'+p.text+'</div>');w.document.close();w.print();}
 function selP(i){pidx=i;rdPass();}
+function printP(){
+var ps=PASSAGES[cur.level]||PASSAGES["Level 5"]||[];
+var p=ps[pidx%ps.length];
+var w=window.open();
+w.document.write("<html><body style='font-family:Georgia,serif;max-width:600px;margin:40px auto'><h1>"+p.title+"</h1><div style='white-space:pre-line;font-size:16px;line-height:2.2;margin-bottom:20px'>"+p.text+"</div>"+p.qs.map(function(q,i){return"<p><strong>"+(i+1)+". "+q+"</strong></p><div style='height:30px;border-bottom:1px solid #ccc;margin-bottom:10px'></div>";}).join("")+"</body></html>");
+w.document.close();w.print();
+}
 function flipToggle(){
 ownText=!ownText;
 var tog=document.getElementById("tog");tog.classList.toggle("on",ownText);
@@ -990,6 +441,102 @@ document.getElementById("s-in").value="";
 rdErrs();
 }
 function rmErr(i){errs.splice(i,1);rdErrs();}
+function rdErrs(){
+var el=document.getElementById("err-list");
+if(!errs.length){el.innerHTML="<div style='font-size:12px;color:#CCC'>No errors logged yet</div>";return;}
+el.innerHTML=errs.map(function(e,i){return"<div class='erow'><div class='row'>"+tag(e.type,"#FF9F43")+"<span style='font-size:12px;font-weight:700'>"+e.word+"</span>"+(e.said?"<span style='font-size:12px;color:#888'>said "+e.said+"</span>":"")+"</div><button style='background:none;border:none;color:#CCC;cursor:pointer;font-size:18px' onclick='rmErr("+i+")'>x</button></div>";}).join("");
+}
+function rdRats(){
+var el=document.getElementById("r-list");
+var html="";
+QR.forEach(function(r){
+html+="<div style='margin-bottom:14px'><div style='font-size:13px;font-weight:700;margin-bottom:6px'>"+r.l+"</div><div class='rg'>";
+r.opts=[{v:96,l:"Strong 95%+"},{v:91,l:"Good 90-94%"},{v:86,l:"Some Errors"},{v:75,l:"Many Errors"}];
+if(r.id==="fluency")r.opts=[{v:95,l:"Smooth"},{v:80,l:"Mostly Fluent"},{v:65,l:"Word-by-Word"},{v:50,l:"Very Choppy"}];
+if(r.id==="decoding")r.opts=[{v:95,l:"Sounds Out Well"},{v:75,l:"Partial"},{v:60,l:"Skips Words"},{v:45,l:"Guesses Only"}];
+if(r.id==="selfmon")r.opts=[{v:95,l:"Corrects Often"},{v:75,l:"Sometimes"},{v:55,l:"Rarely"},{v:35,l:"Never"}];
+if(r.id==="comprehension")r.opts=[{v:95,l:"Strong Retell"},{v:80,l:"Basic Retell"},{v:60,l:"Minimal"},{v:40,l:"Cannot Retell"}];
+r.opts.forEach(function(o){
+var sel=rats[r.id]===o.v;
+var c=o.v>=90?"#6BCB77":o.v>=75?"#FFD166":o.v>=60?"#FF9F43":"#FF6B6B";
+var bg=sel?"background:"+c+";color:#fff;border-color:transparent;font-weight:700;":"";
+html+="<button class='rbtn' style='"+bg+"cursor:pointer' onclick='selR(\""+r.id+"\","+o.v+")'>"+o.l+"</button>";
+});
+html+="</div></div>";
+});
+el.innerHTML=html;
+document.getElementById("r-count").textContent=Object.keys(rats).length+"/"+QR.length+" rated";
+}
+function selR(id,v){rats[id]=v;rdRats();}
+var currItems=[];
+function addCurrItem(val){
+currItems.push(val||"");
+renderCurrItems();
+if(!val)setTimeout(function(){var inputs=document.querySelectorAll(".curr-item-input");if(inputs.length)inputs[inputs.length-1].focus();},50);
+}
+function removeCurrItem(i){
+currItems.splice(i,1);
+renderCurrItems();
+saveCurr();
+}
+function renderCurrItems(){
+var el=document.getElementById("curr-items");
+if(!currItems.length){el.innerHTML="";return;}
+el.innerHTML=currItems.map(function(v,i){return"<div style='display:flex;gap:6px;margin-bottom:6px'><input class='inp curr-item-input' value='"+v.replace(/'/g,"&#39;")+"' placeholder='e.g. Reading 1.2: Uses phonics strategies...' oninput='updateCurr("+i+",this.value)' style='flex:1'/><button onclick='removeCurrItem("+i+")' style='background:#FF6B6B;color:#fff;border:none;border-radius:8px;padding:0 10px;font-weight:700;cursor:pointer'>x</button></div>";}).join("");
+}
+function updateCurr(i,val){currItems[i]=val;saveCurr();}
+function saveCurr(){
+var joined=currItems.filter(function(v){return v.trim().length>0;}).join("\n");
+document.getElementById("curr-in").value=joined;
+var has=joined.length>0;
+document.getElementById("curr-badge").style.display=has?"inline-block":"none";
+document.getElementById("curr-msg").style.display=has?"block":"none";
+try{localStorage.setItem("guided_curriculum",joined);}catch(e){}
+}
+function chkCurr(){saveCurr();}
+function loadSavedCurriculum(){
+try{
+var saved=localStorage.getItem("guided_curriculum");
+if(saved&&saved.trim()){
+currItems=saved.split("\n").filter(function(l){return l.trim().length>0;});
+renderCurrItems();
+saveCurr();
+}
+}catch(e){}
+}
+var dashCurrItems=[];
+function loadDashCurr(){
+try{
+var saved=localStorage.getItem("guided_curriculum");
+if(saved&&saved.trim()){
+dashCurrItems=saved.split("\n").filter(function(l){return l.trim().length>0;});
+}else{dashCurrItems=[];}
+}catch(e){dashCurrItems=[];}
+renderDashCurr();
+}
+function renderDashCurr(){
+var el=document.getElementById("curr-dash-items");
+if(!el)return;
+if(!dashCurrItems.length){el.innerHTML="";document.getElementById("curr-dash-badge").style.display="none";return;}
+document.getElementById("curr-dash-badge").style.display="inline-block";
+el.innerHTML=dashCurrItems.map(function(v,i){return"<div style='display:flex;gap:6px;margin-bottom:6px'><input class='inp' value='"+v.replace(/'/g,"&#39;")+"' placeholder='e.g. Reading 1.2: Uses phonics strategies...' oninput='updateDashCurr("+i+",this.value)' style='flex:1'/><button onclick='removeDashCurrItem("+i+")' style='background:#FF6B6B;color:#fff;border:none;border-radius:8px;padding:0 10px;font-weight:700;cursor:pointer'>x</button></div>";}).join("");
+}
+function addDashCurrItem(){
+dashCurrItems.push("");
+renderDashCurr();
+setTimeout(function(){var inputs=document.querySelectorAll("#curr-dash-items .inp");if(inputs.length)inputs[inputs.length-1].focus();},50);
+}
+function removeDashCurrItem(i){dashCurrItems.splice(i,1);saveDashCurr();renderDashCurr();}
+function updateDashCurr(i,val){dashCurrItems[i]=val;saveDashCurr();}
+async function saveSessionOnly(){
+if(!cur)return;
+var rec={date:new Date().toLocaleDateString(),ratings:Object.assign({},rats),errors:errs.slice()};
+var idx=students.findIndex(function(s){return s.id===cur.id;});
+students[idx].sessions=[rec].concat(students[idx].sessions).slice(0,10);
+cur=students[idx];
+await saveStudent(cur);
+document.getElementById("gen-box").innerHTML="<div style='font-size:14px;font-weight:800;color:#4ECDC4;margin-bottom:8px'>Session Saved!</div><div style='font-size:12px;color:#9999BB;margin-bottom:12px'>Data saved to student profile.</div><button class='btn btn-teal' style='width:100%;font-size:14px;margin-bottom:8px' onclick='doGen()'>Generate Lesson</button><button class='btn-ghost' style='width:100%;font-size:13px' onclick='saveSessionOnly()'>Save Again</button>";
+}
 async function doGen(){
 var curr=document.getElementById("curr-in").value.trim();
 var hasc=curr.length>0;
@@ -1005,24 +552,22 @@ if(hasc){prompt+="Curriculum: "+curr+"\nCRITICAL: cite exact standard codes in e
 else{prompt+="No curriculum. Leave standard as empty string.";}
 prompt+="\nReply ONLY raw JSON:\n";
 prompt+='{"lessonTitle":"...","focusSummary":"...","hasCurriculumAlignment":'+(hasc?"true":"false")+',"segments":[{"pillar":"phonemic","title":"...","timeRange":"0-2 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"phonics","title":"...","timeRange":"2-5 min","minutes":3,"emphasis":true,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"fluency","title":"...","timeRange":"5-8 min","minutes":3,"emphasis":true,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"vocabulary","title":"...","timeRange":"8-11 min","minutes":3,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"comprehension","title":"...","timeRange":"11-13 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"writing","title":"...","timeRange":"13-15 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""}],"afterLesson":"..."}\nReal content for '+cur.name+'. emphasis true on 2 weakest.';
-document.getElementById("gen-box").innerHTML="<div style='text-align:center;padding:8px 0'><div style='font-size:14px;font-weight:700;margin-bottom:4px'>Building lesson plan...</div><div style='font-size:12px;color:#9999BB'>"+(hasc?"Aligning to your curriculum...":"Personalizing for "+cur.name)+"</div></div>";
+document.getElementById("gen-box").innerHTML="<div style='text-align:center;padding:8px 0'><div style='font-size:14px;font-weight:700;margin-bottom:4px'>Building lesson plan...</div></div>";
 try{
-var res=await fetch("/api/lesson",{method:"POST",headers:{"content-type":"application/json","anthropic-dangerous-direct-browser-access":"true","x-api-key":"REMOVED"},body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:3000,messages:[{role:"user",content:prompt}]})});
+var res=await fetch("/api/lesson",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:3000,messages:[{role:"user",content:prompt}]})});
 var data=await res.json();
-var text=(data.content||[]).filter(function(b){return b.type==="text";}).map(function(b){return b.text;}).join("").trim();console.log("API response:",JSON.stringify(data).substring(0,200));var les;
-try{les=JSON.parse(text);}catch(e){try{var clean=text.replace(/```json/gi,"").replace(/```/g,"").trim();les=JSON.parse(clean);}catch(e2){try{var a=text.indexOf("{"),b=text.lastIndexOf("}");les=JSON.parse(text.slice(a,b+1));}catch(e3){les={lessonTitle:"Lesson Plan",focusSummary:"Generated lesson",hasCurriculumAlignment:false,segments:[{pillar:"phonics",title:"Phonics Practice",timeRange:"0-5 min",minutes:5,emphasis:true,teacherDoes:"Work on phonics skills",studentDoes:"Practice with teacher",materials:"Whiteboard",tip:"Focus on target sounds",standard:""},{pillar:"fluency",title:"Fluency Building",timeRange:"5-10 min",minutes:5,emphasis:true,teacherDoes:"Model fluent reading",studentDoes:"Echo read",materials:"Levelled text",tip:"Focus on expression",standard:""},{pillar:"comprehension",title:"Comprehension Check",timeRange:"10-15 min",minutes:5,emphasis:false,teacherDoes:"Ask questions",studentDoes:"Retell the story",materials:"Reading passage",tip:"Use questioning strategies",standard:""}],afterLesson:"Continue practising these skills daily."};}}}
+var text=(data.content||[]).filter(function(b){return b.type==="text";}).map(function(b){return b.text;}).join("").trim();
+var les;
+try{les=JSON.parse(text);}catch(e){try{les=JSON.parse(text.replace(/```json/gi,"").replace(/```/g,"").trim());}catch(e2){var a=text.indexOf("{"),b=text.lastIndexOf("}");les=JSON.parse(text.slice(a,b+1));}}
 lesson=les;
 var rec={date:new Date().toLocaleDateString(),ratings:Object.assign({},rats),errors:errs.slice()};
 var idx=students.findIndex(function(s){return s.id===cur.id;});
 students[idx].sessions=[rec].concat(students[idx].sessions).slice(0,10);
 cur=students[idx];
-saveStudents();
-try{
-await _supabase.from("students").update({sessions:students[idx].sessions}).eq("id",cur.id);
-}catch(e){console.error("session save error",e);}
+await saveStudent(cur);
 document.getElementById("gen-box").innerHTML="<div style='font-size:14px;font-weight:800;color:#4ECDC4;margin-bottom:4px'>Lesson Ready!</div><div style='font-size:12px;color:#9999BB;margin-bottom:12px'>"+les.focusSummary+"</div><button class='btn btn-teal' style='width:100%;font-size:14px' onclick='viewLes()'>View Lesson Plan</button>";
 }catch(e){
-document.getElementById("gen-box").innerHTML="<div style='font-size:15px;font-weight:800;margin-bottom:4px'>Generate Lesson Plan</div><div style='font-size:12px;color:#9999BB;margin-bottom:14px'>Something went wrong. Please try again.</div><button class='btn btn-teal' style='width:100%;font-size:14px' onclick='doGen()'>Retry</button><div style='margin-top:10px;padding:10px;background:#FF6B6B22;border-radius:8px;font-size:12px;color:#FF6B6B'>"+e.message+"</div>";
+document.getElementById("gen-box").innerHTML="<div style='font-size:15px;font-weight:800;margin-bottom:4px'>Generate Lesson Plan</div><div style='font-size:12px;color:#9999BB;margin-bottom:14px'>Something went wrong.</div><button class='btn btn-teal' style='width:100%;font-size:14px' onclick='doGen()'>Retry</button><div style='margin-top:10px;padding:10px;background:#FF6B6B22;border-radius:8px;font-size:12px;color:#FF6B6B'>"+e.message+"</div>";
 }
 }
 function viewLes(){
@@ -1060,7 +605,7 @@ document.getElementById("lesson-out").innerHTML=
 "<div style='font-family:Playfair Display,serif;font-size:28px;font-weight:700;margin-bottom:4px'>"+les.lessonTitle+"</div>"
 +"<div style='font-size:14px;color:#555;margin-bottom:4px'><strong>"+label+"</strong> - "+new Date().toLocaleDateString()+"</div>"
 +"<div style='font-size:14px;color:#666;margin-bottom:20px'>"+les.focusSummary+"</div>"
-+(les.hasCurriculumAlignment?"<div class='card' style='background:#1A1A2E;color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:12px'><div><div style='font-size:13px;font-weight:800;color:#4ECDC4;margin-bottom:2px'>Curriculum Aligned</div><div style='font-size:12px;color:#9999BB'>Each activity mapped to your curriculum standards.</div></div></div>":"")
++(les.hasCurriculumAlignment?"<div class='card' style='background:#1A1A2E;color:#fff;margin-bottom:16px'><div style='font-size:13px;font-weight:800;color:#4ECDC4;margin-bottom:2px'>Curriculum Aligned</div><div style='font-size:12px;color:#9999BB'>Each activity mapped to your curriculum standards.</div></div>":"")
 +"<div class='card' style='margin-bottom:14px'><div style='font-size:12px;font-weight:700;margin-bottom:8px'>6 PILLARS OF READING</div><div style='display:flex;flex-wrap:wrap;gap:6px'>"+pillHtml+"</div></div>"
 +"<div class='pbar-wrap'>"+barHtml+"</div>"
 +"<div class='tlabels'><span>0 min</span><span>5 min</span><span>10 min</span><span>15 min</span></div>"
@@ -1076,27 +621,45 @@ document.querySelectorAll(".seg-body").forEach(function(b){b.classList.remove("o
 document.querySelectorAll("[id^='sa-']").forEach(function(a){a.textContent="v";});
 if(!isOpen){body.classList.add("open");arrow.textContent="^";}
 }
-function rdGroups(){
-var grps=bldGroups();
-if(!grps.length){
-document.getElementById("grp-out").innerHTML="<div class='card' style='text-align:center;padding:40px'><div style='font-weight:700;margin-bottom:6px'>No Groups Yet</div><button class='btn' onclick='go(\"dash\")'>Back to Dashboard</button></div>";
-return;
+async function addStu(){
+var n=document.getElementById("new-name").value.trim();if(!n)return;
+var grade=document.getElementById("new-grade").value;
+var level=document.getElementById("new-level").value;
+try{
+var result=await _sb.from("students").insert([{user_id:_user.id,name:n,grade:grade,level:level,sessions:[]}]).select().single();
+if(result.error)throw result.error;
+students.push({id:result.data.id,name:n,grade:grade,level:level,sessions:[]});
+}catch(e){console.error("addStu error:",e);alert("Error adding student: "+e.message);return;}
+document.getElementById("new-name").value="";
+go("dash");
 }
-window._grps=grps;
-var html="";
-grps.forEach(function(g,gi){
-var mhtml="";
-g.members.forEach(function(m,j){
-mhtml+="<div class='row'><div class='av' style='width:32px;height:32px;background:"+AVC[j%6]+";font-size:12px'>"+m.name[0]+"</div><div><div style='font-size:13px;font-weight:700'>"+m.name+"</div><div style='font-size:11px;color:#AAA'>"+m.level+"</div></div></div>";
+async function deleteStu(id){
+var stu=students.find(function(s){return s.id==id;});
+if(!stu)return;
+var overlay=document.createElement("div");
+overlay.style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:999;display:flex;align-items:center;justify-content:center;";
+var box=document.createElement("div");
+box.style="background:#fff;border-radius:16px;padding:28px;width:320px;text-align:center;";
+box.innerHTML="<div style='font-size:18px;font-weight:700;margin-bottom:8px'>Delete "+stu.name+"?</div><div style='font-size:13px;color:#888;margin-bottom:20px'>This will permanently delete all session data.</div>";
+var delBtn=document.createElement("button");
+delBtn.textContent="Yes, Delete";
+delBtn.style="background:#FF6B6B;color:#fff;border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-bottom:8px;";
+delBtn.addEventListener("click",async function(){
+try{
+await _sb.from("students").delete().eq("id",id);
+students=students.filter(function(s){return s.id!=id;});
+}catch(e){console.error("delete error:",e);}
+document.body.removeChild(overlay);
+rdDash();
 });
-html+="<div class='card' style='border-left:5px solid "+g.color+"'>";
-html+="<div style='font-size:17px;font-weight:800;margin-bottom:6px'>"+g.name+"</div>";
-html+="<div style='font-size:12px;color:#888;margin-bottom:10px'>"+g.members.length+" students - Avg: "+g.avgScore+"</div>";
-html+="<div style='display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap'>"+mhtml+"</div>";
-html+="<button class='btn' style='background:"+g.color+";font-size:13px;padding:9px 18px' onclick='doGrpLes("+gi+")'>Generate Group Lesson</button>";
-html+="</div>";
-});
-document.getElementById("grp-out").innerHTML=html;
+var cancelBtn=document.createElement("button");
+cancelBtn.textContent="Cancel";
+cancelBtn.style="width:100%;padding:10px;border:none;border-radius:10px;background:#F5F3EE;font-weight:700;cursor:pointer;";
+cancelBtn.addEventListener("click",function(){document.body.removeChild(overlay);});
+box.appendChild(delBtn);
+box.appendChild(cancelBtn);
+overlay.appendChild(box);
+document.body.appendChild(overlay);
 }
 async function editLevel(id){
 var stu=students.find(function(s){return s.id==id;});
@@ -1108,17 +671,15 @@ box.style="background:#fff;border-radius:16px;padding:24px;width:320px;max-heigh
 box.innerHTML="<div style='font-size:16px;font-weight:700;margin-bottom:4px'>Edit Reading Level</div><div style='font-size:13px;color:#888;margin-bottom:16px'>"+stu.name+" - currently "+stu.level+"</div>";
 Object.keys(LM).forEach(function(l){
 var btn=document.createElement("button");
-var grade=LM[l][0];
-var sublevel=LM[l][1];
 btn.style="display:block;width:100%;text-align:left;padding:10px 14px;margin-bottom:6px;border-radius:10px;border:2px solid "+(l===stu.level?"#4ECDC4":"#E8E8E8")+";background:"+(l===stu.level?"#4ECDC422":"#fff")+";font-size:13px;font-weight:600;cursor:pointer;";
-btn.textContent=l+" - "+sublevel+" ("+grade+")";
-btn.addEventListener("click",function(){
+btn.textContent=l+" - "+LM[l][1]+" ("+LM[l][0]+")";
+btn.addEventListener("click",async function(){
 var idx=students.findIndex(function(s){return s.id==id;});
 students[idx].level=l;
 students[idx].grade=LM[l][0];
 try{
-await _supabase.from("students").update({level:l,grade:LM[l][0]}).eq("id",id);
-}catch(e){console.error("level update error",e);}
+await _sb.from("students").update({level:l,grade:LM[l][0]}).eq("id",id);
+}catch(e){console.error("editLevel error:",e);}
 document.body.removeChild(overlay);
 if(cur&&cur.id==id){cur=students[idx];pidx=0;}
 rdDash();
@@ -1170,7 +731,11 @@ if(s.errors&&s.errors.length){html+="<div style='margin-top:8px;font-size:11px;f
 html+="</div></div>";
 });
 html+="</div>";
-html+="<div style='display:flex;gap:10px'><button class='btn' onclick='startSess("+stu.id+")' style='flex:1'>New Session</button><button class='btn' style='flex:1;background:#A78BFA' onclick='window.location=\"progress.html\"'>Generate Report</button><button class='btn' style='flex:1;background:#6BCB77;color:#1A1A2E' onclick='exportPDF()'>Export PDF</button></div>";
+html+="<div style='display:flex;gap:10px'>";
+html+="<button class='btn' onclick='startSess("+stu.id+")' style='flex:1'>New Session</button>";
+html+="<button class='btn' style='flex:1;background:#A78BFA' onclick='window.location=\"progress.html\"'>Generate Report</button>";
+html+="<button class='btn' style='flex:1;background:#6BCB77;color:#1A1A2E' onclick='exportPDF()'>Export PDF</button>";
+html+="</div>";
 document.getElementById("prog-out").innerHTML=html;
 go("progress");
 }
@@ -1181,104 +746,24 @@ var open=det.style.display!=="none";
 det.style.display=open?"none":"block";
 arr.textContent=open?"v":"^";
 }
-async function saveSessionOnly(){
-if(!cur)return;
-var rec={date:new Date().toLocaleDateString(),ratings:Object.assign({},rats),errors:errs.slice()};
-var idx=students.findIndex(function(s){return s.id===cur.id;});
-students[idx].sessions=[rec].concat(students[idx].sessions).slice(0,10);
-cur=students[idx];
-saveStudents();
-try{
-await _supabase.from("students").update({sessions:students[idx].sessions}).eq("id",cur.id);
-}catch(e){console.error("session save error",e);}
-document.getElementById("gen-box").innerHTML="<div style='font-size:14px;font-weight:800;color:#4ECDC4;margin-bottom:8px'>Session Saved!</div><div style='font-size:12px;color:#9999BB;margin-bottom:12px'>Data saved to student profile.</div><button class='btn btn-teal' style='width:100%;font-size:14px;margin-bottom:8px' onclick='doGen()'>Generate Lesson</button><button class='btn-ghost' style='width:100%;font-size:13px' onclick='saveSessionOnly()'>Save Again</button>";
-}
 function exportPDF(){
 if(!cur)return;
 var QRL=[{id:"accuracy",l:"Accuracy"},{id:"fluency",l:"Fluency"},{id:"decoding",l:"Decoding"},{id:"selfmon",l:"Self-Monitoring"},{id:"comprehension",l:"Comprehension"}];
 var sess=cur.sessions||[];
 var latest=sess.length?sess[0].ratings||{}:{};
-var html="<html><head><style>";
-html+="body{font-family:Arial,sans-serif;max-width:700px;margin:40px auto;padding:20px;color:#1A1A2E;}";
-html+="h1{font-size:28px;margin-bottom:4px;}";
-html+="h2{font-size:16px;font-weight:700;margin:20px 0 10px;border-bottom:2px solid #4ECDC4;padding-bottom:4px;}";
-html+=".badge{display:inline-block;background:#4ECDC422;color:#2BBDB5;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700;margin-left:8px;}";
-html+=".skill{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}";
-html+=".bar{height:10px;border-radius:99px;background:#F0F0F0;flex:1;margin:0 12px;}";
-html+=".fill{height:10px;border-radius:99px;}";
-html+=".session{border:1px solid #E8E8E8;border-radius:10px;padding:12px;margin-bottom:10px;}";
-html+=".error{font-size:12px;color:#666;padding:3px 0;}";
-html+="</style></head><body>";
-html+="<h1>"+cur.name+"<span class='badge'>"+cur.level+"</span></h1>";
-html+="<div style='font-size:14px;color:#888;margin-bottom:20px'>"+cur.grade+" &bull; "+sess.length+" sessions &bull; Exported "+new Date().toLocaleDateString()+"</div>";
+var html="<html><head><style>body{font-family:Arial,sans-serif;max-width:700px;margin:40px auto;padding:20px;color:#1A1A2E;}h1{font-size:28px;margin-bottom:4px;}h2{font-size:16px;font-weight:700;margin:20px 0 10px;border-bottom:2px solid #4ECDC4;padding-bottom:4px;}.skill{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}.bar{height:10px;border-radius:99px;background:#F0F0F0;flex:1;margin:0 12px;}.fill{height:10px;border-radius:99px;}.session{border:1px solid #E8E8E8;border-radius:10px;padding:12px;margin-bottom:10px;}</style></head><body>";
+html+="<h1>"+cur.name+"</h1>";
+html+="<div style='font-size:14px;color:#888;margin-bottom:20px'>"+cur.grade+" &bull; "+cur.level+" &bull; "+sess.length+" sessions &bull; Exported "+new Date().toLocaleDateString()+"</div>";
 html+="<h2>Latest Skill Ratings</h2>";
-QRL.forEach(function(r){
-var v=latest[r.id]||0;
-var c=v>=90?"#6BCB77":v>=75?"#FFD166":"#FF6B6B";
-html+="<div class='skill'><span style='font-size:13px;font-weight:600;width:140px'>"+r.l+"</span><div class='bar'><div class='fill' style='width:"+v+"%;background:"+c+"'></div></div><span style='font-weight:700;color:"+c+";width:40px;text-align:right'>"+v+"%</span></div>";
-});
+QRL.forEach(function(r){var v=latest[r.id]||0;var c=v>=90?"#6BCB77":v>=75?"#FFD166":"#FF6B6B";html+="<div class='skill'><span style='font-size:13px;font-weight:600;width:140px'>"+r.l+"</span><div class='bar'><div class='fill' style='width:"+v+"%;background:"+c+"'></div></div><span style='font-weight:700;color:"+c+";width:40px;text-align:right'>"+v+"%</span></div>";});
 html+="<h2>Session History</h2>";
-sess.forEach(function(s,si){
-var rats=s.ratings||{};
-var avg=Object.values(rats).length?Math.round(Object.values(rats).reduce(function(a,b){return a+b;},0)/Object.values(rats).length):0;
-html+="<div class='session'><div style='display:flex;justify-content:space-between;margin-bottom:8px'><strong>"+s.date+"</strong><span style='font-weight:700;color:"+(avg>=90?"#6BCB77":avg>=75?"#FFD166":"#FF6B6B")+"'>Avg: "+avg+"%</span></div>";
-html+="<div style='display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px'>";
-QRL.forEach(function(r){var v=rats[r.id]||0;var c=v>=90?"#6BCB77":v>=75?"#FFD166":"#FF6B6B";html+="<span style='font-size:11px;background:"+c+"22;color:"+c+";border-radius:6px;padding:2px 8px;font-weight:700'>"+r.l+" "+v+"%</span>";});
-html+="</div>";
-if(s.errors&&s.errors.length){
-html+="<div style='font-size:12px;font-weight:700;color:#999;margin-bottom:4px'>Errors Logged</div>";
-s.errors.forEach(function(e){html+="<div class='error'><b>"+e.word+"</b>"+(e.said?" said "+e.said:"")+" ("+e.type+")</div>";});
-}
-html+="</div>";
-});
+sess.forEach(function(s){var rats=s.ratings||{};var avg=Object.values(rats).length?Math.round(Object.values(rats).reduce(function(a,b){return a+b;},0)/Object.values(rats).length):0;html+="<div class='session'><div style='display:flex;justify-content:space-between;margin-bottom:8px'><strong>"+s.date+"</strong><span>Avg: "+avg+"%</span></div><div style='display:flex;flex-wrap:wrap;gap:6px'>";QRL.forEach(function(r){var v=rats[r.id]||0;var c=v>=90?"#6BCB77":v>=75?"#FFD166":"#FF6B6B";html+="<span style='font-size:11px;background:"+c+"22;color:"+c+";border-radius:6px;padding:2px 8px;font-weight:700'>"+r.l+" "+v+"%</span>";});html+="</div>"+(s.errors&&s.errors.length?"<div style='margin-top:8px;font-size:12px;color:#666'><b>Errors:</b> "+s.errors.map(function(e){return e.word+(e.said?" said "+e.said:"");}).join(", ")+"</div>":"")+"</div>";});
 html+="</body></html>";
 var w=window.open("","_blank");
 w.document.write(html);
 w.document.close();
 setTimeout(function(){w.print();},500);
 }
-async function deleteStu(id){
-var stu=students.find(function(s){return s.id==id;});
-if(!stu)return;
-var overlay=document.createElement("div");
-overlay.style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:999;display:flex;align-items:center;justify-content:center;";
-var box=document.createElement("div");
-box.style="background:#fff;border-radius:16px;padding:28px;width:320px;text-align:center;";
-box.innerHTML="<div style='font-size:18px;font-weight:700;margin-bottom:8px'>Delete "+stu.name+"?</div><div style='font-size:13px;color:#888;margin-bottom:20px'>This will permanently delete all session data for this student.</div>";
-var delBtn=document.createElement("button");
-delBtn.textContent="Yes, Delete";
-delBtn.style="background:#FF6B6B;color:#fff;border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-bottom:8px;";
-delBtn.addEventListener("click",async function(){
-try{
-await _supabase.from("students").delete().eq("id",id);
-students=students.filter(function(s){return s.id!=id;});
-}catch(e){console.error("delete error",e);}
-document.body.removeChild(overlay);
-rdDash();
-loadDashCurr();
-});
-var cancelBtn=document.createElement("button");
-cancelBtn.textContent="Cancel";
-cancelBtn.style="width:100%;padding:10px;border:none;border-radius:10px;background:#F5F3EE;font-weight:700;cursor:pointer;";
-cancelBtn.addEventListener("click",function(){document.body.removeChild(overlay);});
-box.appendChild(delBtn);
-box.appendChild(cancelBtn);
-overlay.appendChild(box);
-document.body.appendChild(overlay);
-}
-async function addStu(){
-var n=document.getElementById("new-name").value.trim();if(!n)return;
-var newStu={name:n,grade:document.getElementById("new-grade").value,level:document.getElementById("new-level").value,sessions:[]};
-try{
-var {data,error}=await _supabase.from("students").insert([{user_id:window._user.id,name:newStu.name,grade:newStu.grade,level:newStu.level,sessions:[]}]).select().single();
-if(error)throw error;
-newStu.id=data.id;
-students.push(newStu);
-}catch(e){console.error("addStu error",e);}
-document.getElementById("new-name").value="";
-go("dash");
-}
-
 function bldGroups(){
 var ws=students.filter(function(s){return s.sessions.length>0;});
 if(ws.length<2)return[];
@@ -1288,6 +773,21 @@ tagged.forEach(function(s){if(!bkts[s.wid])bkts[s.wid]=[];bkts[s.wid].push(s);})
 var pc={accuracy:"#FF6B6B",fluency:"#FFD166",decoding:"#FF9F43",selfmon:"#4ECDC4",comprehension:"#A78BFA"};
 return Object.entries(bkts).map(function(x){var q=QR.find(function(r){return r.id===x[0];});return{id:x[0],name:q.l+" Group",focus:q.l,members:x[1],color:pc[x[0]]||"#4ECDC4",avgScore:Math.round(x[1].reduce(function(a,s){return a+s.wa;},0)/x[1].length)};});
 }
+function rdGroups(){
+var grps=bldGroups();
+if(!grps.length){
+document.getElementById("grp-out").innerHTML="<div class='card' style='text-align:center;padding:40px'><div style='font-weight:700;margin-bottom:6px'>No Groups Yet</div><div style='font-size:13px;color:#888;margin-bottom:16px'>Complete sessions with at least 2 students to auto-generate groups.</div><button class='btn' onclick='go(\"dash\")'>Back to Dashboard</button></div>";
+return;
+}
+window._grps=grps;
+var html="";
+grps.forEach(function(g,gi){
+var mhtml="";
+g.members.forEach(function(m,j){mhtml+="<div class='row'><div class='av' style='width:32px;height:32px;background:"+AVC[j%6]+";font-size:12px'>"+m.name[0]+"</div><div><div style='font-size:13px;font-weight:700'>"+m.name+"</div><div style='font-size:11px;color:#AAA'>"+m.level+"</div></div></div>";});
+html+="<div class='card' style='border-left:5px solid "+g.color+"'><div style='font-size:17px;font-weight:800;margin-bottom:6px'>"+g.name+"</div><div style='font-size:12px;color:#888;margin-bottom:10px'>"+g.members.length+" students - Avg: "+g.avgScore+"</div><div style='display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap'>"+mhtml+"</div><button class='btn' style='background:"+g.color+";font-size:13px;padding:9px 18px' onclick='doGrpLes("+gi+")'>Generate Group Lesson</button></div>";
+});
+document.getElementById("grp-out").innerHTML=html;
+}
 async function doGrpLes(gi){
 var g=window._grps[gi];
 var level=g.members[0]&&g.members[0].level||"Level 5";
@@ -1295,10 +795,11 @@ var prompt="Reading teacher: 15-min small group lesson. Group:"+g.name+" Level:"
 prompt+='Reply ONLY raw JSON: {"lessonTitle":"...","focusSummary":"...","hasCurriculumAlignment":false,"segments":[{"pillar":"phonemic","title":"...","timeRange":"0-2 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"phonics","title":"...","timeRange":"2-5 min","minutes":3,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"fluency","title":"...","timeRange":"5-8 min","minutes":3,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"vocabulary","title":"...","timeRange":"8-11 min","minutes":3,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"comprehension","title":"...","timeRange":"11-13 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""},{"pillar":"writing","title":"...","timeRange":"13-15 min","minutes":2,"emphasis":false,"teacherDoes":"...","studentDoes":"...","materials":"...","tip":"...","standard":""}],"afterLesson":"..."}\nReal content. emphasis true on 2 segments targeting '+g.focus+".";
 document.getElementById("grp-out").innerHTML="<div style='text-align:center;padding:60px'><div style='font-weight:700;margin-bottom:6px'>Building group lesson...</div></div>";
 try{
-var res=await fetch("/api/lesson",{method:"POST",headers:{"content-type":"application/json","anthropic-dangerous-direct-browser-access":"true","x-api-key":"REMOVED"},body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:3000,messages:[{role:"user",content:prompt}]})});
+var res=await fetch("/api/lesson",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:3000,messages:[{role:"user",content:prompt}]})});
 var data=await res.json();
-var text=(data.content||[]).filter(function(b){return b.type==="text";}).map(function(b){return b.text;}).join("").trim();console.log("API response:",JSON.stringify(data).substring(0,200));var les;
-try{les=JSON.parse(text);}catch(e){try{var clean=text.replace(/```json/gi,"").replace(/```/g,"").trim();les=JSON.parse(clean);}catch(e2){try{var a=text.indexOf("{"),b=text.lastIndexOf("}");les=JSON.parse(text.slice(a,b+1));}catch(e3){les={lessonTitle:"Lesson Plan",focusSummary:"Generated lesson",hasCurriculumAlignment:false,segments:[{pillar:"phonics",title:"Phonics Practice",timeRange:"0-5 min",minutes:5,emphasis:true,teacherDoes:"Work on phonics skills",studentDoes:"Practice with teacher",materials:"Whiteboard",tip:"Focus on target sounds",standard:""},{pillar:"fluency",title:"Fluency Building",timeRange:"5-10 min",minutes:5,emphasis:true,teacherDoes:"Model fluent reading",studentDoes:"Echo read",materials:"Levelled text",tip:"Focus on expression",standard:""},{pillar:"comprehension",title:"Comprehension Check",timeRange:"10-15 min",minutes:5,emphasis:false,teacherDoes:"Ask questions",studentDoes:"Retell the story",materials:"Reading passage",tip:"Use questioning strategies",standard:""}],afterLesson:"Continue practising these skills daily."};}}}
+var text=(data.content||[]).filter(function(b){return b.type==="text";}).map(function(b){return b.text;}).join("").trim();
+var les;
+try{les=JSON.parse(text);}catch(e){try{les=JSON.parse(text.replace(/```json/gi,"").replace(/```/g,"").trim());}catch(e2){var a=text.indexOf("{"),b=text.lastIndexOf("}");les=JSON.parse(text.slice(a,b+1));}}
 lesson=les;
 cur={name:g.name,level:g.members[0]&&g.members[0].level||"Level 5"};
 viewLes();
@@ -1308,33 +809,7 @@ function populateLvl(){
 var sel=document.getElementById("new-level");
 sel.innerHTML=LEVELS.map(function(l){return"<option value='"+l+"'>"+l+" - "+LM[l][1]+" ("+LM[l][0]+")</option>";}).join("");
 }
-function startSess(id){
-cur=students.find(function(s){return s.id==id;});
-rats=Object.assign({},(cur.sessions[0]&&cur.sessions[0].ratings)||{});
-errs=[];ownText=false;lesson=null;pidx=0;
-document.getElementById("obs-title").textContent="Session: "+cur.name;
-document.getElementById("obs-sub").innerHTML=tag(cur.level,lc(cur.level))+" "+lb(cur.level)+" - "+cur.grade;
-document.getElementById("tog").classList.remove("on");
-document.getElementById("tog-lbl").textContent="Using a ReadLead passage";
-document.getElementById("tog-l").style.fontWeight="700";
-document.getElementById("tog-r").style.fontWeight="400";
-document.getElementById("own-msg").style.display="none";
-document.getElementById("passage-card").style.display="block";
-document.getElementById("w-in").value="";
-document.getElementById("s-in").value="";
-document.getElementById("curr-in").value="";
-document.getElementById("curr-badge").style.display="none";
-rdErrs();rdRats();rdPass();loadSavedCurriculum();
-document.getElementById("gen-box").innerHTML="<div style='font-size:15px;font-weight:800;margin-bottom:4px'>Generate Lesson Plan</div><button class='btn btn-teal' style='width:100%;font-size:14px;margin-bottom:8px' onclick='doGen()'>Generate "+cur.name+" Lesson</button><button class='btn-ghost' style='width:100%;font-size:13px;margin-top:4px' onclick='saveSessionOnly()'>Save Session Without Lesson</button>";
-go("observe");
-}
-populateLvl();
-initSupabase();
-window.doSignOut=async function(){
-if(window._supabase)await window._supabase.auth.signOut();
-localStorage.clear();
-window.location.href="login.html";
-}
+initApp();
 </script>
 </body>
 </html>
