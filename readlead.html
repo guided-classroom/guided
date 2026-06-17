@@ -134,6 +134,7 @@ button,input,select,textarea{font-family:inherit;cursor:pointer;}
 <div style="margin-top:12px;border-top:1px solid #F0F0F0;padding-top:10px">
 <div class="lbl">COMPREHENSION QUESTIONS</div>
 <div id="p-qs"></div></div>
+<div id="err-guide" style="margin-top:10px;padding-top:10px;border-top:1px solid #F0F0F0"></div>
 </div>
 <div class="card">
 <div class="lbl">ERRORS HEARD</div>
@@ -412,6 +413,12 @@ rdErrs();rdRats();rdPass();
 document.getElementById("gen-box").innerHTML="<div style='font-size:15px;font-weight:800;margin-bottom:4px'>Generate Lesson Plan</div><div style='font-size:12px;color:#9999BB;margin-bottom:14px'>Builds a personalized 15-min lesson.</div><button class='btn btn-teal' style='width:100%;font-size:14px;margin-bottom:8px' onclick='doGen()'>Generate "+cur.name+" Lesson</button><button class='btn-ghost' style='width:100%;font-size:13px' onclick='saveSessionOnly()'>Save Session Without Lesson</button>";
 go("observe");
 }
+function wordCount(text){return text.trim().split(/\s+/).length;}
+function errGuide(wc){
+var indep=Math.floor(wc*0.05);
+var instr=Math.floor(wc*0.10);
+return{indep:indep,instr:instr};
+}
 function rdPass(){
 var ps=PASSAGES[cur.level]||PASSAGES["Level 5"]||[];
 if(!ps.length)return;
@@ -420,6 +427,9 @@ var lv=lc(cur.level);
 document.getElementById("p-tabs").innerHTML=ps.map(function(x,i){return"<button onclick='selP("+i+")' style='background:"+(pidx===i?lv:"#F5F3EE")+";color:"+(pidx===i?"#fff":"#777")+";border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer'>"+x.title+"</button>";}).join("");
 document.getElementById("p-text").textContent=p.text;
 document.getElementById("p-qs").innerHTML=p.qs.map(function(q,i){return"<div style='font-size:12px;color:#666;margin-bottom:4px;display:flex;gap:6px'><span style='font-weight:700;color:"+lv+";flex-shrink:0'>"+(i+1)+".</span><span>"+q+"</span></div>";}).join("");
+var wc=wordCount(p.text);
+var eg=errGuide(wc);
+document.getElementById("err-guide").innerHTML="<div style='font-size:11px;color:#888'><strong>"+wc+" words</strong> &mdash; Independent (95%+): 0-"+eg.indep+" errors &bull; Instructional (90-94%): "+(eg.indep+1)+"-"+eg.instr+" errors &bull; Frustration (below 90%): "+(eg.instr+1)+"+ errors</div>";
 }
 function selP(i){pidx=i;rdPass();}
 function printP(){
