@@ -100,26 +100,39 @@ button,input,select,textarea{font-family:inherit;cursor:pointer;}
 <div id="comments-out"></div>
 </div>
 </div>
-<script type="module">
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
-const supabase = createClient("https://ynvgikozznybuuusxbhz.supabase.co","sb_publishable_tt1xUdoOfZ0Pf8rXuMxyqw_hRfCzxeZ");
-const { data: { session } } = await supabase.auth.getSession();
-if(!session) window.location.href="login.html";
-const user = session.user;
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 var AVC=["#FF6B6B","#4ECDC4","#FFD166","#6BCB77","#A78BFA","#FF9F43"];
 var cur=null;
 var outcomes=[];
 var QR=[{id:"accuracy",l:"Accuracy"},{id:"fluency",l:"Fluency"},{id:"decoding",l:"Decoding"},{id:"selfmon",l:"Self-Monitoring"},{id:"comprehension",l:"Comprehension"}];
-function loadStudents(){try{var d=localStorage.getItem("guided_students");return d?JSON.parse(d):[];}catch(e){return[];}}
+var _sb=null;
+var _user=null;
+var _students=[];
+async function initApp(){
+_sb=supabase.createClient("https://ynvgikozznybuuusxbhz.supabase.co","sb_publishable_tt1xUdoOfZ0Pf8rXuMxyqw_hRfCzxeZ");
+var result=await _sb.auth.getSession();
+var session=result.data.session;
+if(!session){window.location.href="login.html";return;}
+_user=session.user;
+await loadStudents();
+rdHome();
+}
+async function loadStudents(){
+try{
+var result=await _sb.from("students").select("*").order("created_at",{ascending:true});
+if(result.error)throw result.error;
+_students=result.data.map(function(r){return{id:r.id,name:r.name,grade:r.grade,level:r.level,sessions:r.sessions||[]};});
+}catch(e){console.error("loadStudents error:",e);_students=[];}
+return _students;
+}
 function go(scr){
 document.querySelectorAll(".screen").forEach(function(s){s.classList.remove("active");});
 document.getElementById("s-"+scr).classList.add("active");
 if(scr==="home")rdHome();
 }
 function rdHome(){
-var students=loadStudents();
+var students=_students;
 var el=document.getElementById("student-list");
 if(!students.length){
 el.innerHTML="<div style='text-align:center;padding:40px'><div style='font-size:14px;color:#888;margin-bottom:12px'>No students yet. Add students in ReadLead first.</div><a href='readlead.html' class='btn btn-purple' style='display:inline-block;text-decoration:none;padding:11px 20px'>Go to ReadLead</a></div>";
@@ -145,7 +158,7 @@ btn.addEventListener("click",function(){startReport(s.id);});
 });
 }
 function startReport(id){
-var students=loadStudents();
+var students=_students;
 cur=students.find(function(s){return s.id==id;});
 if(!cur)return;
 document.getElementById("rep-title").textContent="Report: "+cur.name;
@@ -303,8 +316,8 @@ btns[i].textContent="Copied!";
 setTimeout(function(){btns[i].textContent="Copy to Clipboard";},2000);
 });
 }
-rdHome();
-window.doSignOut=async function(){localStorage.clear();window.location.href="login.html";};
+initApp();
+window.doSignOut=async function(){if(_sb)await _sb.auth.signOut();window.location.href="login.html";};
 </script>
 </body>
 </html>

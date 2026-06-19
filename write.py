@@ -1,9 +1,9 @@
-f=open('readlead.html','r')
+f=open('progress.html','r')
 h=f.read()
 f.close()
-old='<div class="lbl">COMPREHENSION QUESTIONS</div>\n<div id="p-qs"></div></div>\n'
-new='<div class="lbl">COMPREHENSION QUESTIONS</div>\n<div id="p-qs"></div></div>\n<div id="err-guide" style="margin-top:10px;padding-top:10px;border-top:1px solid #F0F0F0"></div>\n'
+old='rdHome();\nwindow.doSignOut=async function(){localStorage.clear();window.location.href="login.html";};'
+new='initApp();\nwindow.doSignOut=async function(){if(_sb)await _sb.auth.signOut();window.location.href="login.html";};'
 print('found:',old in h)
 h=h.replace(old,new)
-open('readlead.html','w').write(h)
+open('progress.html','w').write(h)
 print('done')
