@@ -1,9 +1,9 @@
-f=open('progress.html','r')
+f=open('rotator.html','r')
 h=f.read()
 f.close()
-old='rdHome();\nwindow.doSignOut=async function(){localStorage.clear();window.location.href="login.html";};'
-new='initApp();\nwindow.doSignOut=async function(){if(_sb)await _sb.auth.signOut();window.location.href="login.html";};'
+old="function init() {\n// Mode card features"
+new="function init() {\ninitAuth();\n// Mode card features"
 print('found:',old in h)
 h=h.replace(old,new)
-open('progress.html','w').write(h)
+open('rotator.html','w').write(h)
 print('done')

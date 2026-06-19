@@ -240,20 +240,11 @@ style="transition:stroke-dashoffset 1s linear,stroke .5s"/>
 </div>
 </div>
 
-<script type="module">
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
-const supabase = createClient("https://ynvgikozznybuuusxbhz.supabase.co","sb_publishable_tt1xUdoOfZ0Pf8rXuMxyqw_hRfCzxeZ");
-const { data: { session } } = await supabase.auth.getSession();
-if(!session) window.location.href="login.html";
-const user = session.user;
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 // ── DATA ──────────────────────────────────────────────────────────
-function loadGroupsFromStorage(){
+function buildGroupsFromStudents(students){
 try{
-var raw=localStorage.getItem("guided_students");
-if(!raw)return getDefaultGroups();
-var students=JSON.parse(raw);
 if(!students.length)return getDefaultGroups();
 var colors=["#FF6B6B","#A78BFA","#4ECDC4","#6BCB77","#A78BFA","#FF9F43"];
 var skillNames={accuracy:"Accuracy",fluency:"Fluency",decoding:"Decoding",selfmon:"Self-Monitoring",comprehension:"Comprehension"};
@@ -280,8 +271,27 @@ return[
 {id:1,name:"Group 1",emoji:"◆",color:"#FF6B6B",students:["Add students in ReadLead"],focus:"Reading Skills",level:"Mixed",weakSkill:"Fluency"}
 ];
 }
-const READLEAD_GROUPS=loadGroupsFromStorage();
-window.doSignOut=async function(){localStorage.clear();window.location.href="login.html";};
+var READLEAD_GROUPS=[];
+var _sb=null;
+var _user=null;
+async function initAuth(){
+_sb=supabase.createClient("https://ynvgikozznybuuusxbhz.supabase.co","sb_publishable_tt1xUdoOfZ0Pf8rXuMxyqw_hRfCzxeZ");
+var result=await _sb.auth.getSession();
+var session=result.data.session;
+if(!session){window.location.href="login.html";return;}
+_user=session.user;
+await loadGroupsFromDB();
+if(typeof renderGroupsPreview==="function")renderGroupsPreview();
+}
+async function loadGroupsFromDB(){
+try{
+var result=await _sb.from("students").select("*").order("created_at",{ascending:true});
+if(result.error)throw result.error;
+var students=result.data.map(function(r){return{id:r.id,name:r.name,grade:r.grade,level:r.level,sessions:r.sessions||[]};});
+READLEAD_GROUPS=buildGroupsFromStudents(students);
+}catch(e){console.error("loadGroupsFromDB error:",e);READLEAD_GROUPS=getDefaultGroups();}
+}
+window.doSignOut=async function(){if(_sb)await _sb.auth.signOut();window.location.href="login.html";};
 const ALL_CENTRES = [
 {id:"teacher",name:"Teacher Table",emoji:"👥"},
 {id:"tech",name:"Tech Station",emoji:"🖥"},
@@ -326,6 +336,7 @@ let timerDone = false;
 
 // ── INIT ──────────────────────────────────────────────────────────
 function init() {
+initAuth();
 // Mode card features
 document.getElementById('whole-features').innerHTML =
 ["✓ Quick setup — 30 seconds","✓ Same activity for all groups","✓ Perfect for building routines","✓ Projector display + live timer"]
