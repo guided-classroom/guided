@@ -1,9 +1,6 @@
 f=open('index.html','r')
 h=f.read()
 f.close()
-old='<button class="nav-link">Pricing</button>\n<button class="nav-cta">Get Started Free</button>'
-new='<button class="nav-link">Pricing</button>\n<a href="login.html" class="nav-link" style="text-decoration:none;display:inline-block">Sign In</a>\n<a href="login.html" class="nav-cta" style="text-decoration:none;display:inline-block">Get Started Free</a>'
-print('found:',old in h)
-h=h.replace(old,new)
-open('index.html','w').write(h)
-print('done')
+i=h.find('hero-cta') if h.find('hero-cta')>-1 else -1
+print(i)
+print(h[i-50:i+300] if i>-1 else "not found")
