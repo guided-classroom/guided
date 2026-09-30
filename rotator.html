@@ -1,814 +1,263 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>CentreRotator — Guided Literacy Centres</title>
+<title>CentreRotator — Guided</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'DM Sans',sans-serif;background:#F5F7FF;color:#1A1A2E;min-height:100vh;}
-button{font-family:'DM Sans',sans-serif;cursor:pointer;}
-.nav{background:#1A1A2E;border-bottom:1px solid #30363D;padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
-.logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:#fff;}
-.logo span{color:#4ECDC4;}
-.nav-home{background:transparent;color:#AAA;border:1px solid #30363D;border-radius:10px;padding:6px 14px;font-size:12px;font-weight:600;text-decoration:none;}
-.badge{border-radius:8px;padding:4px 12px;font-size:12px;font-weight:700;}
-.badge-teal{background:rgba(78,205,196,0.15);color:#4ECDC4;border:1px solid rgba(78,205,196,0.3);}
-.badge-gold{background:rgba(255,209,102,0.15);color:#A78BFA;border:1px solid rgba(255,209,102,0.3);}
-.main{max-width:980px;margin:0 auto;padding:32px 24px;}
-.h1{font-family:'Playfair Display',serif;font-size:30px;font-weight:900;margin-bottom:6px;color:#1A1A2E;}
-.sub{font-size:14px;color:#AAA;margin-bottom:28px;line-height:1.6;}
-.card{background:#1A1A2E;border-radius:16px;padding:22px;border:1px solid #30363D;margin-bottom:14px;color:#fff;}
-.btn{border:none;border-radius:10px;padding:12px 22px;font-size:14px;font-weight:700;}
-.btn-teal{background:#4ECDC4;color:#1E2A3A;}
-.btn-gold{background:#A78BFA;color:#1A1A2E;}
-.btn-ghost{background:transparent;color:#AAA;border:1px solid #30363D;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:600;}
-.btn-dark{background:#30363D;color:#fff;}
-.lbl{font-size:14px;font-weight:800;color:#AAA;display:block;margin-bottom:8px;letter-spacing:.06em;}
-.tag{border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;display:inline-block;}
-.screen{display:none;}
-.screen.active{display:block;}
-.mode-card{background:#1A1A2E;border:2px solid #30363D;border-radius:20px;padding:28px;cursor:pointer;transition:border-color .2s;}
-.mode-card:hover{border-color:#4ECDC4;}
-.centre-card{background:#1A1A2E;border:2px solid #4ECDC433;border-radius:12px;padding:16px;cursor:pointer;transition:all .15s;color:#fff;}
-.centre-card.selected-teal{background:rgba(78,205,196,0.08);border-color:#4ECDC4;}
-.centre-card.selected-gold{background:rgba(255,209,102,0.08);border-color:#A78BFA;}
-.time-btn{background:#1E2A3A;color:#AAA;border:2px solid #30363D;border-radius:10px;padding:12px 20px;font-size:14px;font-weight:700;}
-.time-btn.active-teal{background:#4ECDC4;color:#1E2A3A;border-color:#4ECDC4;}
-.time-btn.active-gold{background:#A78BFA;color:#1E2A3A;border-color:#A78BFA;}
-.sched-table{width:100%;border-collapse:separate;border-spacing:4px;}
-.sched-cell{background:#1E2A3A;border:2px solid #30363D;border-radius:10px;padding:10px 12px;cursor:pointer;min-width:130px;transition:all .15s;vertical-align:top;}
-.sched-cell:hover{border-color:#4ECDC4;}
-.sched-cell.open{border-color:#4ECDC4;background:rgba(78,205,196,0.08);}
-.activity-detail{display:none;margin-top:10px;border-top:1px solid #30363D;padding-top:10px;font-size:12px;color:#AAA;line-height:1.6;}
-.activity-detail.open{display:block;}
-.group-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:4px;}
-/* PROJECTOR */
-.proj{display:none;position:fixed;inset:0;background:#1E2A3A;color:#fff;z-index:200;padding:24px;overflow-y:auto;}
-.proj.active{display:block;}
-.timer-ring{position:relative;width:160px;height:160px;margin:0 auto 16px;}
-.timer-ring svg{transform:rotate(-90deg);}
-.timer-display{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-.timer-num{font-family:'Playfair Display',serif;font-size:36px;font-weight:900;line-height:1;}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.fade-in{animation:fadeIn .4s ease;}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
-@media(max-width:640px){.grid2{grid-template-columns:1fr;}.grid3{grid-template-columns:1fr 1fr;}}
+body{font-family:"DM Sans",sans-serif;background:#1A1A2E;color:#fff;min-height:100vh;}
+.nav{background:#12122A;padding:16px 28px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #2A2A4A;}
+.logo{font-family:"Playfair Display",serif;font-size:20px;font-weight:700;color:#fff;}
+.logo span{color:#6C63FF;}
+.nav-links{display:flex;gap:12px;align-items:center;}
+.nav-btn{background:#6C63FF;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;}
+.nav-btn-outline{background:transparent;color:#aaa;border:1px solid #444;border-radius:8px;padding:7px 14px;font-size:13px;cursor:pointer;}
+.main{padding:28px;}
+.setup-panel{background:#12122A;border-radius:20px;padding:28px;max-width:700px;margin:0 auto 28px;}
+.setup-title{font-family:"Playfair Display",serif;font-size:22px;margin-bottom:20px;color:#fff;}
+.setup-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.setup-label{font-size:11px;font-weight:800;color:#6C63FF;letter-spacing:.05em;display:block;margin-bottom:6px;}
+.setup-input{width:100%;padding:10px 14px;background:#1A1A2E;border:2px solid #2A2A4A;border-radius:10px;color:#fff;font-size:14px;font-family:"DM Sans",sans-serif;}
+.setup-input:focus{outline:none;border-color:#6C63FF;}
+.timer-row{display:flex;gap:10px;align-items:center;margin-bottom:20px;}
+.timer-btn{background:#2A2A4A;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:14px;font-weight:700;cursor:pointer;}
+.timer-btn.active{background:#6C63FF;}
+.start-btn{width:100%;padding:16px;background:#6C63FF;color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:800;cursor:pointer;}
+.display-panel{display:none;}
+.centres-grid{display:grid;gap:20px;margin-bottom:28px;}
+.centre-card{background:#12122A;border-radius:20px;padding:28px;border:3px solid #2A2A4A;text-align:center;transition:border-color .3s;}
+.centre-card.teacher{border-color:#FFD700;background:#1A1800;}
+.centre-name{font-size:22px;font-weight:800;color:#fff;margin-bottom:16px;}
+.group-badge{display:inline-block;padding:10px 20px;border-radius:99px;font-size:18px;font-weight:800;margin:4px;}
+.timer-display{text-align:center;margin-bottom:28px;}
+.timer-number{font-family:"Playfair Display",serif;font-size:96px;font-weight:900;color:#fff;line-height:1;}
+.timer-number.warning{color:#FF6B6B;}
+.timer-label{font-size:16px;color:#aaa;margin-top:8px;}
+.rotate-btn{display:block;width:100%;max-width:400px;margin:0 auto;padding:20px;background:#6C63FF;color:#fff;border:none;border-radius:16px;font-size:20px;font-weight:800;cursor:pointer;}
+.rotate-btn:disabled{background:#2A2A4A;color:#666;cursor:not-allowed;}
+.edit-btn{display:block;width:100%;max-width:400px;margin:12px auto 0;padding:12px;background:transparent;color:#aaa;border:1px solid #444;border-radius:12px;font-size:14px;cursor:pointer;}
+.alert-overlay{position:fixed;inset:0;background:rgba(108,99,255,.9);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;}
+.alert-text{font-family:"Playfair Display",serif;font-size:48px;font-weight:900;color:#fff;margin-bottom:24px;text-align:center;}
+.alert-btn{background:#fff;color:#6C63FF;border:none;border-radius:14px;padding:16px 40px;font-size:20px;font-weight:800;cursor:pointer;}
 </style>
 </head>
 <body>
-
 <nav class="nav">
-<div style="display:flex;align-items:center;gap:10px">
-<a href="/" class="nav-home">← Home</a>
-<button onclick="doSignOut()" style="background:transparent;color:#9999BB;border:1px solid #444;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;">Sign Out</button>
-<div class="logo">Centre<span>Rotator</span></div>
-</div>
-<span class="badge badge-teal" id="nav-badge">✓ ReadLead Connected</span>
+  <div class="logo">Guided <span>CentreRotator</span></div>
+  <div class="nav-links">
+    <a href="readlead.html" class="nav-btn-outline">ReadLead</a>
+    <a href="progress.html" class="nav-btn-outline">Progress</a>
+    <button class="nav-btn-outline" onclick="doSignOut()">Sign Out</button>
+  </div>
 </nav>
 
-<!-- MODE SELECT -->
-
-<div class="screen active fade-in" id="screen-mode">
-<div class="main" style="max-width:680px">
-<div class="h1">Centre<span style="color:#4ECDC4">Rotator</span></div>
-<div class="sub">Choose how you want to run your centres today.</div>
-<div class="grid2" style="margin-bottom:20px">
-<div class="mode-card" onclick="selectMode('whole')">
-<div style="font-size:40px;margin-bottom:14px">🏫</div>
-<div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:8px">Whole Class</div>
-<div style="font-size:15px;color:#CCC;line-height:1.7;margin-bottom:16px">All students rotate through the same centres with generic activities. Simple, fast, and easy to manage.</div>
-<div id="whole-features"></div>
-<button class="btn btn-teal" style="margin-top:20px;width:100%;font-size:13px">Set Up Whole Class →</button>
-</div>
-<div class="mode-card" onclick="selectMode('skill')">
-<div style="font-size:40px;margin-bottom:14px">🎯</div>
-<div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:8px">Skill-Based</div>
-<div style="font-size:15px;color:#CCC;line-height:1.7;margin-bottom:16px">Each group gets targeted activities matched to their specific skill needs from ReadLead.</div>
-<div id="skill-features"></div>
-<button class="btn btn-gold" style="margin-top:20px;width:100%;font-size:13px">Set Up Skill-Based →</button>
-</div>
-</div>
-<div class="card" style="background:#1A1A2E;text-align:center">
-<div style="font-size:15px;color:#CCC;line-height:1.7">
-💡 <strong style="color:#4ECDC4">Not sure which to use?</strong> Start with <strong style="color:#4ECDC4">Whole Class</strong> to get your students comfortable with the rotation routine, then switch to <strong style="color:#A78BFA">Skill-Based</strong>.
-</div>
-</div>
-</div>
-</div>
-
-<!-- SETUP -->
-
-<div class="screen" id="screen-setup">
 <div class="main">
-<div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
-<button class="btn-ghost" onclick="showScreen('mode')">← Back</button>
-<div class="logo" id="setup-logo" style="color:#1A1A2E">Centre<span style="color:#A78BFA">Rotator</span></div>
-<span class="badge" id="setup-mode-badge"></span>
-</div>
-<div class="h1" id="setup-title">Setup</div>
-<div class="sub" id="setup-sub"></div>
+  <!-- SETUP PANEL -->
+  <div class="setup-panel" id="setup-panel">
+    <div class="setup-title">Set Up Your Centres</div>
+    
+    <div style="margin-bottom:20px">
+      <label class="setup-label">CENTRE NAMES (one per line, up to 5)</label>
+      <textarea id="centre-names" class="setup-input" rows="5" placeholder="Independent Reading&#10;Work with Teacher&#10;Word Study&#10;Tech Time&#10;Fluency Practice"></textarea>
+    </div>
 
-```
-<!-- Groups -->
-<div class="card">
-<div class="lbl" id="groups-lbl">📊 GROUPS FROM READLEAD</div>
-<div class="grid2" id="groups-preview"></div>
-<div id="groups-note" style="display:none;margin-top:10px;font-size:12px;color:#AAA"></div>
-</div>
+    <div style="margin-bottom:20px">
+      <label class="setup-label">GROUP NAMES (one per line, up to 5)</label>
+      <textarea id="group-names" class="setup-input" rows="5" placeholder="Group 1&#10;Group 2&#10;Group 3&#10;Group 4&#10;Group 5"></textarea>
+    </div>
 
-<!-- Centre picker -->
-<div class="card">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-<div class="lbl" style="margin-bottom:0" id="centres-lbl">🏫 SELECT YOUR CENTRES</div>
-<div style="font-size:12px;color:#AAA">2–6 centres</div>
-</div>
-<div class="grid3" id="centre-picker"></div>
-</div>
+    <div style="margin-bottom:20px">
+      <label class="setup-label">WHICH CENTRE IS "WORK WITH TEACHER"?</label>
+      <input id="teacher-centre" class="setup-input" placeholder="Work with Teacher" value="Work with Teacher"/>
+    </div>
 
-<!-- Rotation time -->
-<div class="card">
-<div class="lbl">⏱ ROTATION TIME</div>
-<div style="display:flex;gap:8px;margin-bottom:10px" id="time-btns"></div>
-<div style="font-size:12px;color:#AAA" id="time-total"></div>
-</div>
+    <div style="margin-bottom:20px">
+      <label class="setup-label">ROTATION TIME</label>
+      <div class="timer-row">
+        <button class="timer-btn" onclick="setTime(10,this)">10 min</button>
+        <button class="timer-btn active" onclick="setTime(15,this)">15 min</button>
+        <button class="timer-btn" onclick="setTime(20,this)">20 min</button>
+        <button class="timer-btn" onclick="setTime(25,this)">25 min</button>
+        <button class="timer-btn" onclick="setTime(30,this)">30 min</button>
+      </div>
+    </div>
 
-<!-- Whole class note -->
-<div class="card" id="whole-note" style="display:none;border-left:4px solid #4ECDC4">
-<div style="font-size:16px;font-weight:700;color:#4ECDC4;margin-bottom:6px">📋 How whole class centres work</div>
-<div style="font-size:15px;color:#CCC;line-height:1.7">Each centre will have a <strong style="color:#4ECDC4">generic activity</strong> posted on a card. Students manage themselves while you pull groups to the teacher table.</div>
-</div>
+    <button class="start-btn" onclick="startRotator()">Start Centres ▶</button>
+  </div>
 
-<div class="card" id="gen-card" style="background:linear-gradient(135deg,#1E2A3A,#1C2333)">
-<div style="display:flex;justify-content:space-between;align-items:center">
-<div>
-<div style="font-size:17px;font-weight:800;margin-bottom:4px;color:#fff">Ready to generate?</div>
-<div style="font-size:15px;color:#CCC" id="gen-summary"></div>
-</div>
-<button class="btn" id="gen-btn" onclick="generateSchedule()" style="flex-shrink:0;margin-left:20px;font-size:15px;padding:14px 28px">Generate Schedule →</button>
-</div>
-</div>
-```
-
-</div>
+  <!-- DISPLAY PANEL -->
+  <div class="display-panel" id="display-panel">
+    <div class="timer-display">
+      <div class="timer-number" id="timer-display">15:00</div>
+      <div class="timer-label">until next rotation</div>
+    </div>
+    <div class="centres-grid" id="centres-grid"></div>
+    <button class="rotate-btn" id="rotate-btn" onclick="startTimer()" disabled>▶ Start Timer</button>
+    <button class="edit-btn" onclick="showSetup()">⚙ Edit Setup</button>
+  </div>
 </div>
 
-<!-- SCHEDULE -->
-
-<div class="screen" id="screen-schedule">
-<div class="main">
-<div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;flex-wrap:wrap">
-<button class="btn-ghost" onclick="showScreen('setup')">← Edit</button>
-<button class="btn-ghost" onclick="showScreen('mode')">Start Over</button>
-<div class="logo" id="sched-logo" style="margin-left:4px;color:#1A1A2E">Centre<span style="color:#A78BFA">Rotator</span></div>
-<div style="margin-left:auto;display:flex;gap:8px">
-<button class="btn" id="proj-btn" onclick="openProjector()">📺 Projector + Timer</button>
-<button class="btn btn-dark" onclick="window.print()">🖨 Print</button>
-</div>
-</div>
-<div class="h1">Today's Centre Schedule</div>
-<div class="sub" id="sched-sub"></div>
-<div id="sched-content"></div>
-</div>
+<!-- ALERT OVERLAY -->
+<div class="alert-overlay" id="alert-overlay">
+  <div class="alert-text">⏰ Time to Rotate!</div>
+  <button class="alert-btn" onclick="doRotate()">Rotate Groups ▶</button>
 </div>
 
-<!-- PROJECTOR -->
-
-<div class="proj" id="projector">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-<div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:900">
-<span style="color:#4ECDC4">Guided</span> <span id="proj-mode-label" style="font-size:15px;font-weight:400;color:#AAA"></span>
-</div>
-<button class="btn-ghost" onclick="closeProjector()">← Exit Projector</button>
-</div>
-
-<!-- Rotation dots -->
-
-<div style="display:flex;gap:8px;justify-content:center;margin-bottom:18px" id="proj-dots"></div>
-
-<div style="display:grid;grid-template-columns:1fr 260px;gap:16px;align-items:start">
-<!-- Left: centre cards -->
-<div>
-<div class="lbl" id="proj-rotation-label">ROTATION 1 — WHERE TO GO NOW</div>
-<div id="proj-cards" style="display:grid;gap:10px;margin-bottom:14px"></div>
-<!-- Mini table -->
-<div class="card" style="padding:14px">
-<div class="lbl" style="margin-bottom:8px">FULL SCHEDULE</div>
-<table style="width:100%;border-collapse:collapse;font-size:12px" id="proj-table"></table>
-</div>
-</div>
-
-```
-<!-- Right: Timer -->
-<div style="position:sticky;top:16px">
-<div class="card" id="timer-card" style="text-align:center;border:2px solid #4ECDC4">
-<div class="timer-ring">
-<svg width="160" height="160">
-<circle cx="80" cy="80" r="70" fill="none" stroke="#30363D" stroke-width="10"/>
-<circle id="timer-ring-circle" cx="80" cy="80" r="70" fill="none" stroke="#4ECDC4" stroke-width="10"
-stroke-dasharray="439.8" stroke-dashoffset="0" stroke-linecap="round"
-style="transition:stroke-dashoffset 1s linear,stroke .5s"/>
-</svg>
-<div class="timer-display">
-<div class="timer-num" id="timer-display">00:00</div>
-<div style="font-size:11px;color:#AAA;font-weight:700;margin-top:4px">remaining</div>
-</div>
-</div>
-<div style="font-size:14px;font-weight:800;margin-bottom:2px" id="timer-rotation-label">Rotation 1 of 4</div>
-<div style="font-size:12px;color:#AAA;margin-bottom:16px" id="timer-per-rotation">15 min per rotation</div>
-<div id="timer-warning" style="display:none;background:rgba(255,107,107,.15);border:1px solid #FF6B6B;border-radius:8px;padding:8px 12px;font-size:12px;color:#FF6B6B;font-weight:700;margin-bottom:14px;animation:pulse .8s infinite">⚠️ Almost time — get ready to rotate!</div>
-<div style="display:flex;flex-direction:column;gap:8px">
-<button class="btn" id="timer-play-btn" onclick="toggleTimer()" style="width:100%;font-size:16px;background:#4ECDC4;color:#1E2A3A">▶ Start Timer</button>
-<button class="btn btn-dark" id="timer-next-btn" onclick="nextRotation()" style="width:100%;font-size:13px;display:none">Skip to Next →</button>
-<button style="background:transparent;color:#AAA;border:1px solid #30363D;border-radius:10px;padding:8px;width:100%;font-size:12px;font-weight:600" onclick="resetTimer()">↺ Reset All</button>
-</div>
-</div>
-<div class="card" id="session-time-card" style="margin-top:10px;text-align:center;padding:14px">
-<div class="lbl" style="margin-bottom:4px">TOTAL SESSION LEFT</div>
-<div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:900" id="session-total">--:--</div>
-<div style="font-size:11px;color:#AAA;margin-top:2px">across all remaining rotations</div>
-</div>
-</div>
-```
-
-</div>
-</div>
+<audio id="bell" src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAA..." preload="auto"></audio>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-// ── DATA ──────────────────────────────────────────────────────────
-function buildGroupsFromStudents(students){
-try{
-if(!students.length)return getDefaultGroups();
-var colors=["#FF6B6B","#A78BFA","#4ECDC4","#6BCB77","#A78BFA","#FF9F43"];
-var skillNames={accuracy:"Accuracy",fluency:"Fluency",decoding:"Decoding",selfmon:"Self-Monitoring",comprehension:"Comprehension"};
-var groups={};
-students.forEach(function(s){
-var key="no-data";var focus="No Session Data";
-if(s.sessions&&s.sessions.length>0){
-var rats=s.sessions[0].ratings||{};
-var keys=Object.keys(rats);
-if(keys.length>0){
-var weak=keys.reduce(function(a,b){return rats[a]<rats[b]?a:b;});
-key=weak;focus=skillNames[weak]||weak;
-}}
-if(!groups[key])groups[key]={name:focus+" Group",focus:focus,students:[],color:colors[Object.keys(groups).length%6]};
-groups[key].students.push(s.name+" ("+s.level+")");
-});
-var result=Object.values(groups).map(function(g,gi){return{id:gi+1,name:g.name,emoji:"◆",color:g.color,students:g.students,focus:g.focus,level:"Mixed",weakSkill:g.focus};});
-if(result.length===1&&result[0].focus==="No Session Data")return getDefaultGroups();
-return result;
-}catch(e){return getDefaultGroups();}
-}
-function getDefaultGroups(){
-return[
-{id:1,name:"Group 1",emoji:"◆",color:"#FF6B6B",students:["Add students in ReadLead"],focus:"Reading Skills",level:"Mixed",weakSkill:"Fluency"}
-];
-}
-var READLEAD_GROUPS=[];
-var _sb=null;
-var _user=null;
-async function initAuth(){
-_sb=supabase.createClient("https://ynvgikozznybuuusxbhz.supabase.co","sb_publishable_tt1xUdoOfZ0Pf8rXuMxyqw_hRfCzxeZ");
-var result=await _sb.auth.getSession();
-var session=result.data.session;
-if(!session){window.location.href="login.html";return;}
-_user=session.user;
-await loadGroupsFromDB();
-if(typeof renderGroupsPreview==="function")renderGroupsPreview();
-}
-async function loadGroupsFromDB(){
-try{
-var result=await _sb.from("students").select("*").order("created_at",{ascending:true});
-if(result.error)throw result.error;
-var students=result.data.map(function(r){return{id:r.id,name:r.name,grade:r.grade,level:r.level,sessions:r.sessions||[]};});
-READLEAD_GROUPS=buildGroupsFromStudents(students);
-}catch(e){console.error("loadGroupsFromDB error:",e);READLEAD_GROUPS=getDefaultGroups();}
-}
-window.doSignOut=async function(){if(_sb)await _sb.auth.signOut();window.location.href="login.html";};
-const ALL_CENTRES = [
-{id:"teacher",name:"Teacher Table",emoji:"👥"},
-{id:"tech",name:"Tech Station",emoji:"🖥"},
-{id:"word",name:"Word Work",emoji:"🔤"},
-{id:"read",name:"Read to Self",emoji:"📖"},
-{id:"listen",name:"Listen to Reading",emoji:"🎵"},
-{id:"writing",name:"Writing Station",emoji:"📝"}
-];
+var _sb=supabase.createClient("https://ynvgikozznybuuusxbhz.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inludmdpa296em55YnV1dXN4Ymh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk4NTk2NzMsImV4cCI6MjAyNTQzNTY3M30.oCjedoInIqBkJjUb7tTGPdE5_L7yWNj6EFtQyEtxb1w");
 
-const WHOLE_ACTIVITIES = {
-teacher:"Small group guided reading with teacher. Teacher selects focus based on group needs.",
-tech:"Independent reading practice on a device. Use a reading app or digital book at own level.",
-word:"Word work activity from the board. Today's task is posted at the centre.",
-read:"Read to self — choose a just-right book and read independently and quietly.",
-listen:"Listen to a read-aloud using headphones. Follow along in the text if available.",
-writing:"Independent writing — respond to today's prompt posted at the centre."
-};
+var _centres=[];
+var _groups=[];
+var _rotation=[];
+var _timerMinutes=15;
+var _timerSeconds=0;
+var _timerInterval=null;
+var _teacherCentre="Work with Teacher";
+var GROUP_COLORS=["#6C63FF","#FF6B9D","#4ECDC4","#FFD700","#FF8C42"];
 
-const SKILL_ACTIVITIES = {
-Phonics:{teacher:"Guided reading with CVC and blend word focus. Use letter tiles to build word families.",tech:"Phonics app — practice consonant blends. Target 10 min per blend pattern.",word:"Word sort: short vs long vowel sounds. Build 5 new blend words with magnetic letters.",read:"Choose a decodable book. Point to each word while reading.",listen:"Listen to a read-aloud. Tap when you hear a blend word.",writing:"Write 3 sentences using this week's blend words. Illustrate one sentence."},
-Fluency:{teacher:"Echo reading and partner reading. Model phrasing with expression. Target 65 WPM.",tech:"Record yourself reading a passage. Listen back and note where you paused.",word:"Sight word speed drills — Fry words list 1–50. Beat your own record.",read:"Reread a familiar book 3 times, getting smoother each time.",listen:"Listen to a fluent reader, then match their expression and phrasing.",writing:"Copy a favourite sentence from your book. Practice writing it smoothly."},
-Comprehension:{teacher:"Ask and answer questions before, during, and after reading. Focus on inference.",tech:"Digital story with comprehension questions. Explain answers using text evidence.",word:"Vocabulary web — pick 2 new words from today's reading. Define, draw, use in a sentence.",read:"Stop every paragraph and summarize in your head. Write one sentence per page.",listen:"Listen to a non-fiction passage. Identify 3 key facts and the main idea.",writing:"Write a response: 'What was the most important part of your reading? Why?'"},
-Vocabulary:{teacher:"Pre-teach tier 2 vocabulary from upcoming texts. Use word maps and context clues.",tech:"Digital vocabulary game — match words to definitions, then use in a sentence.",word:"Word of the day — etymology, synonyms, antonyms, and context sentences.",read:"Flag 3 unknown words with sticky notes. Try to figure them out from context.",listen:"Listen to a rich vocabulary read-aloud. List interesting words you want to learn.",writing:"Use 5 vocabulary words from this week in a short creative story."}
-};
-
-const ROTATION_TIMES = [10,15,20,25];
-const AV_COLORS = ["#FF6B6B","#4ECDC4","#A78BFA","#6BCB77","#A78BFA","#FF9F43"];
-
-let currentMode = null;
-let selectedCentres = ["teacher","tech","word","read"];
-let rotationTime = 15;
-let schedule = [];
-let openCell = null;
-
-// Timer state
-let timerInterval = null;
-let timerRunning = false;
-let currentRotation = 0;
-let secondsLeft = 0;
-let totalSeconds = 0;
-let timerDone = false;
-
-// ── INIT ──────────────────────────────────────────────────────────
-function init() {
-initAuth();
-// Mode card features
-document.getElementById('whole-features').innerHTML =
-["✓ Quick setup — 30 seconds","✓ Same activity for all groups","✓ Perfect for building routines","✓ Projector display + live timer"]
-.map(f=>`<div style="font-size:12px;color:#6BCB77;font-weight:600;margin-bottom:4px">${f}</div>`).join('');
-document.getElementById('skill-features').innerHTML =
-["✓ Activities matched to each group","✓ Groups auto-imported from ReadLead","✓ Full activity guide per centre","✓ Projector display + live timer"]
-.map(f=>`<div style="font-size:12px;color:#A78BFA;font-weight:600;margin-bottom:4px">${f}</div>`).join('');
-setTimeout(addActivityButtons,1000);
+async function init(){
+  var result=await _sb.auth.getSession();
+  if(!result.data.session){window.location.href="login.html";return;}
+  loadSaved();
 }
 
-// ── MODE SELECT ───────────────────────────────────────────────────
-function selectMode(mode) {
-currentMode = mode;
-const isWhole = mode === 'whole';
-const accent = isWhole ? '#4ECDC4' : '#A78BFA';
-
-document.getElementById('setup-logo').innerHTML = `Centre<span style="color:${accent}">Rotator</span>`;
-document.getElementById('setup-mode-badge').className = `badge ${isWhole?'badge-teal':'badge-gold'}`;
-document.getElementById('setup-mode-badge').textContent = isWhole ? '🏫 Whole Class' : '🎯 Skill-Based';
-document.getElementById('setup-title').textContent = `${isWhole?'Whole Class':'Skill-Based'} Setup`;
-document.getElementById('setup-sub').textContent = isWhole
-? 'Choose your centres and rotation time. Every group sees the same activity.'
-: 'Groups are loaded from ReadLead. Choose your centres and rotation time.';
-document.getElementById('groups-lbl').textContent = isWhole ? '👥 YOUR GROUPS' : '📊 GROUPS FROM READLEAD';
-document.getElementById('whole-note').style.display = isWhole ? 'block' : 'none';
-
-const note = document.getElementById('groups-note');
-if (isWhole) { note.style.display='block'; note.textContent='All groups will rotate through the same centres with the same activity posted at each one.'; }
-else { note.style.display='none'; }
-
-document.getElementById('gen-btn').className = `btn ${isWhole?'btn-teal':'btn-gold'}`;
-document.getElementById('gen-btn').style.padding = '14px 28px';
-
-renderGroupsPreview();
-renderCentrePicker();
-renderTimeBtns();
-updateGenSummary();
-showScreen('setup');
+function loadSaved(){
+  var saved=localStorage.getItem("guided_rotator_v2");
+  if(saved){
+    var data=JSON.parse(saved);
+    _centres=data.centres||[];
+    _groups=data.groups||[];
+    _timerMinutes=data.minutes||15;
+    _teacherCentre=data.teacherCentre||"Work with Teacher";
+    _rotation=data.rotation||[];
+    if(_centres.length&&_groups.length){
+      document.getElementById("centre-names").value=_centres.join("\n");
+      document.getElementById("group-names").value=_groups.join("\n");
+      document.getElementById("teacher-centre").value=_teacherCentre;
+      document.querySelectorAll(".timer-btn").forEach(function(btn){
+        btn.classList.remove("active");
+        if(btn.textContent===_timerMinutes+" min")btn.classList.add("active");
+      });
+    }
+  }
 }
 
-function renderGroupsPreview() {
-document.getElementById('groups-preview').innerHTML = READLEAD_GROUPS.map(g=>`
-<div style="background:#1E2A3A;border-radius:10px;padding:10px 14px;border:1px solid ${g.color}33;display:flex;gap:10px;align-items:center">
-<span style="font-size:20px">${g.emoji}</span>
-<div>
-<div style="font-weight:700;color:${g.color};font-size:16px">${g.name}</div>
-<div style="font-size:14px;color:#AAA">${g.students.join(', ')}${currentMode==='skill'?` · <strong style="color:${g.color}">${g.weakSkill}</strong>`:''}</div>
-</div>
-</div>`).join('');
-setTimeout(addActivityButtons,500);
+function setTime(min,btn){
+  _timerMinutes=min;
+  document.querySelectorAll(".timer-btn").forEach(function(b){b.classList.remove("active");});
+  btn.classList.add("active");
 }
 
-async function genGroupActivity(name,skill,students){
-var btn=event.target;
-btn.textContent="Generating...";
-btn.disabled=true;
-var prompt="You are a reading teacher. Generate 3 specific literacy centre activities for a small group.\n";
-prompt+="Group focus: "+skill+"\n";
-prompt+="Students: "+students+"\n";
-prompt+="Each activity should be hands-on, specific, and target "+skill+".\n";
-prompt+="Reply ONLY with raw JSON: {\"activities\":[{\"title\":\"...\",\"description\":\"...\",\"materials\":\"...\"},{\"title\":\"...\",\"description\":\"...\",\"materials\":\"...\"},{\"title\":\"...\",\"description\":\"...\",\"materials\":\"...\"}]}";
-try{
-var res=await fetch("/api/lesson",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:1000,messages:[{role:"user",content:prompt}]})});
-var data=await res.json();
-var text=(data.content||[]).filter(function(b){return b.type==="text";}).map(function(b){return b.text;}).join("").trim();
-var parsed;
-try{parsed=JSON.parse(text);}catch(e){var a=text.indexOf("{"),b=text.lastIndexOf("}");parsed=JSON.parse(text.slice(a,b+1));}
-var acts=parsed.activities||[];
-var box=document.createElement("div");
-box.style="margin-top:10px;background:#1A1A2E;border-radius:10px;padding:14px";
-var closeBtn="<button onclick='this.parentNode.remove()' style='float:right;background:none;border:1px solid #555;color:#AAA;border-radius:6px;padding:2px 8px;font-size:11px;cursor:pointer;margin-bottom:8px'>Close x</button>";
-box.innerHTML=closeBtn+"<div style='clear:both;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px'>"+acts.map(function(a){return"<div style='background:#2A3A4A;border-radius:8px;padding:10px'><div style='font-size:12px;font-weight:700;color:#A78BFA;margin-bottom:4px'>"+a.title+"</div><div style='font-size:11px;color:#CCC;margin-bottom:6px;line-height:1.4'>"+a.description+"</div><div style='font-size:10px;color:#888;border-top:1px solid #444;padding-top:4px'>"+a.materials+"</div></div>";}).join("")+"</div>";
-btn.parentNode.appendChild(box);
-btn.textContent="Get Activity Ideas";
-btn.disabled=false;
-}catch(e){
-btn.textContent="Error - Try Again";
-btn.disabled=false;
-}
-}
-function addActivityButtons(){
-var preview=document.getElementById("groups-preview");
-if(!preview)return;
-var cards=Array.from(preview.children);
-READLEAD_GROUPS.forEach(function(g,i){
-if(!cards[i])return;
-var btn=document.createElement("button");
-btn.textContent="Get Activity Ideas";
-btn.style="background:#A78BFA;color:#1A1A2E;border:none;border-radius:8px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;margin-top:8px;display:block;width:100%;";
-btn.addEventListener("click",function(){genGroupActivity(g.name,g.weakSkill,g.students.join(","));});
-cards[i].appendChild(btn);
-});
-}
-function renderCentrePicker() {
-const accent = currentMode==='whole' ? '#4ECDC4' : '#A78BFA';
-const selClass = currentMode==='whole' ? 'selected-teal' : 'selected-gold';
-document.getElementById('centres-lbl').textContent = `🏫 SELECT YOUR CENTRES (${selectedCentres.length} selected)`;
-document.getElementById('centre-picker').innerHTML = ALL_CENTRES.map(c=>{
-const sel = selectedCentres.includes(c.id);
-return `<div class="centre-card${sel?' '+selClass:''}" onclick="toggleCentre('${c.id}')">
-<div style="font-size:22px;margin-bottom:6px">${c.emoji}</div>
-<div style="font-size:16px;font-weight:700;margin-bottom:2px">${c.name}</div>
-${sel?`<div style="font-size:11px;font-weight:700;color:${accent};margin-top:4px">✓ Selected</div>`:''}
-</div>`;
-}).join('');
+function startRotator(){
+  var centreText=document.getElementById("centre-names").value.trim();
+  var groupText=document.getElementById("group-names").value.trim();
+  _teacherCentre=document.getElementById("teacher-centre").value.trim()||"Work with Teacher";
+  _centres=centreText.split("\n").map(function(s){return s.trim();}).filter(Boolean).slice(0,5);
+  _groups=groupText.split("\n").map(function(s){return s.trim();}).filter(Boolean).slice(0,5);
+  if(_centres.length<2||_groups.length<2){alert("Please enter at least 2 centres and 2 groups.");return;}
+  if(_rotation.length===0){
+    _rotation=_groups.slice();
+  }
+  saveData();
+  renderDisplay();
+  document.getElementById("setup-panel").style.display="none";
+  document.getElementById("display-panel").style.display="block";
+  resetTimer();
 }
 
-function toggleCentre(id) {
-if (selectedCentres.includes(id)) {
-if (selectedCentres.length > 2) selectedCentres = selectedCentres.filter(c=>c!==id);
-} else {
-if (selectedCentres.length < 6) selectedCentres = [...selectedCentres, id];
-}
-renderCentrePicker();
-updateGenSummary();
-}
-
-function renderTimeBtns() {
-const accent = currentMode==='whole' ? 'teal' : 'gold';
-document.getElementById('time-btns').innerHTML = ROTATION_TIMES.map(t=>`
-<button class="time-btn${rotationTime===t?' active-'+accent:''}" onclick="setTime(${t})">${t} min</button>`).join('');
-document.getElementById('time-total').innerHTML = `Total: <strong style="color:#1A1A2E">${selectedCentres.length * rotationTime} minutes</strong> · ${selectedCentres.length} rotations`;
-}
-
-function setTime(t) {
-rotationTime = t;
-renderTimeBtns();
-updateGenSummary();
-}
-
-function updateGenSummary() {
-document.getElementById('gen-summary').textContent =
-`${selectedCentres.length} centres · ${rotationTime} min each · ${currentMode==='whole'?'Generic activities for all':'Skill-matched activities per group'}`;
+function renderDisplay(){
+  var grid=document.getElementById("centres-grid");
+  var cols=_centres.length<=2?2:_centres.length<=4?2:3;
+  grid.style.gridTemplateColumns="repeat("+cols+",1fr)";
+  grid.innerHTML=_centres.map(function(centre,ci){
+    var isTeacher=centre===_teacherCentre;
+    var groupIdx=_rotation.indexOf(_groups[ci%_groups.length]);
+    var html="<div class=\"centre-card"+(isTeacher?" teacher":"")+"\">";
+    html+="<div class=\"centre-name\">"+(isTeacher?"⭐ ":"")+centre+"</div>";
+    _groups.forEach(function(g,gi){
+      if(_rotation[gi]===_groups[ci%_groups.length]||(ci<_groups.length&&_rotation[ci]===g)){
+        // show group at this centre
+      }
+    });
+    // Assign groups to centres
+    if(ci<_groups.length){
+      var g=_rotation[ci];
+      var gi=_groups.indexOf(g);
+      var color=GROUP_COLORS[gi%GROUP_COLORS.length];
+      html+="<span class=\"group-badge\" style=\"background:"+color+"\">"+g+"</span>";
+    }
+    html+="</div>";
+    return html;
+  }).join("");
 }
 
-// ── GENERATE SCHEDULE ─────────────────────────────────────────────
-function generateSchedule() {
-const centreList = ALL_CENTRES.filter(c=>selectedCentres.includes(c.id));
-const groups = READLEAD_GROUPS.slice(0, centreList.length);
-schedule = centreList.map((_,ri)=>
-groups.map((group,gi)=>{
-const centreIdx = (gi+ri)%centreList.length;
-const centre = centreList[centreIdx];
-const activity = currentMode==='whole'
-? WHOLE_ACTIVITIES[centre.id]
-: (SKILL_ACTIVITIES[group.weakSkill]?.[centre.id]||'Level-appropriate literacy activity.');
-return {group, centre, activity};
-})
-);
-renderSchedule();
-showScreen('schedule');
+function resetTimer(){
+  _timerSeconds=_timerMinutes*60;
+  updateTimerDisplay();
+  document.getElementById("rotate-btn").disabled=false;
+  document.getElementById("rotate-btn").textContent="▶ Start Timer";
 }
 
-function renderSchedule() {
-const isWhole = currentMode==='whole';
-const accent = isWhole ? '#4ECDC4' : '#A78BFA';
-const centreList = ALL_CENTRES.filter(c=>selectedCentres.includes(c.id));
-const groups = READLEAD_GROUPS.slice(0, centreList.length);
-
-document.getElementById('sched-logo').innerHTML = `Centre<span style="color:${accent}">Rotator</span>`;
-document.getElementById('sched-logo').style.marginLeft = '4px';
-document.getElementById('proj-btn').className = `btn btn-${isWhole?'teal':'gold'}`;
-document.getElementById('sched-sub').textContent = `${centreList.length} centres · ${rotationTime} min each · ${groups.length} groups · ${isWhole?'Same activity at every centre':'Activities matched to each group'}`;
-
-let html = '';
-
-// Whole class activity cards
-if (isWhole) {
-html += `<div class="card" style="border-left:4px solid #4ECDC4;margin-bottom:20px">
-<div style="font-size:16px;font-weight:700;color:#4ECDC4;margin-bottom:10px">📋 Post These at Each Centre</div>
-<div class="grid2">
-${centreList.map(c=>`
-<div style="background:#1E2A3A;border-radius:10px;padding:12px 14px;border:1px solid #30363D">
-<div style="font-size:18px;margin-bottom:4px">${c.emoji}</div>
-<div style="font-size:14px;font-weight:800;margin-bottom:6px">${c.name}</div>
-<div style="font-size:12px;color:#AAA;line-height:1.6">${WHOLE_ACTIVITIES[c.id]}</div>
-</div>`).join('')}
-</div>
-</div>`;
+function startTimer(){
+  if(_timerInterval){clearInterval(_timerInterval);_timerInterval=null;document.getElementById("rotate-btn").textContent="▶ Start Timer";return;}
+  document.getElementById("rotate-btn").textContent="⏸ Pause";
+  _timerInterval=setInterval(function(){
+    _timerSeconds--;
+    updateTimerDisplay();
+    if(_timerSeconds<=0){
+      clearInterval(_timerInterval);_timerInterval=null;
+      showAlert();
+    }
+  },1000);
 }
 
-// Rotation table
-html += `<div class="card">
-<div class="lbl" style="margin-bottom:12px">ROTATION SCHEDULE${!isWhole?' — TAP A CELL FOR ACTIVITY DETAILS':''}</div>
-<div style="overflow-x:auto">
-<table class="sched-table">
-<thead><tr>
-<th style="text-align:left;padding:10px 14px;font-size:12px;color:#AAA;font-weight:700">GROUP</th>
-${schedule[0].map((_,i)=>`<th style="text-align:left;padding:10px 14px;font-size:12px;color:#AAA;font-weight:700">Rotation ${i+1}<div style="font-size:11px;color:#555;font-weight:400">${i*rotationTime}–${(i+1)*rotationTime} min</div></th>`).join('')}
-</tr></thead>
-<tbody>
-${groups.map((group,gi)=>`
-<tr>
-<td style="padding:10px 14px;vertical-align:middle">
-<div style="font-weight:800;color:${group.color};font-size:14px">${group.emoji} ${group.name}</div>
-<div style="font-size:11px;color:#AAA">${group.students.join(', ')}</div>
-${!isWhole?`<span class="tag" style="background:${group.color}22;color:${group.color};font-size:10px;margin-top:4px;display:inline-block">${group.weakSkill}</span>`:''}
-</td>
-${schedule.map((rot,ri)=>{
-const cell=rot[gi]; const key=`${gi}-${ri}`;
-return `<td style="padding:4px;vertical-align:top">
-<div class="sched-cell" id="cell-${key}" onclick="${!isWhole?`toggleCell('${key}','${group.color}')`:''}" style="${isWhole?'cursor:default':''}">
-<div style="font-size:16px;margin-bottom:3px">${cell.centre.emoji}</div>
-<div style="font-size:16px;font-weight:700">${cell.centre.name}</div>
-<div class="activity-detail" id="detail-${key}">${cell.activity}</div>
-</div>
-</td>`;
-}).join('')}
-</tr>`).join('')}
-</tbody>
-</table>
-</div>
-</div>`;
-
-// Skill-based full activity guide
-if (!isWhole) {
-html += `<div style="margin-top:8px"><div class="lbl">FULL ACTIVITY GUIDE</div>`;
-html += groups.map(group=>`
-<div class="card" style="border-left:4px solid ${group.color}">
-<div style="display:flex;gap:10px;align-items:center;margin-bottom:14px">
-<span style="font-size:22px">${group.emoji}</span>
-<div>
-<div style="font-size:15px;font-weight:800;color:${group.color}">${group.name}</div>
-<div style="font-size:12px;color:#AAA">${group.students.join(', ')} · Focus: ${group.weakSkill}</div>
-</div>
-</div>
-<div class="grid2">
-${centreList.map(c=>`
-<div style="background:#1E2A3A;border-radius:10px;padding:10px 14px;border:1px solid #30363D">
-<div style="font-size:16px;font-weight:700;margin-bottom:4px">${c.emoji} ${c.name}</div>
-<div style="font-size:12px;color:#AAA;line-height:1.6">${SKILL_ACTIVITIES[group.weakSkill]?.[c.id]||'Level-appropriate literacy activity.'}</div>
-</div>`).join('')}
-</div>
-</div>`).join('');
-html += '</div>';
+function updateTimerDisplay(){
+  var m=Math.floor(_timerSeconds/60);
+  var s=_timerSeconds%60;
+  var str=m+":"+(s<10?"0":"")+s;
+  var el=document.getElementById("timer-display");
+  el.textContent=str;
+  el.className="timer-number"+(m===0&&s<=30?" warning":"");
 }
 
-document.getElementById('sched-content').innerHTML = html;
+function showAlert(){
+  document.getElementById("alert-overlay").style.display="flex";
+  try{new Audio("data:audio/wav;base64,//uQRAAAAWMSLwUIYAAsYkXgoQwAEaYLWfkWgAI0wWs/ItAAAGDgYtAgAyN+QWaAAihwMWm4G8QQRDiMcCBcH3Cc+CDv/7xA4Tvh9Rz/y8QADBwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZQAAAA8AAAACAAACcQCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA").play();}catch(e){}
 }
 
-function toggleCell(key, color) {
-if (openCell === key) {
-document.getElementById(`cell-${key}`).classList.remove('open');
-document.getElementById(`detail-${key}`).classList.remove('open');
-openCell = null;
-} else {
-if (openCell) {
-document.getElementById(`cell-${openCell}`)?.classList.remove('open');
-document.getElementById(`detail-${openCell}`)?.classList.remove('open');
-}
-document.getElementById(`cell-${key}`).classList.add('open');
-document.getElementById(`detail-${key}`).classList.add('open');
-openCell = key;
-}
+function doRotate(){
+  document.getElementById("alert-overlay").style.display="none";
+  var last=_rotation.pop();
+  _rotation.unshift(last);
+  saveData();
+  renderDisplay();
+  resetTimer();
 }
 
-// ── PROJECTOR ─────────────────────────────────────────────────────
-function openProjector() {
-currentRotation = 0;
-totalSeconds = rotationTime * 60;
-secondsLeft = totalSeconds;
-timerRunning = false;
-timerDone = false;
-clearInterval(timerInterval);
-
-const centreList = ALL_CENTRES.filter(c=>selectedCentres.includes(c.id));
-const groups = READLEAD_GROUPS.slice(0, centreList.length);
-const isWhole = currentMode==='whole';
-
-document.getElementById('proj-mode-label').textContent = `· ${isWhole?'Whole Class':'Skill-Based'} Centres`;
-document.getElementById('timer-per-rotation').textContent = `${rotationTime} min per rotation`;
-
-// Dots
-renderDots();
-
-// Cards grid
-document.getElementById('proj-cards').style.gridTemplateColumns = `repeat(${Math.min(centreList.length,3)},1fr)`;
-
-// Mini table header
-const tableHead = `<thead><tr><th style="text-align:left;padding:5px 8px;color:#AAA;font-weight:700">Group</th>${schedule[0].map((_,i)=>`<th id="proj-th-${i}" style="text-align:left;padding:5px 8px;color:${i===0?'#4ECDC4':'#8B949E'};font-weight:700">R${i+1} ${i===0?'◀':''}</th>`).join('')}</tr></thead>`;
-const tableBody = `<tbody>${groups.map((group,gi)=>`<tr><td style="padding:5px 8px;font-weight:700;color:${group.color}">${group.emoji} ${group.name}</td>${schedule.map((rot,ri)=>`<td id="proj-cell-${gi}-${ri}" style="padding:5px 8px;color:${ri===0?'#E8E6F0':'#555'};font-weight:${ri===0?700:400}">${rot[gi]?.centre.emoji} ${rot[gi]?.centre.name}</td>`).join('')}</tr>`).join('')}</tbody>`;
-document.getElementById('proj-table').innerHTML = tableHead + tableBody;
-
-renderProjectorRotation();
-updateTimerDisplay();
-updateNextBtn();
-
-document.getElementById('projector').classList.add('active');
+function showSetup(){
+  if(_timerInterval){clearInterval(_timerInterval);_timerInterval=null;}
+  document.getElementById("display-panel").style.display="none";
+  document.getElementById("setup-panel").style.display="block";
 }
 
-function closeProjector() {
-clearInterval(timerInterval);
-timerRunning = false;
-document.getElementById('projector').classList.remove('active');
+function saveData(){
+  localStorage.setItem("guided_rotator_v2",JSON.stringify({
+    centres:_centres,groups:_groups,minutes:_timerMinutes,
+    teacherCentre:_teacherCentre,rotation:_rotation
+  }));
 }
 
-function renderDots() {
-document.getElementById('proj-dots').innerHTML = schedule.map((_,i)=>`
-<div style="width:${i===currentRotation?28:10}px;height:10px;border-radius:99px;background:${i<=currentRotation?'#4ECDC4':'#30363D'};opacity:${i>currentRotation?.3:1};transition:all .4s"></div>`).join('');
-addActivityButtons();
+async function doSignOut(){
+  await _sb.auth.signOut();
+  window.location.href="login.html";
 }
 
-function renderProjectorRotation() {
-const centreList = ALL_CENTRES.filter(c=>selectedCentres.includes(c.id));
-const groups = READLEAD_GROUPS.slice(0, centreList.length);
-const rot = schedule[currentRotation]||schedule[0];
-
-document.getElementById('proj-rotation-label').textContent = `ROTATION ${currentRotation+1} OF ${schedule.length} — WHERE TO GO NOW`;
-document.getElementById('proj-cards').innerHTML = rot.map(cell=>`
-<div style="background:#1A1A2E;border:2px solid ${cell.group.color};border-radius:14px;padding:16px">
-<div style="font-size:28px;margin-bottom:6px">${cell.centre.emoji}</div>
-<div style="font-size:15px;font-weight:800;margin-bottom:8px">${cell.centre.name}</div>
-<div style="background:${cell.group.color}22;border-radius:10px;padding:8px 12px">
-<div style="font-size:11px;font-weight:800;color:${cell.group.color};margin-bottom:4px">${cell.group.emoji} ${cell.group.name}</div>
-<div style="display:flex;gap:4px;flex-wrap:wrap">
-${cell.group.students.map(s=>`<span style="background:${cell.group.color};color:#fff;border-radius:20px;padding:2px 8px;font-size:11px;font-weight:700">${s}</span>`).join('')}
-</div>
-</div>
-</div>`).join('');
-
-// Update table highlights
-schedule.forEach((_,ri)=>{
-groups.forEach((_,gi)=>{
-const td = document.getElementById(`proj-cell-${gi}-${ri}`);
-if (td) { td.style.color=ri===currentRotation?'#E8E6F0':'#555'; td.style.fontWeight=ri===currentRotation?700:400; }
-});
-const th = document.getElementById(`proj-th-${ri}`);
-if (th) { th.style.color=ri===currentRotation?'#4ECDC4':'#8B949E'; th.textContent=`R${ri+1} ${ri===currentRotation?'◀':''}`; }
-});
-
-document.getElementById('timer-rotation-label').textContent = `Rotation ${currentRotation+1} of ${schedule.length}`;
-renderDots();
-}
-
-// ── TIMER ─────────────────────────────────────────────────────────
-const CIRC = 2 * Math.PI * 70;
-
-function fmt(s) {
-return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
-}
-
-function updateTimerDisplay() {
-const pct = secondsLeft / totalSeconds;
-const color = pct > 0.5 ? '#4ECDC4' : pct > 0.2 ? '#A78BFA' : '#FF6B6B';
-const isWarning = pct <= 0.2 && !timerDone && secondsLeft !== totalSeconds;
-
-document.getElementById('timer-display').textContent = fmt(secondsLeft);
-document.getElementById('timer-display').style.color = color;
-document.getElementById('timer-ring-circle').style.strokeDashoffset = CIRC * (1 - pct);
-document.getElementById('timer-ring-circle').style.stroke = color;
-document.getElementById('timer-card').style.borderColor = color;
-document.getElementById('timer-card').style.boxShadow = `0 0 ${isWarning?30:20}px ${color}${isWarning?'66':'22'}`;
-document.getElementById('timer-card').style.animation = isWarning ? 'shake .6s infinite' : 'none';
-document.getElementById('timer-warning').style.display = isWarning ? 'block' : 'none';
-
-// Session total
-const remaining = (schedule.length - currentRotation - 1) * totalSeconds + secondsLeft;
-document.getElementById('session-total').textContent = fmt(remaining);
-}
-
-function toggleTimer() {
-if (timerDone) return;
-timerRunning = !timerRunning;
-const btn = document.getElementById('timer-play-btn');
-if (timerRunning) {
-btn.textContent = '⏸ Pause';
-btn.style.background = '#FF6B6B';
-timerInterval = setInterval(tick, 1000);
-} else {
-btn.textContent = '▶ Resume';
-btn.style.background = '#4ECDC4';
-clearInterval(timerInterval);
-}
-}
-
-function tick() {
-if (secondsLeft <= 1) {
-clearInterval(timerInterval);
-timerRunning = false;
-if (currentRotation < schedule.length - 1) {
-currentRotation++;
-secondsLeft = totalSeconds;
-renderProjectorRotation();
-updateTimerDisplay();
-document.getElementById('timer-play-btn').textContent = '▶ Start Timer';
-document.getElementById('timer-play-btn').style.background = '#4ECDC4';
-updateNextBtn();
-} else {
-timerDone = true;
-secondsLeft = 0;
-showDoneState();
-}
-return;
-}
-secondsLeft--;
-updateTimerDisplay();
-}
-
-function nextRotation() {
-if (currentRotation >= schedule.length - 1) return;
-clearInterval(timerInterval);
-timerRunning = false;
-currentRotation++;
-secondsLeft = totalSeconds;
-renderProjectorRotation();
-updateTimerDisplay();
-document.getElementById('timer-play-btn').textContent = '▶ Start Timer';
-document.getElementById('timer-play-btn').style.background = '#4ECDC4';
-updateNextBtn();
-}
-
-function resetTimer() {
-clearInterval(timerInterval);
-timerRunning = false;
-timerDone = false;
-currentRotation = 0;
-secondsLeft = totalSeconds;
-document.getElementById('timer-play-btn').textContent = '▶ Start Timer';
-document.getElementById('timer-play-btn').style.background = '#4ECDC4';
-document.getElementById('session-time-card').style.display = 'block';
-renderProjectorRotation();
-updateTimerDisplay();
-updateNextBtn();
-// restore timer card if done state was shown
-document.getElementById('timer-card').innerHTML = `
-<div class="timer-ring">
-<svg width="160" height="160">
-<circle cx="80" cy="80" r="70" fill="none" stroke="#30363D" stroke-width="10"/>
-<circle id="timer-ring-circle" cx="80" cy="80" r="70" fill="none" stroke="#4ECDC4" stroke-width="10"
-stroke-dasharray="439.8" stroke-dashoffset="0" stroke-linecap="round"
-style="transition:stroke-dashoffset 1s linear,stroke .5s"/>
-</svg>
-<div class="timer-display">
-<div class="timer-num" id="timer-display">${fmt(totalSeconds)}</div>
-<div style="font-size:11px;color:#AAA;font-weight:700;margin-top:4px">remaining</div>
-</div>
-</div>
-<div style="font-size:14px;font-weight:800;margin-bottom:2px" id="timer-rotation-label">Rotation 1 of ${schedule.length}</div>
-<div style="font-size:12px;color:#AAA;margin-bottom:16px" id="timer-per-rotation">${rotationTime} min per rotation</div>
-<div id="timer-warning" style="display:none;background:rgba(255,107,107,.15);border:1px solid #FF6B6B;border-radius:8px;padding:8px 12px;font-size:12px;color:#FF6B6B;font-weight:700;margin-bottom:14px;animation:pulse .8s infinite">⚠️ Almost time — get ready to rotate!</div>
-<div style="display:flex;flex-direction:column;gap:8px">
-<button class="btn" id="timer-play-btn" onclick="toggleTimer()" style="width:100%;font-size:16px;background:#4ECDC4;color:#1E2A3A">▶ Start Timer</button>
-<button class="btn btn-dark" id="timer-next-btn" onclick="nextRotation()" style="width:100%;font-size:13px;display:none">Skip to Next →</button>
-<button style="background:transparent;color:#AAA;border:1px solid #30363D;border-radius:10px;padding:8px;width:100%;font-size:12px;font-weight:600" onclick="resetTimer()">↺ Reset All</button>
-</div>`;
-updateTimerDisplay();
-updateNextBtn();
-}
-
-function updateNextBtn() {
-const btn = document.getElementById('timer-next-btn');
-if (btn) btn.style.display = currentRotation < schedule.length - 1 ? 'block' : 'none';
-}
-
-function showDoneState() {
-document.getElementById('timer-card').innerHTML = `
-<div style="font-size:52px;margin-bottom:12px">🎉</div>
-<div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:#4ECDC4;margin-bottom:6px">All Done!</div>
-<div style="font-size:15px;color:#CCC;margin-bottom:20px">All ${schedule.length} rotations complete</div>
-<button class="btn btn-teal" style="width:100%" onclick="resetTimer()">↺ Restart</button>`;
-document.getElementById('session-time-card').style.display = 'none';
-}
-
-// ── SCREENS ───────────────────────────────────────────────────────
-function showScreen(name) {
-document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-document.getElementById('screen-'+name).classList.add('active');
-}
-
-// ── START ─────────────────────────────────────────────────────────
 init();
 </script>
-
 </body>
 </html>
